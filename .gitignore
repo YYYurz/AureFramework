@@ -3,7 +3,14 @@
 **/[Ll]/og
 **/[Tt]emp/
 **/[Uu]serSettings/
+**/[Dd]ebug/
+**/.idea/
 
 /Packages/
 
+*.sln
+
+*.cache
+*.csproj
+*.user
 *.sln
