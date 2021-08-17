@@ -33,7 +33,7 @@ namespace NoFrameWork.Runtime
 		/// 注册游戏框架Manager
 		/// </summary>
 		/// <param name="frameWorkManager">要注册的游戏框架Manager</param>
-		internal static void RegisterManager(NoFrameWorkManager frameWorkManager)
+		public static void RegisterManager(NoFrameWorkManager frameWorkManager)
 		{
 			if (frameWorkManager == null)
 			{
@@ -50,6 +50,10 @@ namespace NoFrameWork.Runtime
 			}
 			
 			ManagerList.Add(frameWorkManager);
+		}
+
+		public static void ShutDown() {
+			Application.Quit();
 		}
 	}
 }

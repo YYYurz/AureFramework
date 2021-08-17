@@ -7,10 +7,8 @@
 
 namespace NoFrameWork.Runtime
 {
-	public class NoFrameWorkManager : Singleton<NoFrameWorkManager>
+	public partial class BossManager
 	{
-		public virtual void Awake(){}
-		public virtual void Update(){}
-		public virtual void Destroy(){}
-	}	
+
+	}
 }
