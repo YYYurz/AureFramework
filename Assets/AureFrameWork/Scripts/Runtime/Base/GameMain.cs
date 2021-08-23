@@ -9,22 +9,22 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace NoFrameWork.Runtime
+namespace AureFrameWork.Runtime
 {
 	public static class GameMain
 	{
-		private static readonly List<NoFrameWorkManager> ManagerList= new List<NoFrameWorkManager>();
+		private static readonly List<IAureFrameworkManager> ManagerList= new List<IAureFrameworkManager>();
 
-		public static T GetManager<T>() where T : NoFrameWorkManager => (T)GetManager(typeof(T));
+		public static T GetManager<T>() where T : IAureFrameworkManager => (T)GetManager(typeof(T));
 
-		private static NoFrameWorkManager GetManager(Type type) {
+		private static IAureFrameworkManager GetManager(Type type) {
 			foreach (var manager in ManagerList) {
 				if (manager.GetType() == type) {
 					return manager;
 				}
 			}
 			
-			Debug.LogError($"NoFrameWork GameMain : manager type {type.FullName} is not exist");
+			Debug.LogError($"AureFrameWork GameMain : manager type {type.FullName} is not exist");
 			return null;
 		}
 		
@@ -33,7 +33,7 @@ namespace NoFrameWork.Runtime
 		/// 注册游戏框架Manager
 		/// </summary>
 		/// <param name="frameWorkManager">要注册的游戏框架Manager</param>
-		public static void RegisterManager(NoFrameWorkManager frameWorkManager)
+		internal static void RegisterManager(IAureFrameworkManager frameWorkManager)
 		{
 			if (frameWorkManager == null)
 			{
@@ -44,7 +44,7 @@ namespace NoFrameWork.Runtime
 			var type = frameWorkManager.GetType();
 			foreach (var manager in ManagerList) {
 				if (manager.GetType() == type) {
-					Debug.LogError($"NoFrameWork GameMain : manager type {type.FullName} is already exist");
+					Debug.LogError($"AureFrameWork GameMain : manager type {type.FullName} is already exist");
 					return;
 				}
 			}

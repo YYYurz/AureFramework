@@ -7,13 +7,17 @@
 
 using UnityEngine;
 
-namespace NoFrameWork.Runtime
+namespace AureFrameWork.Runtime
 {
-	public class UIManager : NoFrameWorkManager
+	public class SceneManager : AureFrameworkManager
 	{
-		public override void Awake() {
+		protected override void Awake() {
 			base.Awake();
-			Debug.Log("This is UIManager");
+			Debug.Log("This is SceneManager");
+		}
+
+		public void Print() {
+			Debug.Log("Print SceneManager");
 		}
 	}
 }

@@ -7,10 +7,17 @@
 
 using UnityEngine;
 
-namespace NoFrameWork.Runtime
+namespace AureFrameWork.Runtime
 {
-	public partial class BossManager : MonoBehaviour
+	public class UIManager : AureFrameworkManager
 	{
-		
+		protected override void Awake() {
+			base.Awake();
+			Debug.Log("This is UIManager");
+		}
+
+		public void Print() {
+			Debug.Log("Print UIManger");
+		}
 	}
 }

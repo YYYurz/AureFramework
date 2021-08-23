@@ -5,12 +5,11 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace NoFrameWork.Runtime
+using AureFrameWork.Runtime;
+
+namespace GameTest
 {
-	public class NoFrameWorkManager : Singleton<NoFrameWorkManager>
+	public class Test
 	{
-		public virtual void Awake(){}
-		public virtual void Update(){}
-		public virtual void Destroy(){}
-	}	
+	}
 }

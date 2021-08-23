@@ -123,7 +123,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &1193148012426767651
+--- !u!1001 &1156084011
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -176,7 +176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1193148012413222403, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: m_Name
-      value: NoFrameWork
+      value: AureFrameWork
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}

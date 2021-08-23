@@ -7,7 +7,7 @@
 
 using UnityEngine;
 
-namespace NoFrameWork.Runtime
+namespace AureFrameWork.Runtime
 {
 	public class Singleton<T> where T : class, new()
 	{
@@ -26,6 +26,23 @@ namespace NoFrameWork.Runtime
 
 					instance = t;
 				}
+				return instance;
+			}
+		}
+	}
+
+	public class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviourSingleton<T>
+	{
+		public static T Instance
+		{
+			get
+			{
+				var instance = FindObjectOfType(typeof(T)) as T;
+				if (instance == null) {
+					Debug.LogError("MonoBehaviourSingleton : Instance is null");
+					return default;
+				}
+
 				return instance;
 			}
 		}
