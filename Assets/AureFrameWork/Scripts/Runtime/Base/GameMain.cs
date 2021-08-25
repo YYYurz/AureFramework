@@ -13,11 +13,11 @@ namespace AureFrameWork.Runtime
 {
 	public static class GameMain
 	{
-		private static readonly List<IAureFrameworkManager> ManagerList= new List<IAureFrameworkManager>();
+		private static readonly List<AureFrameworkManager> ManagerList= new List<AureFrameworkManager>();
 
-		public static T GetManager<T>() where T : IAureFrameworkManager => (T)GetManager(typeof(T));
+		public static T GetManager<T>() where T : AureFrameworkManager => (T)GetManager(typeof(T));
 
-		private static IAureFrameworkManager GetManager(Type type) {
+		private static AureFrameworkManager GetManager(Type type) {
 			foreach (var manager in ManagerList) {
 				if (manager.GetType() == type) {
 					return manager;
@@ -33,7 +33,7 @@ namespace AureFrameWork.Runtime
 		/// 注册游戏框架Manager
 		/// </summary>
 		/// <param name="frameWorkManager">要注册的游戏框架Manager</param>
-		internal static void RegisterManager(IAureFrameworkManager frameWorkManager)
+		internal static void RegisterManager(AureFrameworkManager frameWorkManager)
 		{
 			if (frameWorkManager == null)
 			{

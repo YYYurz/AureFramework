@@ -9,9 +9,7 @@ using UnityEngine;
 
 namespace AureFrameWork.Runtime
 {
-	public interface IAureFrameworkManager{}
-	
-	public abstract class AureFrameworkManager : MonoBehaviourSingleton<AureFrameworkManager>, IAureFrameworkManager
+	public abstract class AureFrameworkManager : MonoBehaviour
 	{
 		protected virtual void Awake() {
 			GameMain.RegisterManager(this);
