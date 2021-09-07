@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------
 // No Framework
-// Develop By ZhiRui Yu.
+// Developed By ZhiRui Yu.
 // Gitee: https://gitee.com/yyyurz
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
@@ -13,6 +13,7 @@ namespace AureFrameWork.Runtime
 	public class Aure : MonoBehaviour
 	{
 		private void Awake() {
+		
 		}
 
 		private void Start() {
