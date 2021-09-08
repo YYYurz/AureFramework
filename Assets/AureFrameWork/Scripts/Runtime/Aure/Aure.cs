@@ -1,14 +1,15 @@
 ﻿//------------------------------------------------------------
-// No Framework
+// AureFramework
 // Developed By ZhiRui Yu.
 // Gitee: https://gitee.com/yyyurz
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
 using System;
+using System.Text;
 using UnityEngine;
 
-namespace AureFrameWork.Runtime
+namespace AureFramework.Runtime
 {
 	public class Aure : MonoBehaviour
 	{
@@ -17,11 +18,21 @@ namespace AureFrameWork.Runtime
 		}
 
 		private void Start() {
-			var uiManager = GameMain.GetManager<UIManager>();
-			var sceneManager = GameMain.GetManager<SceneManager>();
-			
-			uiManager.Print();
-			sceneManager.Print();
+			// LoadAssetBundle();
+		}
+		
+		
+
+		private void LoadAssetBundle() {
+			var assetBundle = AssetBundle.LoadFromFile("Assets/AB/Lua.bundle");
+			var allAssetName = assetBundle.GetAllAssetNames();
+			foreach (var fileName in allAssetName) {
+				var file = assetBundle.LoadAsset<TextAsset>(fileName);
+				var byteList = file.bytes;
+				
+				var content = Encoding.Default.GetString(byteList);
+			}
+			Debug.Log("");
 		}
 	}
 }

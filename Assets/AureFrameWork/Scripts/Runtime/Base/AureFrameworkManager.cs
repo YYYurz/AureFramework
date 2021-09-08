@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------
-// No Framework
+// AureFramework
 // Developed By ZhiRui Yu.
 // Gitee: https://gitee.com/yyyurz
 // Email: 1228396352@qq.com
@@ -7,7 +7,7 @@
 
 using UnityEngine;
 
-namespace AureFrameWork.Runtime
+namespace AureFramework.Runtime
 {
 	public abstract class AureFrameworkManager : MonoBehaviour
 	{

@@ -1,15 +1,18 @@
 ﻿//------------------------------------------------------------
-// No Framework
+// AureFramework
 // Developed By ZhiRui Yu.
 // Gitee: https://gitee.com/yyyurz
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using AureFrameWork.Runtime;
+using AureFramework.Runtime;
 
 namespace GameTest
 {
-	public class Test
+	public partial class GameEntrance
 	{
+		public static void InitCustomManagers() {
+			
+		}
 	}
 }

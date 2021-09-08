@@ -7,17 +7,13 @@
 
 using UnityEngine;
 
-namespace AureFramework.Runtime
+namespace GameTest
 {
-	public class SceneManager : AureFrameworkManager
+	public partial class GameEntrance : MonoBehaviour
 	{
-		protected override void Awake() {
-			base.Awake();
-			Debug.Log("This is SceneManager");
-		}
-
-		public void Print() {
-			Debug.Log("Print SceneManager");
+		private void Start() {
+			InitBuiltinManagers();
+			InitCustomManagers();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------
-// No Framework
+// AureFramework
 // Developed By ZhiRui Yu.
 // Gitee: https://gitee.com/yyyurz
 // Email: 1228396352@qq.com
@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AureFrameWork.Runtime
+namespace AureFramework.Runtime
 {
 	public static class GameMain
 	{
