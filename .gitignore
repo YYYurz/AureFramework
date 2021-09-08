@@ -5,6 +5,8 @@
 **/[Uu]serSettings/
 **/[Dd]ebug/
 **/.idea/
+**/[Ii]gnorePlugins/
+**/[Ii]gnorePlugins.meta
 
 /Packages/
 
@@ -14,3 +16,4 @@
 *.csproj
 *.user
 *.sln
+

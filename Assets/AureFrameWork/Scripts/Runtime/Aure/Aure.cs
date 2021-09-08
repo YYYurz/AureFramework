@@ -18,21 +18,7 @@ namespace AureFramework.Runtime
 		}
 
 		private void Start() {
-			// LoadAssetBundle();
-		}
-		
-		
 
-		private void LoadAssetBundle() {
-			var assetBundle = AssetBundle.LoadFromFile("Assets/AB/Lua.bundle");
-			var allAssetName = assetBundle.GetAllAssetNames();
-			foreach (var fileName in allAssetName) {
-				var file = assetBundle.LoadAsset<TextAsset>(fileName);
-				var byteList = file.bytes;
-				
-				var content = Encoding.Default.GetString(byteList);
-			}
-			Debug.Log("");
 		}
 	}
 }

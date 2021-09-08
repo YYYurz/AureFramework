@@ -10,6 +10,5 @@ namespace AureFramework.Runtime
 {
 	public class ResourcesManager : AureFrameworkManager
 	{
-		
 	}
 }
