@@ -5,13 +5,18 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using UnityEngine;
+namespace AureFramework.Scene {
+	public class SceneModule : AureFrameworkModule, ISceneModule {
+		public void ChangeScene() {
+			
+		}
+		
+		public override void Update() {
+			
+		}
 
-namespace GameTest {
-	public partial class GameEntrance : MonoBehaviour {
-		private void Start() {
-			InitBuiltinManagers();
-			InitCustomManagers();
+		public override void ClearData() {
+			
 		}
 	}
 }

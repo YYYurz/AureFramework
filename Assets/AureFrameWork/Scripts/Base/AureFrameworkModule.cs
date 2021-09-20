@@ -5,20 +5,16 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
-using System.Text;
-using UnityEngine;
+namespace AureFramework {
+	public abstract class AureFrameworkModule {
+		/// <summary>
+		/// 轮询
+		/// </summary>
+		public abstract void Update();
 
-namespace AureFramework.Runtime
-{
-	public class Aure : MonoBehaviour
-	{
-		private void Awake() {
-		
-		}
-
-		private void Start() {
-
-		}
+		/// <summary>
+		/// 清理数据
+		/// </summary>
+		public abstract void ClearData();
 	}
 }

@@ -7,11 +7,10 @@
 
 using UnityEngine;
 
-namespace GameTest {
-	public partial class GameEntrance : MonoBehaviour {
-		private void Start() {
-			InitBuiltinManagers();
-			InitCustomManagers();
+namespace AureFramework.Runtime {
+	public class AureFrameworkManager : MonoBehaviour {
+		protected virtual void Awake() {
+			Aure.RegisterManager(this);
 		}
 	}
 }

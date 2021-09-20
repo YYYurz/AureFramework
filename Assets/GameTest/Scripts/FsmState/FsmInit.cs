@@ -5,13 +5,13 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using UnityEngine;
+using System;
+using AureFramework.Runtime;
 
 namespace GameTest {
-	public partial class GameEntrance : MonoBehaviour {
-		private void Start() {
-			InitBuiltinManagers();
-			InitCustomManagers();
-		}
+	[Serializable]
+	public class FsmInit {
+		
+		
 	}
 }

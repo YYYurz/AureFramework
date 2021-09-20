@@ -5,10 +5,8 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-
-namespace AureFramework.Runtime
-{
-	public class ResourcesManager : AureFrameworkManager
-	{
+namespace AureFramework.Resource {
+	public interface IResourceModule {
+		
 	}
 }

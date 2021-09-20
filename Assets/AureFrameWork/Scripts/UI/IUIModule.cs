@@ -5,13 +5,10 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using UnityEngine;
+namespace AureFramework.UI {
+	public interface IUIModule {
+		void OpenUI();
 
-namespace GameTest {
-	public partial class GameEntrance : MonoBehaviour {
-		private void Start() {
-			InitBuiltinManagers();
-			InitCustomManagers();
-		}
+		void CloseUI();
 	}
 }

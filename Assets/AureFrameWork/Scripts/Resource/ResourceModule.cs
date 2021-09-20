@@ -5,19 +5,15 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using UnityEngine;
 
-namespace AureFramework.Runtime
-{
-	public class UIManager : AureFrameworkManager
-	{
-		protected override void Awake() {
-			base.Awake();
-			Debug.Log("This is UIManager");
+namespace AureFramework.Resource {
+	public class ResourceModule : AureFrameworkModule, IResourceModule {
+		public override void Update() {
+			
 		}
 
-		public void Print() {
-			Debug.Log("Print UIManger");
+		public override void ClearData() {
+			
 		}
 	}
 }
