@@ -7,31 +7,45 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AureFramework.Fsm {
 	public sealed class FsmModule : AureFrameworkModule, IFsmModule {
-		private readonly Dictionary<object, List<IFsmState>> dicFsmState = new Dictionary<object, List<IFsmState>>();
-		private IFsmState previousFsmState;
-		private IFsmState currentFsmState;
+		private readonly Dictionary<object, IFsm> fsmStateDic = new Dictionary<object, IFsm>();
 
-		private float durationTime;
-
-		public void CreateFsm<T>(T owner, List<IFsmState> fsmStateList) where T : class{
-			if (dicFsmState.ContainsKey(owner)) {
-				throw new Exception("FsmModule : The Fsm for this owner already exists.");
+		public void CreateFsm<T>(T owner, IEnumerable<Type> fsmStateList, Type originStateType) where T : class {
+			if (fsmStateDic.ContainsKey(owner)) {
+				Debug.LogError("FsmModule : The Fsm for this owner already exists.");
+				return;
 			}
 			
-			dicFsmState.Add(owner, fsmStateList);
+			var fsm = new Fsm(fsmStateList, originStateType);
+			fsmStateDic.Add(owner, fsm);
 		}
 
-		public void ChangeState<T>(T fsmState) where T : IFsmState{
-			
+		public void DestroyFsm<T>(T owner) where T : class {
+			var type = typeof(T);
+			if (fsmStateDic.ContainsKey(type)) {
+				Debug.LogError("FsmModule : The Fsm for this owner already exists.");
+				return;
+			}
+
+			var fsm = fsmStateDic[type];
+			fsm.Destroy();
+			fsmStateDic.Remove(type);
 		}
 
 		public override void Update() {
+			foreach (var fsm in fsmStateDic) {
+				fsm.Value.Update();
+			}
 		}
 
 		public override void ClearData() {
+			foreach (var fsm in fsmStateDic) {
+				fsm.Value.Destroy();
+			}
+			fsmStateDic.Clear();
 		}
 	}
 }

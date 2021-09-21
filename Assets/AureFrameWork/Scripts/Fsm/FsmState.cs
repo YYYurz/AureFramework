@@ -6,20 +6,21 @@
 //------------------------------------------------------------
 
 namespace AureFramework.Fsm {
-	public interface IFsmState {
-		void OnEnter(params object[] args);
-		void OnUpdate();
-		void OnExit(params object[] args);
-	}
-
-	public abstract class FsmStateBase<T> : IFsmState {
-		public T Owner;
+	public abstract class FsmState : IFsmState {
+		private readonly IFsm fsmController;
 		
-		public FsmStateBase(T owner) {
-			Owner = owner;
+		public FsmState(IFsm fsmController) {
+			this.fsmController = fsmController;
 		}
+		
 		public virtual void OnEnter(params object[] args) { }
+		
 		public virtual void OnUpdate() { }
+		
 		public virtual void OnExit(params object[] args) { }
+		
+		public void ChangeState<T>() where T : IFsmState{
+			fsmController.ChangeState<T>();
+		}
 	}
 }
