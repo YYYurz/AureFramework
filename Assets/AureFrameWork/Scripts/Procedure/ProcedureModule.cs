@@ -5,14 +5,16 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.Procedure {
-	public class ProcedureModule : AureFrameworkModule, IProcedureModule {
-		public override void Update() {
-			
-		}
+using AureFramework.Fsm;
 
-		public override void ClearData() {
+namespace AureFramework.Procedure {
+	public class ProcedureModule : AureFrameworkModule, IProcedureModule
+	{
+		public void Init() {
 			
 		}
+		
+		public override void Update() { }
+		public override void ClearData() { }
 	}
 }

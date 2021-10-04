@@ -29,10 +29,9 @@ namespace AureFramework.Runtime.Fsm {
 		/// </summary>
 		/// <param name="owner"> 持有类 </param>
 		/// <param name="fsmStateList"> 状态列表 </param>
-		/// <param name="originStateType"> 起始状态 </param>
 		/// <typeparam name="T"></typeparam>
-		public void CreateFsm<T>(T owner, IEnumerable<Type> fsmStateList, Type originStateType) where T : class {
-			fsmModule.CreateFsm(owner, fsmStateList, originStateType);
+		public void CreateFsm<T>(T owner, IEnumerable<Type> fsmStateList) where T : class {
+			fsmModule.CreateFsm(owner, fsmStateList);
 		}
 
 		/// <summary>

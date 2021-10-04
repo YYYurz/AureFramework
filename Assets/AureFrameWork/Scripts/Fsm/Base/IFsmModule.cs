@@ -15,9 +15,8 @@ namespace AureFramework.Fsm {
 		/// </summary>
 		/// <param name="owner"> 持有类 </param>
 		/// <param name="fsmStateList"> 状态列表 </param>
-		/// <param name="originStateType"> 起始状态 </param>
 		/// <typeparam name="T"></typeparam>
-		void CreateFsm<T>(T owner, IEnumerable<Type> fsmStateList, Type originStateType) where T : class;
+		void CreateFsm<T>(T owner, IEnumerable<Type> fsmStateList) where T : class;
 
 		/// <summary>
 		/// 销毁有限状态机

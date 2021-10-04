@@ -13,11 +13,6 @@ namespace AureFramework.Fsm {
 		void Update();
 		
 		/// <summary>
-		/// 从初始状态开始
-		/// </summary>
-		void Restart();
-		
-		/// <summary>
 		/// 暂停状态机轮询
 		/// </summary>
 		void Pause();

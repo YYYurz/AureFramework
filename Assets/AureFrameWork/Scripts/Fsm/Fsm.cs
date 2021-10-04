@@ -18,14 +18,13 @@ namespace AureFramework.Fsm
 
 	public class Fsm : IFsm{
 		private readonly Dictionary<Type, IFsmState> fsmStateDic = new Dictionary<Type, IFsmState>();
-		private readonly IFsmState originFsmState;
 		private IFsmState previousFsmState;
 		private IFsmState currentFsmState;
 
 		private float durationTime;
 		private bool isPause;
 		
-		public Fsm(IEnumerable<Type> fsmStateTypeList, Type originStateType) {
+		public Fsm(IEnumerable<Type> fsmStateTypeList) {
 			var interfaceType = typeof(IFsmState);
 			foreach (var type in fsmStateTypeList) {
 				if (!type.IsSubclassOf(interfaceType)) {
@@ -40,10 +39,6 @@ namespace AureFramework.Fsm
 
 				var fsmState = Activator.CreateInstance(type, this) as IFsmState;
 
-				if (type == originStateType) {
-					originFsmState = fsmState;
-				}
-
 				fsmStateDic.Add(type, fsmState);
 			}
 
@@ -56,13 +51,6 @@ namespace AureFramework.Fsm
 			}
 			
 			currentFsmState.OnUpdate();
-		}
-
-		public void Restart() {
-			previousFsmState = currentFsmState;
-			currentFsmState?.OnExit();
-			currentFsmState = originFsmState;
-			currentFsmState.OnEnter();
 		}
 
 		public void Pause() {
