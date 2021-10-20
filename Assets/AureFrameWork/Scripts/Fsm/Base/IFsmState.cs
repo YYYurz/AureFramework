@@ -7,12 +7,14 @@
 
 namespace AureFramework.Fsm {
 	public interface IFsmState {
+		void OnInit(IFsm fsmController);
+		
 		void OnEnter(params object[] args);
 		
 		void OnUpdate();
 		
 		void OnExit(params object[] args);
 
-		void ChangeState<T>() where T : IFsmState;
+		void ChangeState<T>(params object[] args) where T : IFsmState;
 	}
 }

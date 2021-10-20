@@ -7,20 +7,20 @@
 
 namespace AureFramework.Fsm {
 	public abstract class FsmState : IFsmState {
-		private readonly IFsm fsmController;
+		private IFsm fsmController;
 		
-		public FsmState(IFsm fsmController) {
-			this.fsmController = fsmController;
+		public void OnInit(IFsm fsm) {
+			fsmController = fsm;
 		}
-		
+
 		public virtual void OnEnter(params object[] args) { }
 		
 		public virtual void OnUpdate() { }
 		
 		public virtual void OnExit(params object[] args) { }
 		
-		public void ChangeState<T>() where T : IFsmState{
-			fsmController.ChangeState<T>();
+		public void ChangeState<T>(params object[] args) where T : IFsmState{
+			fsmController.ChangeState<T>(args);
 		}
 	}
 }

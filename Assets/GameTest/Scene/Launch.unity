@@ -178,6 +178,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AureFrameWork
       objectReference: {fileID: 0}
+    - target: {fileID: 7087076356657679238, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: m_Name
+      value: Fsm
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
 --- !u!1 &1156084012 stripped

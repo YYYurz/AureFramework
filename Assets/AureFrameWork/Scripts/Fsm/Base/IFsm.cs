@@ -8,6 +8,14 @@
 namespace AureFramework.Fsm {
 	public interface IFsm {
 		/// <summary>
+		/// 当前状态
+		/// </summary>
+		IFsmState CurrentState
+		{
+			get;
+		}
+		
+		/// <summary>
 		/// 轮询
 		/// </summary>
 		void Update();
@@ -26,12 +34,13 @@ namespace AureFramework.Fsm {
 		/// 销毁状态机
 		/// </summary>
 		void Destroy();
-		
+
 		/// <summary>
 		/// 切换状态
 		/// </summary>
+		/// <param name="args"> 传给下一个状态的参数 </param>
 		/// <typeparam name="T"></typeparam>
-		void ChangeState<T>() where T : IFsmState;
+		void ChangeState<T>(params object[] args) where T : IFsmState;
 		
 		/// <summary>
 		/// 获取上一次的状态

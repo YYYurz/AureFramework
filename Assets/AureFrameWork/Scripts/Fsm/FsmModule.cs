@@ -13,20 +13,22 @@ namespace AureFramework.Fsm {
 	public sealed class FsmModule : AureFrameworkModule, IFsmModule {
 		private readonly Dictionary<object, IFsm> fsmStateDic = new Dictionary<object, IFsm>();
 
-		public void CreateFsm<T>(T owner, IEnumerable<Type> fsmStateList) where T : class {
+		public IFsm CreateFsm<T>(T owner, List<Type> fsmStateList) where T : class {
 			if (fsmStateDic.ContainsKey(owner)) {
 				Debug.LogError("FsmModule : The Fsm for this owner already exists.");
-				return;
+				return null;
 			}
 			
 			var fsm = new Fsm(fsmStateList);
 			fsmStateDic.Add(owner, fsm);
+			
+			return fsm;
 		}
 
 		public void DestroyFsm<T>(T owner) where T : class {
 			var type = typeof(T);
-			if (fsmStateDic.ContainsKey(type)) {
-				Debug.LogError("FsmModule : The Fsm for this owner already exists.");
+			if (!fsmStateDic.ContainsKey(type)) {
+				Debug.LogError("FsmModule : The Fsm for this owner not exists.");
 				return;
 			}
 

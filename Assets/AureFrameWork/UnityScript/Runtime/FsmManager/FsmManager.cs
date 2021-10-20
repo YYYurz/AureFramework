@@ -30,7 +30,7 @@ namespace AureFramework.Runtime.Fsm {
 		/// <param name="owner"> 持有类 </param>
 		/// <param name="fsmStateList"> 状态列表 </param>
 		/// <typeparam name="T"></typeparam>
-		public void CreateFsm<T>(T owner, IEnumerable<Type> fsmStateList) where T : class {
+		public void CreateFsm<T>(T owner, List<Type> fsmStateList) where T : class {
 			fsmModule.CreateFsm(owner, fsmStateList);
 		}
 
