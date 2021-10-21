@@ -25,13 +25,13 @@ namespace AureFramework.Procedure {
 			procedureFsm = fsmModule.CreateFsm(this, fsmStateList);
 		}
 
-		public void StartProcedure<T>() where T : IFsmState {
+		public void StartProcedure(Type entranceProcedure){
 			if (procedureFsm == null) {
 				Debug.LogError("ProcedureModule : procedureFsm is null");
 				return;
 			}
 			
-			procedureFsm.ChangeState<T>();
+			procedureFsm.ChangeState(entranceProcedure);
 		}
 
 		public override void Update() { }

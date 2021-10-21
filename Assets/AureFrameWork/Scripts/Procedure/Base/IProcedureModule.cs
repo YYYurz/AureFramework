@@ -26,7 +26,7 @@ namespace AureFramework.Procedure {
 		/// <summary>
 		/// 启动流程
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		void StartProcedure<T>() where T : IFsmState;
+		/// <param name="entranceProcedure"> 入口流程 </param>
+		void StartProcedure(Type entranceProcedure);
 	}
 }

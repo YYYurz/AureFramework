@@ -6,7 +6,6 @@
 //------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using AureFramework.Fsm;
 using AureFramework.Procedure;
@@ -15,11 +14,10 @@ using UnityEngine;
 namespace AureFramework.Runtime.Procedure {
 	public class ProcedureManager : AureFrameworkManager {
 		private IProcedureModule procedureModule;
-		private ProcedureBase entranceProcedure;
-		private Type test;
+		private Type entranceProcedure;
 
-		[SerializeField] private List<string> procedureNameList;
-		[SerializeField] private string entranceProcedureName;
+		[SerializeField] private string[] allProcedureTypeNameList;
+		[SerializeField] private string entranceProcedureTypeName;
 
 		public ProcedureBase CurrentProcedure => procedureModule.CurrentProcedure;
 
@@ -33,19 +31,23 @@ namespace AureFramework.Runtime.Procedure {
 		}
 
 		private void Start() {
-			var procedureList = new List<ProcedureBase>();
-			foreach (var procedureName in procedureNameList) {
-				var procedureType = Utility.Assembly.GetType(procedureName);
+			var procedureList = new List<Type>();
+			foreach (var procedureTypeName in allProcedureTypeNameList) {
+				var procedureType = Utility.Assembly.GetType(procedureTypeName);
 				if (procedureType == null) {
 					Debug.LogError("ProcedureManager : Can not find procedure type.");
 					continue;
 				}
 
-				if (procedureName == entranceProcedureName) {
-					procedureModule.StartProcedure(test);
+				if (procedureTypeName == entranceProcedureTypeName) {
+					entranceProcedure = procedureType;
 				}
 
+				procedureList.Add(procedureType);
 			}
+
+			procedureModule.Init(GameMain.GetModule<FsmModule>(), procedureList);
+			procedureModule.StartProcedure(entranceProcedure);
 		}
 	}
 }
