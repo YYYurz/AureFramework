@@ -6,6 +6,7 @@
 //------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using AureFramework.Fsm;
 using AureFramework.Procedure;
@@ -30,7 +31,7 @@ namespace AureFramework.Runtime.Procedure {
 			}
 		}
 
-		private void Start() {
+		private IEnumerator Start() {
 			var procedureList = new List<Type>();
 			foreach (var procedureTypeName in allProcedureTypeNameList) {
 				var procedureType = Utility.Assembly.GetType(procedureTypeName);
@@ -47,6 +48,9 @@ namespace AureFramework.Runtime.Procedure {
 			}
 
 			procedureModule.Init(GameMain.GetModule<FsmModule>(), procedureList);
+
+			yield return new WaitForEndOfFrame();
+			
 			procedureModule.StartProcedure(entranceProcedure);
 		}
 	}

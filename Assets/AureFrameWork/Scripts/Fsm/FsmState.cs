@@ -17,7 +17,7 @@ namespace AureFramework.Fsm {
 		
 		public virtual void OnUpdate() { }
 		
-		public virtual void OnExit(params object[] args) { }
+		public virtual void OnExit() { }
 		
 		public void ChangeState<T>(params object[] args) where T : IFsmState{
 			fsmController.ChangeState<T>(args);

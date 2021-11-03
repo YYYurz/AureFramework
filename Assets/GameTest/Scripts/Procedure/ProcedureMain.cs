@@ -16,8 +16,8 @@ namespace GameTest {
 			Debug.Log("ProcedureMain : OnEnter");
 		}
 
-		public override void OnExit(params object[] args) {
-			base.OnExit(args);
+		public override void OnExit() {
+			base.OnExit();
 			
 			Debug.Log("ProcedureMain : OnEnter");
 		}

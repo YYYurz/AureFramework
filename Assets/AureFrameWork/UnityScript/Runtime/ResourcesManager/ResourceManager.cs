@@ -5,8 +5,10 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
+using System;
 using AureFramework.Resource;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AureFramework.Runtime.Resource {
 	public class ResourceManager : AureFrameworkManager {
@@ -20,6 +22,14 @@ namespace AureFramework.Runtime.Resource {
 				Debug.LogError("ResourceManager : ResourceModule is invalid");
 				return;
 			}
+		}
+
+		public T LoadAssetSync<T>(string assetName) where T : Object {
+			return resourceModule.LoadAssetSync<T>(assetName);
+		}
+
+		public void LoadAssetAsync<T>(string assetName, Action<T> callBack) where T : Object {
+			resourceModule.LoadAssetAsync<T>(assetName, callBack);
 		}
 	}
 }

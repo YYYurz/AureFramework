@@ -13,7 +13,7 @@ namespace AureFramework.Fsm {
 		
 		void OnUpdate();
 		
-		void OnExit(params object[] args);
+		void OnExit();
 
 		void ChangeState<T>(params object[] args) where T : IFsmState;
 	}

@@ -178,6 +178,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: AureFrameWork
       objectReference: {fileID: 0}
+    - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: allProcedureTypeNameList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: entranceProcedureName
+      value: GameTest.ProcedureLaunch
+      objectReference: {fileID: 0}
+    - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: allProcedureTypeNameList.Array.data[0]
+      value: GameTest.ProcedureLaunch
+      objectReference: {fileID: 0}
+    - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: allProcedureTypeNameList.Array.data[1]
+      value: GameTest.ProcedureMain
+      objectReference: {fileID: 0}
+    - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: entranceProcedureTypeName
+      value: GameTest.ProcedureLaunch
+      objectReference: {fileID: 0}
     - target: {fileID: 7087076356657679238, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: m_Name
       value: Fsm

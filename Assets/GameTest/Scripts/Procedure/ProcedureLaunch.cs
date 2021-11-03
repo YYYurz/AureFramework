@@ -10,27 +10,23 @@ using UnityEngine;
 
 namespace GameTest {
 	public class ProcedureLaunch : ProcedureBase {
-		private float timeRecord = 0; 
+		private GameObject asd;
 		
 		public override void OnEnter(params object[] args) {
 			base.OnEnter(args);
-
-			timeRecord = 0;
 			
+			GameEntrance.Resource.LoadAssetAsync<GameObject>("Boom", obj => Object.Instantiate(obj, Vector3.zero, Quaternion.identity));
 			Debug.Log("LaunchProcedure : OnEnter");
 		}
 
 		public override void OnUpdate() {
 			base.OnUpdate();
 
-			timeRecord += Time.deltaTime;
-			if (timeRecord > 5) {
-				ChangeState<ProcedureMain>();
-			}
+			ChangeState<ProcedureMain>();
 		}
 
-		public override void OnExit(params object[] args) {
-			base.OnExit(args);
+		public override void OnExit() {
+			base.OnExit();
 			
 			Debug.Log("LaunchProcedure : OnExit");
 		}

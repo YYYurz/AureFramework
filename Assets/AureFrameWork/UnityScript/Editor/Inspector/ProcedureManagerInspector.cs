@@ -10,7 +10,6 @@ using System.Reflection;
 using AureFramework.Procedure;
 using AureFramework.Runtime.Procedure;
 using UnityEditor;
-using UnityEngine;
 
 namespace AureFramework.Editor {
 	[CustomEditor(typeof(ProcedureManager))]
