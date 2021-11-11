@@ -6,26 +6,26 @@
 //------------------------------------------------------------
 
 
-using AureFramework.Runtime;
-using AureFramework.Runtime.Fsm;
-using AureFramework.Runtime.Procedure;
-using AureFramework.Runtime.Resource;
-using AureFramework.Runtime.UI;
+using AureFramework;
+using AureFramework.Fsm;
+using AureFramework.Procedure;
+using AureFramework.Resource;
+using AureFramework.UI;
 
 namespace GameTest
 {
 	public partial class GameEntrance
 	{
-		public static FsmManager Fsm { get; private set; }
-		public static ProcedureManager Procedure { get; private set; }
-		public static ResourceManager Resource { get; private set; }
-		public static UIManager UI { get; private set; }
+		public static FsmModule Fsm { get; private set; }
+		public static ProcedureModule Procedure { get; private set; }
+		public static ResourceModule Resource { get; private set; }
+		public static UIModule UI { get; private set; }
 		
-		public static void InitBuiltinManagers() {
-			Fsm = Aure.GetManager<FsmManager>();
-			Procedure = Aure.GetManager<ProcedureManager>();
-			Resource = Aure.GetManager<ResourceManager>();
-			UI = Aure.GetManager<UIManager>();
+		private static void InitBuiltinManagers() {
+			Fsm = GameMain.GetModule<FsmModule>();
+			Procedure = GameMain.GetModule<ProcedureModule>();
+			Resource = GameMain.GetModule<ResourceModule>();
+			UI = GameMain.GetModule<UIModule>();
 		}
 	}
 }

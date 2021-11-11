@@ -70,7 +70,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 421298518935752971}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 470f0806246c440288430a6e40b05f74, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a00988892754db3a475b9717c79eb8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &887958785055043375
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 913626094868118544}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10b348970df944ee92cac476032b9a66, type: 3}
+  m_Script: {fileID: 11500000, guid: d842e946389448e2b8f7a133f627317f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1152396794609616484
@@ -424,7 +424,7 @@ GameObject:
   - component: {fileID: 4825403245408619881}
   - component: {fileID: 8366284951770163933}
   m_Layer: 0
-  m_Name: FSM
+  m_Name: Fsm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -453,7 +453,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7087076356657679238}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35aa0998f34e4d9cb4d06287e01b47c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ca58ef677fc4875b73b332c9b722e74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8332112934694998070
@@ -526,8 +526,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9028196032427878725}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5847d27a4fa6480c8447fdd86a91700d, type: 3}
+  m_Script: {fileID: 11500000, guid: d81e8f91cd8943a388a521e9c89cf4ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  procedureNameList: []
-  entranceProcedureName: []
+  allProcedureTypeNameList:
+  - GameTest.ProcedureMain
+  - GameTest.ProcedureLaunch
+  - GameTest.ProcedurePreload
+  entranceProcedureTypeName: GameTest.ProcedureLaunch
