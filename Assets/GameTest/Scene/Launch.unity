@@ -180,7 +180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: allProcedureTypeNameList.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: entranceProcedureName
@@ -188,11 +188,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: allProcedureTypeNameList.Array.data[0]
-      value: GameTest.ProcedureLaunch
+      value: GameTest.ProcedureMain
       objectReference: {fileID: 0}
     - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: allProcedureTypeNameList.Array.data[1]
-      value: GameTest.ProcedureMain
+      value: GameTest.ProcedureLaunch
       objectReference: {fileID: 0}
     - target: {fileID: 5807285779437032579, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: entranceProcedureTypeName

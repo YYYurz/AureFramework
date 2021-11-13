@@ -20,7 +20,7 @@ namespace AureFramework
 		/// <param name="module"></param>
 		public static void RegisterModule(AureFrameworkModule module) {
 			if (ModuleLinked.Contains(module)) {
-				Debug.LogError($"AureFramework GameMain : Module is exists, can not register again. module : {module.GetType().FullName}");
+				Debug.LogError($"AureFramework GameMain : Module is exists, can not register it again. module : {module.GetType().FullName}");
 				return;
 			}
 
@@ -57,7 +57,6 @@ namespace AureFramework
 				}
 			}
 			
-			Debug.LogError($"AureFramework GameMain : This module has not been registered name : {typeof(T).FullName}");
 			return null;
 		}
 

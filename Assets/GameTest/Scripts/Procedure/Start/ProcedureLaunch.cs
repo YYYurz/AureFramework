@@ -7,7 +7,6 @@
 
 using AureFramework.Procedure;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace GameTest {
 	public class ProcedureLaunch : ProcedureBase {
@@ -20,7 +19,10 @@ namespace GameTest {
 				Debug.Log("Load Success!!");
 				// Addressables.Release(obj);
 			});
-			
+
+			// GameEntrance.Lua.DoString("LuaTxt");
+			GameEntrance.Lua.DoString("require 'LuaTxt'");
+
 			Debug.Log("LaunchProcedure : OnEnter");
 		}
 

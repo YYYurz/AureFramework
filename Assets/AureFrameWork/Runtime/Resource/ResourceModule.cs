@@ -30,7 +30,7 @@ namespace AureFramework.Resource {
 		
 		public override void Tick() {
 			foreach (var task in loadingAssetDic) {
-				
+
 			}
 		}
 		
@@ -46,9 +46,31 @@ namespace AureFramework.Resource {
 
 			return loadingAssetDic.ContainsKey(_counter) ? GetCounter() : _counter;
 		}
-		
+
+		public void InstantiateSync(string assetName, Action<GameObject> callBack) {
+			if (string.IsNullOrEmpty(assetName)) {
+				callBack?.Invoke(null);
+				return;
+			}
+
+			var handle = Addressables.InstantiateAsync(assetName);
+
+			handle.WaitForCompletion();
+
+			if (handle.Result != null) {
+				callBack?.Invoke(handle.Result);
+				return;
+			}
+			
+			Addressables.Release(handle);
+		}
 		
 		public async void InstantiateAsync(string assetName, Action<GameObject> callBack = null) {
+			if (string.IsNullOrEmpty(assetName)) {
+				callBack?.Invoke(null);
+				return;
+			}
+			
 			var handle = Addressables.InstantiateAsync(assetName);
 			var index = GetCounter();
 			loadingAssetDic.Add(index, handle);
@@ -63,8 +85,30 @@ namespace AureFramework.Resource {
 				}
 			}
 		}
+
+		public T LoadAssetSync<T>(string assetName) where T : Object {
+			if (string.IsNullOrEmpty(assetName)) {
+				return null;
+			}
+			
+			var handle = Addressables.LoadAssetAsync<T>(assetName);
+			
+			handle.WaitForCompletion();
+
+			if (handle.Result != null) {
+				return handle.Result;
+			}
+			
+			Addressables.Release(handle);
+			return null;
+		}
 		
 		public async void LoadAssetAsync<T>(string assetName, Action<T> callBack = null) where T : Object{
+			if (string.IsNullOrEmpty(assetName)) {
+				callBack?.Invoke(null);
+				return;
+			}
+			
 			var handle = Addressables.LoadAssetAsync<T>(assetName);
 			var index = GetCounter();
 			
@@ -83,6 +127,11 @@ namespace AureFramework.Resource {
 
 		public IEnumerator LoadSceneAsync(string assetName, Action<float> percentCallBack = null,
 			Action<SceneInstance> endCallBack = null) {
+			if (string.IsNullOrEmpty(assetName)) {
+				endCallBack?.Invoke(default);
+				yield break;
+			}
+			
 			var handle = Addressables.LoadSceneAsync(assetName);
 
 			while (!handle.IsDone) {
@@ -100,5 +149,9 @@ namespace AureFramework.Resource {
 			
 			callBack?.Invoke();
 		}
+
+		public void ReleaseAsset(Object asset) {
+			Addressables.Release(asset);
+		} 
 	}
 }
