@@ -6,8 +6,6 @@
 //------------------------------------------------------------
 
 using System;
-using AureFramework.Resource;
-using GameTest;
 using UnityEngine;
 using XLua;
 
@@ -58,9 +56,7 @@ namespace AureFramework.Lua {
 				return null;
 			}
 
-			// return LuaAsset.Require(filePath);
-			var bytes = GameMain.GetModule<ResourceModule>().LoadAssetSync<TextAsset>(filePath).bytes;
-			return bytes;
+			return LuaAsset.Require(filePath);
 		}
 
 		/// <summary>

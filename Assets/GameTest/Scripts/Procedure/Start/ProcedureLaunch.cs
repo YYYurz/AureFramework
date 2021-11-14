@@ -15,13 +15,8 @@ namespace GameTest {
 		public override void OnEnter(params object[] args) {
 			base.OnEnter(args);
 
-			GameEntrance.Resource.LoadAssetAsync<GameObject>("Boom", obj => {
-				Debug.Log("Load Success!!");
-				// Addressables.Release(obj);
-			});
-
-			// GameEntrance.Lua.DoString("LuaTxt");
-			GameEntrance.Lua.DoString("require 'LuaTxt'");
+			GameEntrance.Lua.DoString("require 'LuaTest'");
+			// GameEntrance.Lua.DoString(@"require 'LuaTxt'");
 
 			Debug.Log("LaunchProcedure : OnEnter");
 		}
