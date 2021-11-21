@@ -6,15 +6,12 @@
 //------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+using AureFramework.ReferencePool;
 
-namespace AureFramework.Runtime
-{
-	public class Aure : MonoBehaviour {
-		private void Update() {
-			GameMain.Update();
+namespace AureFramework.Event {
+	public class GameEventArgs : EventArgs, IReference {
+		public virtual void Clear() {
+			
 		}
 	}
 }

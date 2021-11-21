@@ -5,16 +5,11 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
-
-namespace AureFramework.Runtime
-{
-	public class Aure : MonoBehaviour {
-		private void Update() {
-			GameMain.Update();
-		}
+namespace AureFramework.ReferencePool {
+	public interface IReference {
+		/// <summary>
+		/// 清理函数
+		/// </summary>
+		void Clear();
 	}
 }

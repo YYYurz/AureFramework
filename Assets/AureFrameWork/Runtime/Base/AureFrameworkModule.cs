@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace AureFramework {
 	public abstract class AureFrameworkModule : MonoBehaviour {
+		/// <summary>
+		/// 框架优先级，最小的优先初始化以及轮询
+		/// </summary>
 		public virtual int Priority => 0;
 
 		/// <summary>

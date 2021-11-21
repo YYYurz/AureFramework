@@ -12,8 +12,8 @@ using XLua;
 namespace AureFramework.Lua {
 	public class LuaModule : AureFrameworkModule {
 		private LuaEnv luaEnv;
-
 		private float tickRecord;
+		
 		public override int Priority => 10;
 
 		protected override void Awake() {
@@ -36,29 +36,7 @@ namespace AureFramework.Lua {
 		public override void Clear() {
 			
 		}
-
-		/// <summary>
-		/// 初始化Lua环境第三方接口
-		/// </summary>
-		private void InitLuaExternalApi() {
-			if (luaEnv != null) {
-				luaEnv.AddLoader(CustomLoader);
-			}
-		}
-
-		/// <summary>
-		/// 自定义加载器
-		/// </summary>
-		/// <param name="filePath"></param>
-		/// <returns></returns>
-		private static byte[] CustomLoader(ref string filePath) {
-			if (filePath.Contains("emmy_core")) {
-				return null;
-			}
-
-			return LuaAsset.Require(filePath);
-		}
-
+		
 		/// <summary>
 		/// Require Lua脚本
 		/// </summary>
@@ -149,5 +127,20 @@ namespace AureFramework.Lua {
 				return null;
 			}
 		}
+		
+		private void InitLuaExternalApi() {
+			if (luaEnv != null) {
+				luaEnv.AddLoader(CustomLoader);
+			}
+		}
+
+		private static byte[] CustomLoader(ref string filePath) {
+			if (filePath.Contains("emmy_core")) {
+				return null;
+			}
+
+			return LuaAsset.Require(filePath);
+		}
+
 	}
 }

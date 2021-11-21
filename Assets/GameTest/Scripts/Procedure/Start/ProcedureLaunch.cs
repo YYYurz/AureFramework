@@ -17,6 +17,7 @@ namespace GameTest {
 
 			GameEntrance.Lua.DoString("require 'LuaTest'");
 			// GameEntrance.Lua.DoString(@"require 'LuaTxt'");
+			
 
 			Debug.Log("LaunchProcedure : OnEnter");
 		}

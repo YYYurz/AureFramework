@@ -9,6 +9,8 @@ namespace AureFramework.UI
 {
 	public class UIModule : AureFrameworkModule, IUIModule
 	{
+		
+
 		public void OpenUI() {
 			throw new System.NotImplementedException();
 		}
