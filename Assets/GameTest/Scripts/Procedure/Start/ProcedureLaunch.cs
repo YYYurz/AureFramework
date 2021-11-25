@@ -6,6 +6,7 @@
 //------------------------------------------------------------
 
 using AureFramework.Procedure;
+using AureFramework.Resource;
 using UnityEngine;
 
 namespace GameTest {
@@ -17,6 +18,11 @@ namespace GameTest {
 
 			GameEntrance.Lua.DoString("require 'LuaTest'");
 			// GameEntrance.Lua.DoString(@"require 'LuaTxt'");
+
+			var loadSuccessEventArgs = LoadSuccessEventArgs.Create();
+			var loadSuccessEventArgs1= LoadSuccessEventArgs.Create();
+			
+			LoadSuccessEventArgs.Release(loadSuccessEventArgs);
 			
 
 			Debug.Log("LaunchProcedure : OnEnter");

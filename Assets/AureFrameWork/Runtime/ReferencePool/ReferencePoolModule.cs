@@ -23,6 +23,22 @@ namespace AureFramework.ReferencePool {
 			ClearAllReference();
 		}
 
+		public static List<ReferenceInfo> GetReferenceInfoList() {
+			var referenceInfoList = new List<ReferenceInfo>();
+
+			lock (ReferenceCollectionDic) {
+				foreach (var referenceCollection in ReferenceCollectionDic) {
+					var referenceInfo = new ReferenceInfo(referenceCollection.Key.FullName, referenceCollection.Value.UnusedReferenceCount, referenceCollection.Value.UsingReferenceCount, referenceCollection.Value.AcquireReferenceCount, referenceCollection.Value.ReleaseReferenceCount);
+					referenceInfoList.Add(referenceInfo);
+				}
+			}
+
+			return referenceInfoList;
+		}
+		
+		/// <summary>
+		/// 清除所有的引用
+		/// </summary>
 		public void ClearAllReference() {
 			lock (ReferenceCollectionDic) {
 				foreach (var referenceCollection in ReferenceCollectionDic) {
@@ -148,7 +164,7 @@ namespace AureFramework.ReferencePool {
 				return false;
 			}
 
-			if (!referenceType.IsSubclassOf(typeof(IReference))) {
+			if (!typeof(IReference).IsAssignableFrom(referenceType)) {
 				Debug.LogError("AureFramework ReferencePoolModule : Reference type is not a subclass of IReference.");
 				return false;
 			}

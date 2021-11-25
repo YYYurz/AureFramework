@@ -13,9 +13,9 @@ namespace AureFramework.ReferencePool {
 		private sealed class ReferenceCollection {
 			private readonly Type referenceType;
 			private readonly Queue<IReference> referenceQue;
-			private uint usingReferenceCount;
-			private uint acquireReferenceCount;
-			private uint releaseReferenceCount;
+			private int usingReferenceCount;
+			private int acquireReferenceCount;
+			private int releaseReferenceCount;
 
 			public ReferenceCollection(Type referenceType) {
 				this.referenceType = referenceType;
@@ -25,7 +25,15 @@ namespace AureFramework.ReferencePool {
 				releaseReferenceCount = 0;
 			}
 
-			public uint UsingReferenceCount
+			public int UnusedReferenceCount
+			{
+				get
+				{
+					return referenceQue.Count;
+				}
+			}
+			
+			public int UsingReferenceCount
 			{
 				get
 				{
@@ -33,7 +41,7 @@ namespace AureFramework.ReferencePool {
 				}
 			}
 			
-			public uint AcquireReferenceCount
+			public int AcquireReferenceCount
 			{
 				get
 				{
@@ -41,7 +49,7 @@ namespace AureFramework.ReferencePool {
 				}
 			}
 			
-			public uint ReleaseReferenceCount
+			public int ReleaseReferenceCount
 			{
 				get
 				{

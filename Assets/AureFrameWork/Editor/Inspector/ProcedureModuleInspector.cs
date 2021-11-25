@@ -12,7 +12,7 @@ using UnityEditor;
 
 namespace AureFramework.Editor {
 	[CustomEditor(typeof(ProcedureModule))]
-	public class ProcedureManagerInspector : AureFrameworkInspector {
+	public class ProcedureModuleInspector : AureFrameworkInspector {
 		private SerializedProperty allProcedureTypeNameList;
 		private SerializedProperty entranceProcedureTypeName;
 		
@@ -79,6 +79,13 @@ namespace AureFramework.Editor {
 			foreach (var type in types) {
 				if (type.IsClass && !type.IsAbstract && procedureBaseType.IsAssignableFrom(type)) {
 					procedureTypeNameList.Add(type.FullName);
+				}
+			}
+
+			if (!string.IsNullOrEmpty(entranceProcedureTypeName.stringValue)) {
+				entranceProcedureIndex = procedureTypeNameList.IndexOf(entranceProcedureTypeName.stringValue);
+				if (entranceProcedureIndex < 0) {
+					entranceProcedureTypeName.stringValue = null;
 				}
 			}
 			

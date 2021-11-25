@@ -173,12 +173,12 @@ namespace AureFramework.Resource {
 		/// <param name="callBack"> 卸载完成回调 </param>
 		public async void UnloadSceneAsync(SceneInstance scene, Action callBack = null) {
 			var handle = Addressables.UnloadSceneAsync(scene);
-			
+				
 			await handle.Task;
 			
 			callBack?.Invoke();
 		}
-
+		
 		private static bool InternalCreateLoadAsyncHandle<T>(string assetName, out AsyncOperationHandle<T> handle) where T : Object {
 			if (string.IsNullOrEmpty(assetName)) {
 				Debug.LogError("AureFramework ResourceModule : Load asset name is null.");

@@ -17,5 +17,13 @@ namespace AureFramework.Resource {
 			var loadSuccessEventArgs = GameMain.GetModule<ReferencePoolModule>().Acquire<LoadSuccessEventArgs>();
 			return loadSuccessEventArgs;
 		}
+
+		public static void Release(LoadSuccessEventArgs e) {
+			if (e == null) {
+				return;
+			}
+			
+			GameMain.GetModule<ReferencePoolModule>().Release(e);
+		}
 	}
 }

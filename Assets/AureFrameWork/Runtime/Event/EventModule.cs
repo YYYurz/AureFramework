@@ -5,13 +5,18 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using UnityEngine;
+namespace AureFramework.Event {
+	public sealed class EventModule : AureFrameworkModule {
+		
+		
+		public override int Priority => 4;
 
-namespace AureFramework.Runtime
-{
-	public class Aure : MonoBehaviour {
-		private void Update() {
-			GameMain.Update();
+		public override void Tick() {
+			
+		}
+
+		public override void Clear() {
+			
 		}
 	}
 }
