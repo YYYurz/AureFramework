@@ -9,9 +9,18 @@ using System;
 using AureFramework.ReferencePool;
 
 namespace AureFramework.Event {
-	public class GameEventArgs : EventArgs, IReference {
-		public virtual void Clear() {
-			
+	public abstract class GameEventArgs : EventArgs, IReference {
+		/// <summary>
+		/// 事件类唯一Id
+		/// </summary>
+		public abstract int EventId
+		{
+			get;
 		}
+
+		/// <summary>
+		/// 清理函数
+		/// </summary>
+		public abstract void Clear();
 	}
 }
