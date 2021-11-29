@@ -9,15 +9,15 @@ using AureFramework.Event;
 using AureFramework.ReferencePool;
 
 namespace AureFramework.Resource {
-	public class LoadSuccessEventArgs : GameEventArgs {
+	public class LoadFailedEventArgs : GameEventArgs {
 		public string Content
 		{
 			private set;
 			get;
 		}
 
-		public static LoadSuccessEventArgs Create(string content) {
-			var loadSuccessEventArgs = GameMain.GetModule<ReferencePoolModule>().Acquire<LoadSuccessEventArgs>();
+		public static LoadFailedEventArgs Create(string content) {
+			var loadSuccessEventArgs = GameMain.GetModule<ReferencePoolModule>().Acquire<LoadFailedEventArgs>();
 			loadSuccessEventArgs.Content = content;
 			
 			return loadSuccessEventArgs;

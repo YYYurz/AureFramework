@@ -6,22 +6,65 @@
 //------------------------------------------------------------
 
 using System;
+using System.Threading;
+using AureFramework.ReferencePool;
+using UnityEngine;
 
 namespace AureFramework.Event {
 	public sealed partial class EventModule {
-		private class EventObject {
+		private class EventObject{
 			private event EventHandler<GameEventArgs> EventArgs;
+			private bool isHasSubscriber;
+			private string[] subscriberList;
 
+			public bool IsHaveSubscriber
+			{
+				get
+				{
+					if (EventArgs == null) {
+						return false;
+					}
+
+					if (EventArgs.GetInvocationList().Length == 0) {
+						return false;
+					}
+
+					return true;
+				}
+			}
+
+			public string[] SubscriberList
+			{
+				get
+				{
+					Volatile.Read(ref EventArgs);
+
+					if (EventArgs != null) {
+						var invocationList = EventArgs.GetInvocationList();
+						var length = invocationList.Length;
+						subscriberList = new string[length];
+						
+						for (var i = 0; i < length; i++) {
+							var invocation = invocationList[i];
+							subscriberList[i] = $"{invocation.Target}.{invocation.Method.Name}(";
+							var parameterList = invocation.Method.GetParameters();
+							for (var k = 0; k < parameterList.Length; k ++) {
+								subscriberList[i] += k == 0 ? parameterList[k].ToString() : ", " + parameterList[k];
+							}
+							subscriberList[i] += ")";
+						}
+
+						return subscriberList;
+					}
+
+					return null;
+				}
+			}
+			
 			public void Fire(object sender, GameEventArgs e) {
-				if (EventArgs == null) {
-					return;
-				}
-
-				if (e == null) {
-					return;
-				}
-				
-				EventArgs.Invoke(sender, e);
+				Volatile.Read(ref EventArgs);
+				EventArgs?.Invoke(sender, e);
+				GameMain.GetModule<ReferencePoolModule>().Release(e);
 			}
 			
 			public void Subscribe(EventHandler<GameEventArgs> e) {
