@@ -18,28 +18,25 @@ namespace GameTest {
 			base.OnEnter(args);
 			// GameEntrance.Lua.DoString("require 'LuaTest'");
 
-			GameEntrance.Event.Subscribe<LoadSuccessEventArgs>(Func1);
-			GameEntrance.Event.Subscribe<LoadFailedEventArgs>(Func2);
-			GameEntrance.Event.Subscribe<LoadFailedEventArgs>(Func2);
+			GameEntrance.Event.Fire(this, LoadAssetFailedEventArgs.Create("Ha"));
 
-			GameEntrance.Event.Fire(this, LoadSuccessEventArgs.Create("Ha"));
+			A<LoadAssetSuccessEventArgs>.num = 2;
+			A<LoadAssetFailedEventArgs>.num = 3;
+			var a = A<LoadAssetSuccessEventArgs>.num;
+			var b = A<LoadAssetSuccessEventArgs>.num;
+			var c = A<LoadAssetFailedEventArgs>.num;
+			Debug.Log(a);
+			Debug.Log(b);
+			Debug.Log(c);
 		}
 
 		public override void OnExit() {
 			base.OnExit();
 			
-			GameEntrance.Event.Unsubscribe<LoadSuccessEventArgs>(Func1);
-			GameEntrance.Event.Unsubscribe<LoadFailedEventArgs>(Func2);
-		}
-
-		private void Func1(object sender, GameEventArgs e) {
-			var args = (LoadSuccessEventArgs) e;
-			Debug.Log(args.Content);
-		}
-		
-		private void Func2(object sender, GameEventArgs e) {
-			var args = (LoadSuccessEventArgs) e;
-			Debug.Log(args.Content);
 		}
 	}
-}
+
+	public class A<T> where T : GameEventArgs {
+		public static int num = 1;
+	}
+} 

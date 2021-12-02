@@ -231,7 +231,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8114256593903390707}
   m_Layer: 0
-  m_Name: NetWork
+  m_Name: Network
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -8,7 +8,6 @@
 using System;
 using System.Threading;
 using AureFramework.ReferencePool;
-using UnityEngine;
 
 namespace AureFramework.Event {
 	public sealed partial class EventModule {

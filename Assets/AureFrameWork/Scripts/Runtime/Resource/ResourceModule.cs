@@ -18,7 +18,7 @@ namespace AureFramework.Resource {
 	public sealed class ResourceModule : AureFrameworkModule {
 		private readonly Dictionary<uint, AsyncOperationHandle> loadingAssetDic = new Dictionary<uint, AsyncOperationHandle>();
 
-		private EventHandler<LoadSuccessEventArgs> loadSuccessEventArgs;
+		private EventHandler<LoadAssetSuccessEventArgs> loadSuccessEventArgs;
 
 		private uint taskIdAccumulator;
 

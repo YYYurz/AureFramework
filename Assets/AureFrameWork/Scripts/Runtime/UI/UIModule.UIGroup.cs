@@ -5,10 +5,12 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.UI {
-	public interface IUIModule {
-		void OpenUI();
+using UnityEngine;
 
-		void CloseUI();
+namespace AureFramework.UI {
+	public sealed partial class UIModule : AureFrameworkModule{
+		public sealed class UIGroup {
+			
+		}
 	}
 }

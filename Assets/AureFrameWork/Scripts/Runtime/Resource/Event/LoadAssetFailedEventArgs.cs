@@ -9,21 +9,21 @@ using AureFramework.Event;
 using AureFramework.ReferencePool;
 
 namespace AureFramework.Resource {
-	public class LoadSuccessEventArgs : GameEventArgs {
+	public class LoadAssetFailedEventArgs : GameEventArgs {
 		public string Content
 		{
 			private set;
 			get;
 		}
 
-		public static LoadSuccessEventArgs Create(string content) {
-			var loadSuccessEventArgs = GameMain.GetModule<ReferencePoolModule>().Acquire<LoadSuccessEventArgs>();
+		public static LoadAssetFailedEventArgs Create(string content) {
+			var loadSuccessEventArgs = GameMain.GetModule<ReferencePoolModule>().Acquire<LoadAssetFailedEventArgs>();
 			loadSuccessEventArgs.Content = content;
 			
 			return loadSuccessEventArgs;
 		}
 
-		public static void Release(LoadSuccessEventArgs e) {
+		public static void Release(LoadAssetSuccessEventArgs e) {
 			if (e == null) {
 				return; 
 			}
