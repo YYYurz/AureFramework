@@ -7,15 +7,22 @@
 
 namespace AureFramework.Scene {
 	public class SceneModule : AureFrameworkModule, ISceneModule {
-		public void ChangeScene() {
+		
+		public override int Priority => 1;
+
+		public override void Init() {
 			
 		}
-		
-		public override void Tick() {
+
+		public override void Tick(float elapseTime, float realElapseTime) {
 			
 		}
 
 		public override void Clear() {
+			
+		}
+		
+		public void ChangeScene() {
 			
 		}
 	}

@@ -10,7 +10,7 @@ using System.Threading;
 using AureFramework.ReferencePool;
 
 namespace AureFramework.Event {
-	public sealed partial class EventModule {
+	public sealed partial class EventModule : AureFrameworkModule, IEventModule {
 		private class EventObject{
 			private event EventHandler<GameEventArgs> EventArgs;
 			private bool isHasSubscriber;
@@ -63,7 +63,7 @@ namespace AureFramework.Event {
 			public void Fire(object sender, GameEventArgs e) {
 				Volatile.Read(ref EventArgs);
 				EventArgs?.Invoke(sender, e);
-				GameMain.GetModule<ReferencePoolModule>().Release(e);
+				Aure.GetModule<IReferencePoolModule>().Release(e);
 			}
 			
 			public void Subscribe(EventHandler<GameEventArgs> e) {

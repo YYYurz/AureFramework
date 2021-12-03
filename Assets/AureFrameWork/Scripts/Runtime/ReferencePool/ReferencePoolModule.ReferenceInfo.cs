@@ -6,7 +6,7 @@
 //------------------------------------------------------------
 
 namespace AureFramework.ReferencePool {
-	public sealed partial class ReferencePoolModule {
+	public sealed partial class ReferencePoolModule : AureFrameworkModule, IReferencePoolModule {
 		public readonly struct ReferenceInfo {
 			private readonly string typeName;
 			private readonly int unusedReferenceCount;

@@ -7,31 +7,31 @@
 
 
 using AureFramework;
-using AureFramework.Event;
 using AureFramework.Fsm;
+using AureFramework.Resource;
+using AureFramework.Event;
 using AureFramework.Lua;
 using AureFramework.Procedure;
-using AureFramework.Resource;
 using AureFramework.UI;
 
 namespace GameTest
 {
 	public partial class GameEntrance
 	{
-		public static FsmModule Fsm { get; private set; }
-		public static ProcedureModule Procedure { get; private set; }
-		public static EventModule Event { get; private set; }
-		public static ResourceModule Resource { get; private set; }
-		public static UIModule UI { get; private set; }
-		public static LuaModule Lua { get; private set; }
+		public static IFsmModule Fsm { get; private set; }
+		public static IResourceModule Resource { get; private set; }
+		public static IProcedureModule Procedure { get; private set; }
+		public static IEventModule Event { get; private set; }
+		public static IUIModule UI { get; private set; }
+		public static ILuaModule Lua { get; private set; }
 		
 		private static void InitBuiltinManagers() {
-			Fsm = GameMain.GetModule<FsmModule>();
-			Procedure = GameMain.GetModule<ProcedureModule>();
-			Event = GameMain.GetModule<EventModule>();
-			Resource = GameMain.GetModule<ResourceModule>();
-			UI = GameMain.GetModule<UIModule>();
-			Lua = GameMain.GetModule<LuaModule>();
+			Fsm = Aure.GetModule<IFsmModule>();
+			Resource = Aure.GetModule<IResourceModule>();
+			Procedure = Aure.GetModule<IProcedureModule>();
+			Event = Aure.GetModule<IEventModule>();
+			UI = Aure.GetModule<IUIModule>();
+			Lua = Aure.GetModule<ILuaModule>();
 		}
 	}
 }

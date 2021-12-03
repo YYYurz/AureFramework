@@ -10,12 +10,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AureFramework.ReferencePool {
-	public sealed partial class ReferencePoolModule : AureFrameworkModule {
+	public sealed partial class ReferencePoolModule : AureFrameworkModule, IReferencePoolModule {
 		private static readonly Dictionary<Type, ReferenceCollection> ReferenceCollectionDic = new Dictionary<Type,ReferenceCollection>();
 		
 		public override int Priority => 2;
 
-		public override void Tick() {
+		public override void Init() {
+			
+		}
+
+		public override void Tick(float elapseTime, float realElapseTime) {
 			
 		}
 

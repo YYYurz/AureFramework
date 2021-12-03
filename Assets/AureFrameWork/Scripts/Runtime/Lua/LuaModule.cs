@@ -10,22 +10,20 @@ using UnityEngine;
 using XLua;
 
 namespace AureFramework.Lua {
-	public class LuaModule : AureFrameworkModule {
+	public class LuaModule : AureFrameworkModule, ILuaModule {
 		private LuaEnv luaEnv;
 		private float tickRecord;
 		
 		public override int Priority => 10;
 
-		protected override void Awake() {
-			base.Awake();
-
+		public override void Init() {
 			luaEnv = new LuaEnv();
 
 			InitLuaExternalApi();
 		}
 
-		public override void Tick() {
-			tickRecord += Time.deltaTime;
+		public override void Tick(float elapseTime, float realElapseTime) {
+			tickRecord += elapseTime;
 			if (tickRecord < 1) {
 				return;
 			}
@@ -62,8 +60,7 @@ namespace AureFramework.Lua {
 		/// </summary>
 		/// <param name="className"> 类名 </param>
 		/// <returns></returns>
-		public LuaTable GetLuaTable(string className)
-		{
+		public LuaTable GetLuaTable(string className) {
 			if (luaEnv == null) {
 				Debug.LogError("AureFramework LuaModule : LuaEnv is null.");
 				return null;

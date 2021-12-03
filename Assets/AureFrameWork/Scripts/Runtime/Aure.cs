@@ -5,13 +5,112 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace AureFramework.Runtime
+namespace AureFramework
 {
 	public class Aure : MonoBehaviour {
-		private void Update() {
-			GameMain.Update();
+		private static readonly List<AureFrameworkModule> RegisteredModuleList = new List<AureFrameworkModule>();
+		private static readonly LinkedList<AureFrameworkModule> ModuleLinked= new LinkedList<AureFrameworkModule>();
+
+		/// <summary>
+		/// 框架轮询
+		/// </summary>
+		public void Update() {
+			foreach (var module in ModuleLinked) {
+				module.Tick(Time.deltaTime, Time.unscaledDeltaTime);
+			}
+		}
+
+		/// <summary>
+		/// 退出
+		/// </summary>
+		public static void ShutDown() {
+			foreach (var module in ModuleLinked) {
+				module.Clear();
+			}
+			ModuleLinked.Clear();
+			Application.Quit();
+		}
+		
+		/// <summary>
+		/// 注册框架模块
+		/// </summary>
+		/// <param name="module"></param>
+		public static void RegisterModule(AureFrameworkModule module) {
+			if (RegisteredModuleList.Contains(module)) {
+				Debug.LogError($"AureFramework GameMain : Module is exists, can not register it again. module : {module.GetType().FullName}");
+				return;
+			}
+			
+			RegisteredModuleList.Add(module);
+		}
+		
+		/// <summary>
+		/// 获取框架组件
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public static T GetModule<T>() where T : class {
+			var interfaceType = typeof(T);
+			if (!interfaceType.IsInterface)
+			{
+				Debug.LogError($"AureFramework GameMain : Module must be interface {interfaceType.FullName}.");
+				return null;
+			}
+
+			return InternalGetModule(typeof(T)) as T;
+		}
+
+		private static AureFrameworkModule InternalGetModule(Type moduleType) {
+			foreach (var module in ModuleLinked) {
+				if (module.GetType().IsAssignableFrom(moduleType)) {
+					return module;
+				}
+			}
+
+			return InternalActivateModule(moduleType);
+		}
+
+		private static AureFrameworkModule InternalActivateModule(Type moduleType) {
+			AureFrameworkModule tempModule = null;
+			foreach (var module in RegisteredModuleList) {
+				if (module.GetType().IsAssignableFrom(moduleType)) {
+					tempModule = module;
+					break;
+				}
+			}
+		
+			if (tempModule != null) {
+				var curNode = ModuleLinked.First;
+				while (curNode != null)
+				{
+					if (tempModule.Priority > curNode.Value.Priority)
+					{
+						break;
+					}
+		
+					curNode = curNode.Next;
+				}
+		
+				if (curNode != null)
+				{
+					ModuleLinked.AddBefore(curNode, tempModule);
+				}
+				else
+				{
+					ModuleLinked.AddLast(tempModule);
+				}
+
+				tempModule.Init();
+				RegisteredModuleList.Remove(tempModule);
+			} else {
+				Debug.LogError($"AureFramework GameMain : This module has not been registered {moduleType.FullName}.");
+			}
+
+			return tempModule;
 		}
 	}
 }

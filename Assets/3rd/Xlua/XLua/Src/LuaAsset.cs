@@ -1,7 +1,6 @@
 using System;
-using System.Security.Cryptography;
-using System.Text;
-using GameTest;
+using AureFramework;
+using AureFramework.Resource;
 using UnityEngine;
 
 [Serializable]
@@ -19,7 +18,7 @@ public class LuaAsset : ScriptableObject
         byte[] bytes = null;
         var assetName = search + luaPath.Replace(".", "/");
         {
-            var asset = GameEntrance.Resource.LoadAssetSync<LuaAsset>(assetName);
+            var asset = Aure.GetModule<ResourceModule>().LoadAssetSync<LuaAsset>(assetName);
             if (asset != null)
             {
                 bytes = asset.GetDecodeBytes();

@@ -17,7 +17,7 @@ namespace AureFramework.Resource {
 		}
 
 		public static LoadAssetFailedEventArgs Create(string content) {
-			var loadSuccessEventArgs = GameMain.GetModule<ReferencePoolModule>().Acquire<LoadAssetFailedEventArgs>();
+			var loadSuccessEventArgs = Aure.GetModule<IReferencePoolModule>().Acquire<LoadAssetFailedEventArgs>();
 			loadSuccessEventArgs.Content = content;
 			
 			return loadSuccessEventArgs;
@@ -28,7 +28,7 @@ namespace AureFramework.Resource {
 				return; 
 			}
 			
-			GameMain.GetModule<ReferencePoolModule>().Release(e);
+			Aure.GetModule<IReferencePoolModule>().Release(e);
 		}
 		
 		public override void Clear() {

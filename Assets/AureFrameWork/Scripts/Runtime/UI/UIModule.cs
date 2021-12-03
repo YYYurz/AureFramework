@@ -11,25 +11,29 @@ using AureFramework.Resource;
 
 namespace AureFramework.UI
 {
-	public sealed partial class UIModule : AureFrameworkModule
+	/// <summary>
+	/// UI模块
+	/// </summary>
+	public sealed partial class UIModule : AureFrameworkModule, IUIModule
 	{
 		private Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string,UIGroup>();
-		private Queue<UIForm> waitingUIFormQue = new Queue<UIForm>();
+		private Queue<int> loadingTaskIdQue = new Queue<int>();
+		private Queue<int> waitingUIFormQue = new Queue<int>();
 
-		protected override void Awake() {
-			base.Awake();
-			
-			GameMain.GetModule<EventModule>().Subscribe<LoadAssetSuccessEventArgs>(OnLoadAssetSuccess);
-			GameMain.GetModule<EventModule>().Subscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
+		public override int Priority => 10;
+
+		public override void Init() {
+			Aure.GetModule<IEventModule>().Subscribe<LoadAssetSuccessEventArgs>(OnLoadAssetSuccess);
+			Aure.GetModule<IEventModule>().Subscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
 		}
 
-		public override void Tick() {
+		public override void Tick(float elapseTime, float realElapseTime) {
 			
 		}
 
-		public override void Clear() {
-			GameMain.GetModule<EventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
-			GameMain.GetModule<EventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
+		public override void Clear() { 
+			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
+			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
 		}
 		
 		public void OpenUI(string uiName, object userData) {

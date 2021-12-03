@@ -5,13 +5,8 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
+namespace AureFramework {
+	public interface IUIForm {
 
-namespace GameTest
-{
-	public partial class GameEntrance
-	{
-		public static void InitCustomManagers() {
-			
-		}
 	}
 }

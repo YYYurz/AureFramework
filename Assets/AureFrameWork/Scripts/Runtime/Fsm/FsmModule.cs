@@ -13,6 +13,25 @@ namespace AureFramework.Fsm {
 	public sealed class FsmModule : AureFrameworkModule, IFsmModule {
 		private readonly Dictionary<object, IFsm> fsmStateDic = new Dictionary<object, IFsm>();
 
+		public override int Priority => 1;
+
+		public override void Init() {
+			
+		}
+
+		public override void Tick(float elapseTime, float realElapseTime) {
+			foreach (var fsm in fsmStateDic) {
+				fsm.Value.Update();
+			}
+		}
+
+		public override void Clear() {
+			foreach (var fsm in fsmStateDic) {
+				fsm.Value.Destroy();
+			}
+			fsmStateDic.Clear();
+		}
+		
 		public IFsm CreateFsm<T>(T owner, List<Type> fsmStateList) where T : class {
 			if (fsmStateDic.ContainsKey(owner)) {
 				Debug.LogError("FsmModule : The Fsm for this owner already exists.");
@@ -35,19 +54,6 @@ namespace AureFramework.Fsm {
 			var fsm = fsmStateDic[type];
 			fsm.Destroy();
 			fsmStateDic.Remove(type);
-		}
-
-		public override void Tick() {
-			foreach (var fsm in fsmStateDic) {
-				fsm.Value.Update();
-			}
-		}
-
-		public override void Clear() {
-			foreach (var fsm in fsmStateDic) {
-				fsm.Value.Destroy();
-			}
-			fsmStateDic.Clear();
 		}
 	}
 }

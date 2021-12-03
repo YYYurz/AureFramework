@@ -15,37 +15,34 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 using Object = UnityEngine.Object;
 
 namespace AureFramework.Resource {
-	public sealed class ResourceModule : AureFrameworkModule {
+	public sealed class ResourceModule : AureFrameworkModule, IResourceModule {
 		private readonly Dictionary<uint, AsyncOperationHandle> loadingAssetDic = new Dictionary<uint, AsyncOperationHandle>();
-
-		private EventHandler<LoadAssetSuccessEventArgs> loadSuccessEventArgs;
-
 		private uint taskIdAccumulator;
 
 		/// <summary>
 		/// 框架优先级，最小的优先初始化以及轮询
 		/// </summary>
-		public override int Priority => 1;
+		public override int Priority => 2;
 		
-		protected override void Awake() {
-			base.Awake();
-			
+		public override void Init() {
 			Addressables.InitializeAsync();
 		}
 		
-		public override void Tick() {
+		public override void Tick(float elapseTime, float realElapseTime) {
 			
 		}
 		
 		public override void Clear() {
-			
+			foreach (var loadingTask in loadingAssetDic) {
+				ReleaseTask(loadingTask.Key);
+			}
 		}
 
 		/// <summary>
 		/// 同步克隆
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
-		private GameObject InstantiateSync(string assetName) {
+		public GameObject InstantiateSync(string assetName) {
 			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle)) {
 				return null;
 			}
@@ -65,7 +62,7 @@ namespace AureFramework.Resource {
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
 		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
-		private async void InstantiateAsync(string assetName, Action<uint> beginCallBack, Action<GameObject> endCallBack = null) {
+		public async void InstantiateAsync(string assetName, Action<uint> beginCallBack, Action<GameObject> endCallBack = null) {
 			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle)) {
 				endCallBack?.Invoke(null);
 				return;
@@ -149,7 +146,7 @@ namespace AureFramework.Resource {
 		/// 卸载资源
 		/// </summary>
 		/// <param name="asset"> 要卸载的资源 </param>
-		private void ReleaseAsset(Object asset) {
+		public void ReleaseAsset(Object asset) {
 			Addressables.Release(asset);
 		}
 		

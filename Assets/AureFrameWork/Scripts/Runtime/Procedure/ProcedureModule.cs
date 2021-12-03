@@ -21,12 +21,15 @@ namespace AureFramework.Procedure {
 
 		public ProcedureBase CurrentProcedure => (ProcedureBase)procedureFsm.CurrentState;
 
-		protected override void Awake() {
-			base.Awake();
+		public override int Priority => 1;
 
+		public override void Init() {
+			
 		}
 
-		public override void Tick() { }
+		public override void Tick(float elapseTime, float realElapseTime) {
+			
+		}
 		
 		public override void Clear() { }
 		
@@ -46,7 +49,7 @@ namespace AureFramework.Procedure {
 				procedureList.Add(procedureType);
 			}
 
-			var fsmModule = GameMain.GetModule<FsmModule>();
+			var fsmModule = Aure.GetModule<IFsmModule>();
 			procedureFsm = fsmModule.CreateFsm(this, procedureList);
 
 			yield return new WaitForEndOfFrame();

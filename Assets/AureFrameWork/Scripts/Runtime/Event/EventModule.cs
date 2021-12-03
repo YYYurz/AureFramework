@@ -10,12 +10,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AureFramework.Event {
-	public sealed partial class EventModule : AureFrameworkModule {
+	public sealed partial class EventModule : AureFrameworkModule, IEventModule {
 		private static readonly Dictionary<Type, EventObject> EventObjectDic = new Dictionary<Type, EventObject>();
 		
 		public override int Priority => 2;
 
-		public override void Tick() {
+		public override void Init() {
+			
+		}
+
+		public override void Tick(float elapseTime, float realElapseTime) {
 			
 		}
 

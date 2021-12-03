@@ -10,21 +10,28 @@ using UnityEngine;
 namespace AureFramework {
 	public abstract class AureFrameworkModule : MonoBehaviour {
 		/// <summary>
-		/// 框架优先级，最小的优先初始化以及轮询
+		/// 框架优先级，最小的优先轮询
 		/// </summary>
 		public virtual int Priority => 0;
 
 		/// <summary>
-		/// MonoBehaviour注册框架模块
+		/// MonoBehaviour自动注册框架模块
 		/// </summary>
-		protected virtual void Awake() {
-			GameMain.RegisterModule(this);
+		private void Awake() {
+			Aure.RegisterModule(this);
 		}
 
 		/// <summary>
+		/// 模块初始化，只在第一次被获取时调用一次
+		/// </summary>
+		public abstract void Init();
+		
+		/// <summary>
 		/// 轮询
 		/// </summary>
-		public abstract void Tick();
+		/// <param name="elapseTime"> 距离上一帧的流逝时间，秒单位 </param>
+		/// <param name="realElapseTime"> 距离上一帧的真实流逝时间，秒单位 </param>
+		public abstract void Tick(float elapseTime, float realElapseTime);
 
 		/// <summary>
 		/// 清理

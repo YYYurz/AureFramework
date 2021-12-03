@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 
 namespace AureFramework.ReferencePool {
-	public sealed partial class ReferencePoolModule {
+	public sealed partial class ReferencePoolModule : AureFrameworkModule, IReferencePoolModule {
 		private sealed class ReferenceCollection {
 			private readonly Type referenceType;
 			private readonly Queue<IReference> referenceQue;
