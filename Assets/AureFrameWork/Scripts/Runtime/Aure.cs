@@ -66,7 +66,7 @@ namespace AureFramework
 
 		private static AureFrameworkModule InternalGetModule(Type moduleType) {
 			foreach (var module in ModuleLinked) {
-				if (module.GetType().IsAssignableFrom(moduleType)) {
+				if (moduleType.IsInstanceOfType(module)) {
 					return module;
 				}
 			}
@@ -77,7 +77,7 @@ namespace AureFramework
 		private static AureFrameworkModule InternalActivateModule(Type moduleType) {
 			AureFrameworkModule tempModule = null;
 			foreach (var module in RegisteredModuleList) {
-				if (module.GetType().IsAssignableFrom(moduleType)) {
+				if (moduleType.IsInstanceOfType(module)) {
 					tempModule = module;
 					break;
 				}
