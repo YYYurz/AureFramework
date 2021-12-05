@@ -18,7 +18,7 @@ public class LuaAsset : ScriptableObject
         byte[] bytes = null;
         var assetName = search + luaPath.Replace(".", "/");
         {
-            var asset = Aure.GetModule<ResourceModule>().LoadAssetSync<LuaAsset>(assetName);
+            var asset = Aure.GetModule<IResourceModule>().LoadAssetSync<LuaAsset>(assetName);
             if (asset != null)
             {
                 bytes = asset.GetDecodeBytes();

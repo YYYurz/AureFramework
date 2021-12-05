@@ -9,7 +9,7 @@ using AureFramework.Event;
 using AureFramework.ReferencePool;
 
 namespace AureFramework.Resource {
-	public class LoadAssetSuccessEventArgs : GameEventArgs {
+	public class LoadAssetSuccessEventArgs : AureEventArgs {
 		public string Content
 		{
 			private set;
@@ -17,7 +17,7 @@ namespace AureFramework.Resource {
 		}
 
 		public static LoadAssetSuccessEventArgs Create(string content) {
-			var loadSuccessEventArgs = Aure.GetModule<ReferencePoolModule>().Acquire<LoadAssetSuccessEventArgs>();
+			var loadSuccessEventArgs = Aure.GetModule<IReferencePoolModule>().Acquire<LoadAssetSuccessEventArgs>();
 			loadSuccessEventArgs.Content = content;
 			
 			return loadSuccessEventArgs;
@@ -28,7 +28,7 @@ namespace AureFramework.Resource {
 				return; 
 			}
 			
-			Aure.GetModule<ReferencePoolModule>().Release(e);
+			Aure.GetModule<IReferencePoolModule>().Release(e);
 		}
 		
 		public override void Clear() {

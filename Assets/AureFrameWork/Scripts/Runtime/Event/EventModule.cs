@@ -47,7 +47,7 @@ namespace AureFramework.Event {
 		/// 订阅事件
 		/// </summary>
 		/// <param name="eventHandler"> 委托函数 </param>
-		public void Subscribe<T>(EventHandler<GameEventArgs> eventHandler) where T : GameEventArgs{
+		public void Subscribe<T>(EventHandler<AureEventArgs> eventHandler) where T : AureEventArgs{
 			if (eventHandler == null) {
 				Debug.LogError("AureFramework EventModule : EventHandler is null.");
 				return;
@@ -60,7 +60,7 @@ namespace AureFramework.Event {
 		/// 取消订阅事件
 		/// </summary>
 		/// <param name="eventHandler"> 委托函数 </param>
-		public void Unsubscribe<T>(EventHandler<GameEventArgs> eventHandler) where T : GameEventArgs{
+		public void Unsubscribe<T>(EventHandler<AureEventArgs> eventHandler) where T : AureEventArgs{
 			if (eventHandler == null) {
 				Debug.LogError("AureFramework EventModule : EventHandler is null.");
 				return;
@@ -74,7 +74,7 @@ namespace AureFramework.Event {
 		/// </summary>
 		/// <param name="sender"> 发送者实例 </param>
 		/// <param name="eventArgs"> 事件信息类 </param>
-		public void Fire(object sender, GameEventArgs eventArgs) {
+		public void Fire(object sender, AureEventArgs eventArgs) {
 			if (eventArgs == null) {
 				Debug.LogError("AureFramework EventModule : EventArgs is null.");
 				return;

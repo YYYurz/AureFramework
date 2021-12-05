@@ -12,7 +12,7 @@ using AureFramework.ReferencePool;
 namespace AureFramework.Event {
 	public sealed partial class EventModule : AureFrameworkModule, IEventModule {
 		private class EventObject{
-			private event EventHandler<GameEventArgs> EventArgs;
+			private event EventHandler<AureEventArgs> EventArgs;
 			private bool isHasSubscriber;
 			private string[] subscriberList;
 
@@ -60,17 +60,17 @@ namespace AureFramework.Event {
 				}
 			}
 			
-			public void Fire(object sender, GameEventArgs e) {
+			public void Fire(object sender, AureEventArgs e) {
 				Volatile.Read(ref EventArgs);
 				EventArgs?.Invoke(sender, e);
 				Aure.GetModule<IReferencePoolModule>().Release(e);
 			}
 			
-			public void Subscribe(EventHandler<GameEventArgs> e) {
+			public void Subscribe(EventHandler<AureEventArgs> e) {
 				EventArgs += e;
 			}
 
-			public void Unsubscribe(EventHandler<GameEventArgs> e) {
+			public void Unsubscribe(EventHandler<AureEventArgs> e) {
 				EventArgs -= e;
 			}
 		}

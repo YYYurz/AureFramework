@@ -18,24 +18,8 @@ namespace AureFramework.Fsm
 
 	public class Fsm : IFsm{
 		private readonly Dictionary<Type, IFsmState> fsmStateDic = new Dictionary<Type, IFsmState>();
-
 		private float durationTime;
 		private bool isPause;
-
-		/// <summary>
-		/// 上一个状态
-		/// </summary>
-		public IFsmState PreviousState { get; private set; }
-		
-		/// <summary>
-		/// 当前状态
-		/// </summary>
-		public IFsmState CurrentState { get; private set; }
-		
-		/// <summary>
-		/// 状态机处于哪个运行时状态
-		/// </summary>
-		public FsmStatus Status => isPause ? FsmStatus.Pause : FsmStatus.Running;
 
 		public Fsm(IEnumerable<Type> fsmStateTypeList) {
 			var interfaceType = typeof(FsmState);
@@ -58,7 +42,35 @@ namespace AureFramework.Fsm
 
 			isPause = false;
 		}
-		
+
+		/// <summary>
+		/// 上一个状态
+		/// </summary>
+		public IFsmState PreviousState
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// 当前状态
+		/// </summary>
+		public IFsmState CurrentState
+		{
+			get; 
+			private set;
+		}
+
+		/// <summary>
+		/// 状态机处于哪个运行时状态
+		/// </summary>
+		public FsmStatus Status {
+			get
+			{
+				return isPause ? FsmStatus.Pause : FsmStatus.Running;
+			}
+		}
+
 		/// <summary>
 		/// 轮询
 		/// </summary>

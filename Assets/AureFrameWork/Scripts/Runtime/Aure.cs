@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace AureFramework
 {
+	/// <summary>
+	/// 框架主模块
+	/// </summary>
 	public class Aure : MonoBehaviour {
 		private static readonly List<AureFrameworkModule> RegisteredModuleList = new List<AureFrameworkModule>();
 		private static readonly LinkedList<AureFrameworkModule> ModuleLinked= new LinkedList<AureFrameworkModule>();

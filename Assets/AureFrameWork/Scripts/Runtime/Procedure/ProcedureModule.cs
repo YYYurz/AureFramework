@@ -57,16 +57,7 @@ namespace AureFramework.Procedure {
 			StartProcedure();
 		}
 
-		public void Init(IFsmModule fsmModule, List<Type> fsmStateList) {
-			if (fsmModule == null) {
-				Debug.LogError("ProcedureModule : fsmModule is null");
-				return;
-			}
-			
-			procedureFsm = fsmModule.CreateFsm(this, fsmStateList);
-		}
-
-		public void StartProcedure(){
+		private void StartProcedure(){
 			if (procedureFsm == null) {
 				Debug.LogError("ProcedureModule : procedureFsm is null");
 				return;

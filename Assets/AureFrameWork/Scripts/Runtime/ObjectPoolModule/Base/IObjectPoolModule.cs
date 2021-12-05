@@ -5,14 +5,9 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
-using AureFramework.ReferencePool;
+namespace AureFramework.ObjectPool {
+	public interface IObjectPoolModule {
+		
 
-namespace AureFramework.Event {
-	public abstract class GameEventArgs : EventArgs, IReference {
-		/// <summary>
-		/// 清理函数
-		/// </summary>
-		public abstract void Clear();
 	}
 }

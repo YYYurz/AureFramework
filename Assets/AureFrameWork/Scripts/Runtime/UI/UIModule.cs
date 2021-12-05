@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using AureFramework.Event;
 using AureFramework.Resource;
+using UnityEngine;
 
 namespace AureFramework.UI
 {
@@ -31,7 +32,7 @@ namespace AureFramework.UI
 			
 		}
 
-		public override void Clear() { 
+		public override void Clear() {
 			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
 			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
 		}
@@ -44,11 +45,11 @@ namespace AureFramework.UI
 			
 		}
 
-		private void OnLoadAssetSuccess(object sender, GameEventArgs e) {
+		private void OnLoadAssetSuccess(object sender, AureEventArgs e) {
 			
 		}
 		
-		private void OnLoadAssetFailed(object sender, GameEventArgs e) {
+		private void OnLoadAssetFailed(object sender, AureEventArgs e) {
 			
 		}
 	}

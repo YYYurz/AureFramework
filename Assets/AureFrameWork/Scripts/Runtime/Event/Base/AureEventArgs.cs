@@ -6,14 +6,13 @@
 //------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using AureFramework.Fsm;
+using AureFramework.ReferencePool;
 
-namespace AureFramework.Procedure {
-	public interface IProcedureModule {
-		ProcedureBase CurrentProcedure
-		{
-			get;
-		}
+namespace AureFramework.Event {
+	public abstract class AureEventArgs : EventArgs, IReference {
+		/// <summary>
+		/// 清理函数
+		/// </summary>
+		public abstract void Clear();
 	}
 }

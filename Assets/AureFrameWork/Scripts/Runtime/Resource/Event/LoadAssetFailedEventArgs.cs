@@ -9,7 +9,7 @@ using AureFramework.Event;
 using AureFramework.ReferencePool;
 
 namespace AureFramework.Resource {
-	public class LoadAssetFailedEventArgs : GameEventArgs {
+	public class LoadAssetFailedEventArgs : AureEventArgs {
 		public string Content
 		{
 			private set;
