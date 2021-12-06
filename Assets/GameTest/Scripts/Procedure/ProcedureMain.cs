@@ -17,7 +17,7 @@ namespace GameTest {
 		public override void OnEnter(params object[] args) {
 			base.OnEnter(args);
 			// GameEntrance.Lua.DoString("require 'LuaTest'");
-			
+
 		}
 
 		public override void OnExit() {

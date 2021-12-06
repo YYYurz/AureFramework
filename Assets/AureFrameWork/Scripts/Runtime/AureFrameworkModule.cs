@@ -10,7 +10,7 @@ using UnityEngine;
 namespace AureFramework {
 	public abstract class AureFrameworkModule : MonoBehaviour {
 		/// <summary>
-		/// 框架优先级，最小的优先轮询
+		/// 模块优先级，最小的优先轮询
 		/// </summary>
 		public virtual int Priority => 0;
 
@@ -27,14 +27,14 @@ namespace AureFramework {
 		public abstract void Init();
 		
 		/// <summary>
-		/// 轮询
+		/// 框架轮询
 		/// </summary>
 		/// <param name="elapseTime"> 距离上一帧的流逝时间，秒单位 </param>
 		/// <param name="realElapseTime"> 距离上一帧的真实流逝时间，秒单位 </param>
 		public abstract void Tick(float elapseTime, float realElapseTime);
 
 		/// <summary>
-		/// 清理
+		/// 框架清理
 		/// </summary>
 		public abstract void Clear();
 	}
