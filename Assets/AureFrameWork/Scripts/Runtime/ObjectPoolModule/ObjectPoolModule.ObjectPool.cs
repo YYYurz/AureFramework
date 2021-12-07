@@ -125,7 +125,7 @@ namespace AureFramework.ObjectPool {
 					return;
 				}
 
-				InternalCheckRelease(true);
+				InternalReleaseUnusedObject(true);
 			}
 
 			/// <summary>
@@ -135,7 +135,18 @@ namespace AureFramework.ObjectPool {
 				ReleaseAllUnused();
 				usingObjectList.Clear();
 			}
-			
+
+			/// <summary>
+			/// 注册一个新创建的对象
+			/// </summary>
+			/// <param name="obj"> 对象 </param>
+			public void Register(T obj) {
+				if (unusedObjectList.Contains(obj) || usingObjectList.Contains(obj)) {
+					return;
+				}
+				unusedObjectList.Add(obj);
+			}
+
 			/// <summary>
 			/// 获取对象池中任意一个对象
 			/// </summary>
@@ -179,7 +190,11 @@ namespace AureFramework.ObjectPool {
 			/// 释放所有没有使用中的对象
 			/// </summary>
 			public override void ReleaseAllUnused() {
-				InternalCheckRelease(false);
+				InternalReleaseUnusedObject(false);
+			}
+
+			private void InternalRegister(T obj) {
+				
 			}
 			
 			private T InternalSpawn(string name = null) {
@@ -237,7 +252,7 @@ namespace AureFramework.ObjectPool {
 				}
 			}
 			
-			private void InternalCheckRelease(bool isCheckTime) {
+			private void InternalReleaseUnusedObject(bool isCheckTime) {
 				autoReleaseTime = 0f;
 				if (UnusedCount <= 0) {
 					return;

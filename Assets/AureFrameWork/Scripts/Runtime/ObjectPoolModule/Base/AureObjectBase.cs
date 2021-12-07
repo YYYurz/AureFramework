@@ -11,10 +11,37 @@ using Object = UnityEngine.Object;
 
 namespace AureFramework.ObjectPool {
 	public abstract class AureObjectBase : IReference {
-		private string name;
 		private Object target;
-		private bool locked;
 		private DateTime lastUseTime;
+		private string name;
+		private bool locked;
+		private bool isInUse;
+		
+		/// <summary>
+		/// 获取对象
+		/// </summary>
+		public Object Target
+		{
+			get
+			{
+				return target;
+			}
+		}
+		
+		/// <summary>
+		/// 获取或设置对象上次使用时间。
+		/// </summary>
+		public DateTime LastUseTime
+		{
+			get
+			{
+				return lastUseTime;
+			}
+			set
+			{
+				lastUseTime = value;
+			}
+		}
 
 		/// <summary>
 		/// 获取对象名称
@@ -26,18 +53,7 @@ namespace AureFramework.ObjectPool {
 				return name;
 			}
 		}
-
-		/// <summary>
-		/// 获取对象
-		/// </summary>
-		public Object Target
-		{
-			get
-			{
-				return target;
-			}
-		}
-
+		
 		/// <summary>
 		/// 获取或设置对象是否加锁
 		/// </summary>
@@ -53,20 +69,7 @@ namespace AureFramework.ObjectPool {
 			}
 		}
 		
-		/// <summary>
-		/// 获取对象上次使用时间。
-		/// </summary>
-		public DateTime LastUseTime
-		{
-			get
-			{
-				return lastUseTime;
-			}
-			set
-			{
-				lastUseTime = value;
-			}
-		}
+		
 
 		/// <summary>
 		/// 初始化对象
@@ -108,7 +111,7 @@ namespace AureFramework.ObjectPool {
 		}
 		
 		public void Clear() {
-			
+			target = null;
 		}
 	}
 }

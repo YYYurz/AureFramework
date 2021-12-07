@@ -56,6 +56,12 @@ namespace AureFramework.ObjectPool {
 		}
 
 		/// <summary>
+		/// 注册一个新创建的对象
+		/// </summary>
+		/// <param name="obj"> 对象 </param>
+		void Register(T obj);
+
+		/// <summary>
 		/// 获取对象池中任意一个对象
 		/// </summary>
 		/// <returns></returns>
