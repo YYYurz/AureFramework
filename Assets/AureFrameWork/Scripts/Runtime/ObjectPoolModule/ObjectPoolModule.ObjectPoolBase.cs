@@ -14,7 +14,16 @@ namespace AureFramework.ObjectPool {
 		/// </summary>
 		private abstract class ObjectPoolBase {
 			/// <summary>
-			/// 获取或设置对象类型
+			/// 获取或设置对象池名称
+			/// </summary>
+			public abstract string Name
+			{
+				get;
+				set;
+			}
+			
+			/// <summary>
+			/// 获取对象类型
 			/// </summary>
 			public abstract Type ObjectType
 			{
@@ -38,6 +47,12 @@ namespace AureFramework.ObjectPool {
 				get;
 				set;
 			}
+			
+			/// <summary>
+			/// 获取对象池信息
+			/// </summary>
+			/// <returns></returns>
+			public abstract ObjectPoolInfo GetObjectPoolInfo();
 			
 			/// <summary>
 			/// 轮询

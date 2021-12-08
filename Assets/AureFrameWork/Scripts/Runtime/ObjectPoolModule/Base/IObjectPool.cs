@@ -6,13 +6,22 @@
 //------------------------------------------------------------
 
 using System;
+using Object = UnityEngine.Object;
 
 namespace AureFramework.ObjectPool {
 	/// <summary>
 	/// 对象池接口
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public interface IObjectPool<T> where T : AureObjectBase{
+	public interface IObjectPool<T> where T : Object {
+		/// <summary>
+		/// 获取对象池名称
+		/// </summary>
+		string Name
+		{
+			get;
+		}
+		
 		/// <summary>
 		/// 获取对象类型
 		/// </summary>
@@ -54,31 +63,35 @@ namespace AureFramework.ObjectPool {
 			get;
 			set;
 		}
-
+		
 		/// <summary>
 		/// 注册一个新创建的对象
 		/// </summary>
 		/// <param name="obj"> 对象 </param>
-		void Register(T obj);
+		/// <param name="isNeed"> 是否需要返回IObject对象 </param>
+		/// <param name="name"> 对象名称 </param>
+		/// <returns></returns>
+		IObject<T> Register(T obj, bool isNeed, string name = null);
+
 
 		/// <summary>
 		/// 获取对象池中任意一个对象
 		/// </summary>
 		/// <returns></returns>
-		T Spawn();
+		IObject<T> Spawn();
 
 		/// <summary>
 		/// 获取对象
 		/// </summary>
 		/// <param name="name"> 对象名称 </param>
 		/// <returns></returns>
-		T Spawn(string name);
+		IObject<T> Spawn(string name);
 		
 		/// <summary>
 		/// 回收对象
 		/// </summary>
 		/// <param name="obj"> 对象 </param>
-		void Recycle(T obj);
+		void Recycle(IObject<T> obj);
 		
 		/// <summary>
 		/// 所有对象加锁

@@ -18,7 +18,7 @@ using AureFramework.UI;
 
 namespace GameTest
 {
-	public partial class GameEntrance
+	public partial class GameMain
 	{
 		public static IFsmModule Fsm
 		{

@@ -5,13 +5,13 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
+using UnityEngine;
 
-namespace GameTest
-{
-	public partial class GameEntrance
-	{
-		public static void InitCustomManagers() {
-			
+namespace GameTest {
+	public partial class GameMain : MonoBehaviour {
+		private void Start() {
+			InitBuiltinManagers();
+			InitCustomManagers();
 		}
 	}
 }

@@ -10,7 +10,7 @@ using UnityEditor;
 
 namespace AureFramework.Editor {
 	[CustomEditor(typeof(ReferencePoolModule))]
-	public class ReferenceModuleInspector : AureFrameworkInspector {
+	public class ReferencePoolModuleInspector : AureFrameworkInspector {
 		public override void OnInspectorGUI() {
 			base.OnInspectorGUI();
 			

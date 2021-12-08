@@ -13,7 +13,7 @@ namespace AureFramework.ObjectPool {
 	/// 对象池模块
 	/// </summary>
 	public sealed partial class ObjectPoolModule : AureFrameworkModule, IObjectPoolModule {
-		private readonly List<ObjectPoolBase> objectPoolList = new List<ObjectPoolBase>(); 
+		private static readonly List<ObjectPoolBase> ObjectPoolList = new List<ObjectPoolBase>(); 
 
 		/// <summary>
 		/// 模块优先级，最小的优先轮询
@@ -27,7 +27,7 @@ namespace AureFramework.ObjectPool {
 		{
 			get
 			{
-				return objectPoolList.Count;
+				return ObjectPoolList.Count;
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace AureFramework.ObjectPool {
 		/// <param name="elapseTime"> 距离上一帧的流逝时间，秒单位 </param>
 		/// <param name="realElapseTime"> 距离上一帧的真实流逝时间，秒单位 </param>
 		public override void Tick(float elapseTime, float realElapseTime) {
-			foreach (var objectPool in objectPoolList) {
+			foreach (var objectPool in ObjectPoolList) {
 				objectPool.Update(elapseTime, realElapseTime);
 			}
 		}
@@ -57,75 +57,91 @@ namespace AureFramework.ObjectPool {
 		}
 
 		/// <summary>
+		/// 获取所有对象池信息
+		/// </summary>
+		/// <returns></returns>
+		public static ObjectPoolInfo[] GetAllObjectPoolInfo() {
+			var objectPoolInfos = new ObjectPoolInfo[ObjectPoolList.Count];
+			for (var i = 0; i < ObjectPoolList.Count; i++) {
+				objectPoolInfos[i] = ObjectPoolList[i].GetObjectPoolInfo();
+			}
+
+			return objectPoolInfos;
+		}
+		
+		/// <summary>
 		/// 获取对象池
 		/// </summary>
+		/// <param name="poolName"> 对象池名称 </param>
 		/// <typeparam name="T"> 对象类型 </typeparam>
 		/// <returns></returns>
-		public IObjectPool<T> GetObjectPool<T>() where T : AureObjectBase {
-			TryGetObjectPool<T>(out var objectPool);
+		public IObjectPool<T> GetObjectPool<T>(string poolName) where T : Object {
+			TryGetObjectPool<T>(poolName, out var objectPool);
 			return (IObjectPool<T>) objectPool;
 		}
 
 		/// <summary>
 		/// 创建对象池
 		/// </summary>
+		/// <param name="poolName"> 对象池名称 </param>
 		/// <param name="capacity"> 容量 </param>
 		/// <param name="expireTime"> 自动释放时间 </param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public IObjectPool<T> CreateObjectPool<T>(int capacity, float expireTime) where T : AureObjectBase {
-			return InternalCreateObjectPool<T>(capacity, expireTime);
+		public IObjectPool<T> CreateObjectPool<T>(string poolName, int capacity, float expireTime) where T : Object {
+			return (IObjectPool<T>) InternalCreateObjectPool<T>(poolName, capacity, expireTime);
 		}
 
 		/// <summary>
 		/// 销毁对象池
+		/// <param name="poolName"> 对象池名称 </param>
 		/// </summary>
-		public void DestroyObjectPool<T>(IObjectPool<T> objPool) where T : AureObjectBase {
-			InternalDestroyObjectPool<T>(objPool);
+		public void DestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : Object {
+			InternalDestroyObjectPool<T>(poolName, objPool);
 		}
 		
 		/// <summary>
 		/// 释放所有对象池中未使用的对象
 		/// </summary>
 		public void ReleaseAllUnused() {
-			foreach (var objectPool in objectPoolList) {
+			foreach (var objectPool in ObjectPoolList) {
 				objectPool.ReleaseAllUnused();
 			}
 		}
 
-		private IObjectPool<T> InternalCreateObjectPool<T>(int capacity, float expireTime) where T : AureObjectBase {
-			if (TryGetObjectPool<T>(out var objPool)) {
-				Debug.LogError($"AureFramework ObjectPoolModule : Object Pool is already exists, object type : {objPool.ObjectType.FullName}.");
+		private ObjectPoolBase InternalCreateObjectPool<T>(string poolName, int capacity, float expireTime) where T : Object {
+			if (TryGetObjectPool<T>(poolName, out var objectPool)) {
+				Debug.LogError($"AureFramework ObjectPoolModule : Object Pool is already exists, object type : {objectPool.ObjectType.FullName}.");
 				return null;
 			}
 			
-			var objectPool = new ObjectPool<T>(capacity, expireTime);
-			objectPoolList.Add(objectPool);
+			objectPool = new ObjectPool<T>(name, capacity, expireTime);
+			ObjectPoolList.Add(objectPool);
 			return objectPool;
 		}
 
-		private void InternalDestroyObjectPool<T>(IObjectPool<T> objPool) where T : AureObjectBase {
-			if (objPool == null || !TryGetObjectPool<T>(out var objectPool)) {
+		private void InternalDestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : Object {
+			if (objPool == null || !TryGetObjectPool<T>(poolName, out var objectPool)) {
 				Debug.LogError($"AureFramework ObjectPoolModule : Object Pool is invalid.");
 				return;
 			}
 			
 			objectPool.ShutDown();
-			objectPoolList.Remove(objectPool);
+			ObjectPoolList.Remove(objectPool);
 		}
 		
 		private void InternalDestroyAllObjectPool() {
 			for (var i = 0; i < Count; i++) {
-				var objectPool = objectPoolList[i];
+				var objectPool = ObjectPoolList[i];
 				objectPool.ShutDown();
-				objectPoolList.Remove(objectPool);
+				ObjectPoolList.Remove(objectPool);
 			}
 		}
 
-		private bool TryGetObjectPool<T>(out ObjectPoolBase objectPool) where T : AureObjectBase {
+		private bool TryGetObjectPool<T>(string poolName, out ObjectPoolBase objectPool) where T : Object {
 			objectPool = null;
-			foreach (var objPool in objectPoolList) {
-				if (objPool.ObjectType == typeof(T)) {
+			foreach (var objPool in ObjectPoolList) {
+				if (objPool.ObjectType == typeof(T) && objPool.Name.Equals(poolName)) {
 					objectPool = objPool;
 					return true;
 				}
