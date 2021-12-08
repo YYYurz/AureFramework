@@ -1,6 +1,7 @@
 ﻿//------------------------------------------------------------
 // AureFramework
 // Developed By ZhiRui Yu.
+// GitHub: https://github.com/YYYurz
 // Gitee: https://gitee.com/yyyurz
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
@@ -29,13 +30,13 @@ namespace AureFramework.Editor {
 
 			foreach (var objectPool in objectPoolInfoList)
 			{
-				DrawObjectPool(objectPool);
+				DrawObjectPoolInfo(objectPool);
 			}
 			
 			Repaint();
 		}
 		
-		private void DrawObjectPool(ObjectPoolInfo objectPoolInfo) {
+		private void DrawObjectPoolInfo(ObjectPoolInfo objectPoolInfo) {
 			var recordName = objectPoolInfo.Name + objectPoolInfo.ObjectType.FullName;
             var lastState = m_OpenedItems.Contains(recordName);
             var currentState = EditorGUILayout.Foldout(lastState, objectPoolInfo.Name);
