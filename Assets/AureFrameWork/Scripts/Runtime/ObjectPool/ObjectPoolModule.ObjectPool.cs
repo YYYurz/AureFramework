@@ -180,15 +180,15 @@ namespace AureFramework.ObjectPool {
 			/// </summary>
 			/// <param name="obj"> 对象 </param>
 			/// <param name="isNeed"> 是否需要注册后的对象 </param>
-			/// <param name="name"> 对象名称 </param>
+			/// <param name="objName"> 对象名称 </param>
 			/// <returns></returns>
-			public IObject<T> Register(T obj, bool isNeed, string name = null) {
+			public IObject<T> Register(T obj, bool isNeed, string objName = null) {
 				if (obj == null) {
 					Debug.LogError("AureFramework ObjectPoolModule : Object is null.");
 					return null;
 				}
 				
-				var newObject = InternalCreateObject(obj, isNeed, name);
+				var newObject = InternalCreateObject(obj, isNeed, objName);
 				return (IObject<T>)newObject;
 			}
 
@@ -203,10 +203,10 @@ namespace AureFramework.ObjectPool {
 			/// <summary>
 			/// 获取对象
 			/// </summary>
-			/// <param name="name"> 对象名称 </param>
+			/// <param name="objName"> 对象名称 </param>
 			/// <returns></returns>
-			public IObject<T> Spawn(string name) {
-				return (IObject<T>)InternalSpawn(name);
+			public IObject<T> Spawn(string objName) {
+				return (IObject<T>)InternalSpawn(objName);
 			}
 
 			/// <summary>
@@ -243,7 +243,7 @@ namespace AureFramework.ObjectPool {
 				InternalReleaseUnusedObject(false);
 			}
 
-			private ObjectBase InternalCreateObject(T obj, bool isNeed, string name = null) {
+			private ObjectBase InternalCreateObject(T obj, bool isNeed, string objName = null) {
 				for (var i = 0; i < objectList.Count; i++) {
 					if (objectList[i].TargetId.Equals(obj.GetHashCode())) {
 						Debug.LogError("AureFramework ObjectPoolModule : Register failed because the object is already exists.");
@@ -251,7 +251,7 @@ namespace AureFramework.ObjectPool {
 					}
 				}
 				
-				var internalObj = Object<T>.Create(obj, name ?? string.Empty);
+				var internalObj = Object<T>.Create(obj, objName ?? string.Empty);
 				internalObj.IsInUse = isNeed;
 				objectList.Add(internalObj);
 
@@ -264,16 +264,16 @@ namespace AureFramework.ObjectPool {
 				return null;
 			}
 			
-			private ObjectBase InternalSpawn(string name = null) {
+			private ObjectBase InternalSpawn(string objName = null) {
 				if (UnusedCount == 0) {
 					return null;
 				}
 				
-				var objName = name ?? string.Empty;
+				var internalObjectName = objName ?? string.Empty;
 				ObjectBase obj = null;
 				
 				foreach (var internalObj in objectList) {
-					if (internalObj.Name.Equals(objName)) {
+					if (internalObj.Name.Equals(internalObjectName) && !internalObj.IsInUse) {
 						obj = internalObj;
 						break;
 					}
