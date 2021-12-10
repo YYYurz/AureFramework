@@ -256,7 +256,6 @@ namespace AureFramework.ObjectPool {
 				objectList.Add(internalObj);
 
 				if (isNeed) {
-					internalObj.OnSpawn();
 					internalObj.LastUseTime = DateTime.UtcNow;
 					return internalObj;
 				}
@@ -280,7 +279,6 @@ namespace AureFramework.ObjectPool {
 				}
 
 				if (obj != null) {
-					obj.OnSpawn();
 					obj.LastUseTime = DateTime.UtcNow;
 					obj.IsInUse = true;
 				}
@@ -300,7 +298,6 @@ namespace AureFramework.ObjectPool {
 				
 				internalObject.LastUseTime = DateTime.UtcNow;
 				internalObject.IsInUse = false;
-				internalObject.OnRecycle();
 			}
 
 			private void InternalSetLockAll(bool isLock) {
@@ -330,7 +327,6 @@ namespace AureFramework.ObjectPool {
 					return;
 				}
 				
-				internalObject.OnRelease();
 				referencePoolModule.Release(internalObject);
 				objectList.Remove(internalObject);
 			}

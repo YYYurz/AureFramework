@@ -127,70 +127,10 @@ namespace AureFramework.ObjectPool {
 			}
 
 			/// <summary>
-			/// 获取对象时触发
-			/// </summary>
-			public override void OnSpawn() {
-				onSpawnCallBack?.Invoke();
-			}
-
-			/// <summary>
-			/// 回收对象时触发
-			/// </summary>
-			public override void OnRecycle() {
-				onRecycleCallBack?.Invoke();
-			}
-
-			/// <summary>
-			/// 释放对象时触发
-			/// </summary>
-			public override void OnRelease() {
-				onReleaseCallBack?.Invoke();
-			}
-			
-			/// <summary>
-			/// 注册对象获取时触发回调
-			/// </summary>
-			/// <param name="callBack"> 回调方法 </param>
-			public void RegisterOnSpawn(Action callBack) {
-				if (callBack == null) {
-					return;
-				}
-				
-				onSpawnCallBack += callBack;
-			}
-
-			/// <summary>
-			/// 注册对象回收时触发回调
-			/// </summary>
-			/// <param name="callBack"> 回调方法 </param>
-			public void RegisterOnRecycle(Action callBack) {
-				if (callBack == null) {
-					return;
-				}
-				
-				onRecycleCallBack += callBack;
-			}
-
-			/// <summary>
-			/// 注册对象释放时触发回调
-			/// </summary>
-			/// <param name="callBack"> 回调方法 </param>
-			public void RegisterOnRelease(Action callBack) {
-				if (callBack == null) {
-					return;
-				}
-				
-				onReleaseCallBack += callBack;
-			}
-			
-			/// <summary>
 			/// 清理
 			/// </summary>
 			public override void Clear() {
 				target = null;
-				onSpawnCallBack = null;
-				onRecycleCallBack = null;
-				onReleaseCallBack = null;
 			}
 		}
 	}

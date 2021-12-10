@@ -61,21 +61,6 @@ namespace AureFramework.ObjectPool {
 		public abstract ObjectInfo GetObjectInfo();
 
 		/// <summary>
-		/// 获取对象时触发
-		/// </summary>
-		public abstract void OnSpawn();
-
-		/// <summary>
-		/// 回收对象时触发
-		/// </summary>
-		public abstract void OnRecycle();
-
-		/// <summary>
-		/// 释放对象时触发
-		/// </summary>
-		public abstract void OnRelease();
-
-		/// <summary>
 		/// 清理对象
 		/// </summary>
 		public abstract void Clear();
