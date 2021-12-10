@@ -33,6 +33,10 @@ MonoBehaviour:
     m_Address: LuaTxt
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 7bd34c4dfcfc5914ba58ec075ba2c26f
+    m_Address: Ball
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d8112eb284d33884b9ee3fb88b0a6b16, type: 2}
   m_SchemaSet:

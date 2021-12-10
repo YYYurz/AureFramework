@@ -128,7 +128,7 @@ namespace AureFramework.ObjectPool {
 				set
 				{
 					if (value < 0) {
-						Debug.LogError("AureFramework ObjectPoolModule : The capacity of the object pool cannot be less than zero.");
+						Debug.LogError("AureFramework ObjectPoolModule : The expire time of the object pool cannot be less than zero.");
 						return;
 					}
 
