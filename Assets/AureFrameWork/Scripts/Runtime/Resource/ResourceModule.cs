@@ -9,6 +9,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AureFramework.Event;
+using GameTest;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -17,8 +19,9 @@ using Object = UnityEngine.Object;
 
 namespace AureFramework.Resource {
 	public sealed class ResourceModule : AureFrameworkModule, IResourceModule {
-		private readonly Dictionary<uint, AsyncOperationHandle> loadingAssetDic = new Dictionary<uint, AsyncOperationHandle>();
-		private uint taskIdAccumulator;
+		private readonly Dictionary<int, AsyncOperationHandle> loadingAssetDic = new Dictionary<int, AsyncOperationHandle>();
+		private int taskIdAccumulator;
+		private IEventModule eventModule;
 
 		/// <summary>
 		/// 框架优先级，最小的优先初始化以及轮询
@@ -27,6 +30,7 @@ namespace AureFramework.Resource {
 		
 		public override void Init() {
 			Addressables.InitializeAsync();
+			eventModule = Aure.GetModule<IEventModule>();
 		}
 		
 		public override void Tick(float elapseTime, float realElapseTime) {
@@ -63,7 +67,7 @@ namespace AureFramework.Resource {
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
 		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
-		public async void InstantiateAsync(string assetName, Action<uint> beginCallBack, Action<GameObject> endCallBack = null) {
+		public async void InstantiateAsync(string assetName, Action<int> beginCallBack, Action<GameObject> endCallBack = null) {
 			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle)) {
 				endCallBack?.Invoke(null);
 				return;
@@ -78,14 +82,16 @@ namespace AureFramework.Resource {
 				loadingAssetDic.Remove(taskId);
 				endCallBack?.Invoke(handle.Result);
 				Addressables.Release(handle);
+				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId));
 				if (handle.Result == null) {
 					Addressables.Release(handle);
+					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId));
 				}
 			}
 		}
 
 		/// <summary>
-		/// 同步加载
+		/// 同步加载资源
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
 		/// <typeparam name="T"></typeparam>
@@ -111,7 +117,7 @@ namespace AureFramework.Resource {
 		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
 		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
 		/// <typeparam name="T"></typeparam>
-		public async void LoadAssetAsync<T>(string assetName, Action<uint> beginCallBack, Action<T> endCallBack = null) where T : Object{
+		public async void LoadAssetAsync<T>(string assetName, Action<int> beginCallBack, Action<T> endCallBack = null) where T : Object{
 			if (!InternalCreateLoadAsyncHandle<T>(assetName, out var handle)) {
 				endCallBack?.Invoke(null);
 				return;
@@ -126,8 +132,10 @@ namespace AureFramework.Resource {
 				loadingAssetDic.Remove(taskId);
 				endCallBack?.Invoke(handle.Result);
 				Addressables.Release(handle);
+				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId));
 				if (handle.Result == null) {
 					Addressables.Release(handle);
+					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId));
 				}
 			}
 		}
@@ -154,8 +162,8 @@ namespace AureFramework.Resource {
 		/// <summary>
 		///	终止正在加载的任务 
 		/// </summary>
-		/// <param name="taskId"></param>
-		public void ReleaseTask(uint taskId) {
+		/// <param name="taskId"> 加载任务Id </param>
+		public void ReleaseTask(int taskId) {
 			if (!loadingAssetDic.TryGetValue(taskId, out var asset)) {
 				return;
 			}
@@ -210,7 +218,7 @@ namespace AureFramework.Resource {
 			return true;
 		}
 		
-		private IEnumerator InternalLoadSceneAsync(string sceneName, Action<float> percentCallBack = null, Action<SceneInstance> endCallBack = null) {
+		private static IEnumerator InternalLoadSceneAsync(string sceneName, Action<float> percentCallBack = null, Action<SceneInstance> endCallBack = null) {
 			if (!InternalCreateSceneAsyncHandle(sceneName, out var handle)) {
 				endCallBack?.Invoke(default);
 				yield break;
@@ -224,10 +232,10 @@ namespace AureFramework.Resource {
 			endCallBack?.Invoke(handle.Result);
 		}
 		
-		private uint GetTaskId() {
+		private int GetTaskId() {
 			while (true) {
 				++taskIdAccumulator;
-				if (taskIdAccumulator == uint.MaxValue) {
+				if (taskIdAccumulator == int.MaxValue) {
 					taskIdAccumulator = 1;
 				}
 

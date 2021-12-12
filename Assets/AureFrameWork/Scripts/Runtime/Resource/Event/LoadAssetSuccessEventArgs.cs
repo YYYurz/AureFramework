@@ -11,29 +11,21 @@ using AureFramework.ReferencePool;
 
 namespace AureFramework.Resource {
 	public class LoadAssetSuccessEventArgs : AureEventArgs {
-		public string Content
+		public int TaskId
 		{
 			private set;
 			get;
 		}
 
-		public static LoadAssetSuccessEventArgs Create(string content) {
+		public static LoadAssetSuccessEventArgs Create(int taskId) {
 			var loadSuccessEventArgs = Aure.GetModule<IReferencePoolModule>().Acquire<LoadAssetSuccessEventArgs>();
-			loadSuccessEventArgs.Content = content;
+			loadSuccessEventArgs.TaskId = taskId;
 			
 			return loadSuccessEventArgs;
 		}
 
-		public static void Release(LoadAssetSuccessEventArgs e) {
-			if (e == null) {
-				return; 
-			}
-			
-			Aure.GetModule<IReferencePoolModule>().Release(e);
-		}
-		
 		public override void Clear() {
-			Content = null;
+			TaskId = -1;
 		}
 	}
 }
