@@ -17,15 +17,23 @@ namespace AureFramework.Resource {
 			get;
 		}
 
-		public static LoadAssetSuccessEventArgs Create(int taskId) {
+		public string AssetName
+		{
+			private set;
+			get;
+		}
+
+		public static LoadAssetSuccessEventArgs Create(int taskId, string assetName) {
 			var loadSuccessEventArgs = Aure.GetModule<IReferencePoolModule>().Acquire<LoadAssetSuccessEventArgs>();
 			loadSuccessEventArgs.TaskId = taskId;
+			loadSuccessEventArgs.AssetName = assetName;
 			
 			return loadSuccessEventArgs;
 		}
 
 		public override void Clear() {
 			TaskId = -1;
+			AssetName = null;
 		}
 	}
 }

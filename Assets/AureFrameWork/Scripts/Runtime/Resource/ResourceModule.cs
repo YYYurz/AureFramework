@@ -10,7 +10,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using AureFramework.Event;
-using GameTest;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -82,10 +81,10 @@ namespace AureFramework.Resource {
 				loadingAssetDic.Remove(taskId);
 				endCallBack?.Invoke(handle.Result);
 				Addressables.Release(handle);
-				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId));
+				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName));
 				if (handle.Result == null) {
 					Addressables.Release(handle);
-					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId));
+					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId, assetName));
 				}
 			}
 		}
@@ -132,10 +131,10 @@ namespace AureFramework.Resource {
 				loadingAssetDic.Remove(taskId);
 				endCallBack?.Invoke(handle.Result);
 				Addressables.Release(handle);
-				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId));
+				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName));
 				if (handle.Result == null) {
 					Addressables.Release(handle);
-					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId));
+					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId, assetName));
 				}
 			}
 		}

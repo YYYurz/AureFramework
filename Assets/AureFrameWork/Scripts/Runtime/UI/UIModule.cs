@@ -20,9 +20,9 @@ namespace AureFramework.UI
 	/// </summary>
 	public sealed partial class UIModule : AureFrameworkModule, IUIModule
 	{
-		private Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string,UIGroup>();
-		private Queue<int> loadingTaskIdQue = new Queue<int>();
-		private Queue<int> waitingUIFormQue = new Queue<int>();
+		private readonly Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string, UIGroup>();
+		private readonly Dictionary<string, IObject<GameObject>> usingUIObject = new Dictionary<string, IObject<GameObject>>(); 
+		private readonly List<string> loadingUINameList = new List<string>();
 		private IObjectPool<GameObject> uiObjectPool;
 
 		public override int Priority => 10;
@@ -42,7 +42,17 @@ namespace AureFramework.UI
 			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
 		}
 		
-		public void OpenUI(string uiName, object userData) {
+		public void OpenUI(string uiName, string uiGroupName, object userData) {
+			if (string.IsNullOrEmpty(uiName)) {
+				Debug.LogError("AureFramework UIModule : UI name is null.");
+				return;
+			}
+
+			if (string.IsNullOrEmpty(uiGroupName)) {
+				Debug.LogError("AureFramework UIModule : UI group name is null.");
+				return;
+			}
+
 			
 		}
 		
@@ -50,6 +60,22 @@ namespace AureFramework.UI
 			
 		}
 
+		public void CloseAllLoadingUI() {
+			
+		}
+
+		public UIForm GetAlreadyOpenUI(string uiName) {
+			return null;
+		}
+
+		public void SetUIObjectLock(bool isLock) {
+			
+		}
+
+		public IObject<GameObject> GetUIObject(string uiName) {
+			
+		}
+		
 		private void OnLoadAssetSuccess(object sender, AureEventArgs e) {
 			
 		}
