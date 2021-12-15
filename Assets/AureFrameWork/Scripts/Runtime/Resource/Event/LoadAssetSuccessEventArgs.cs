@@ -8,6 +8,7 @@
 
 using AureFramework.Event;
 using AureFramework.ReferencePool;
+using UnityEngine;
 
 namespace AureFramework.Resource {
 	public class LoadAssetSuccessEventArgs : AureEventArgs {
@@ -23,10 +24,17 @@ namespace AureFramework.Resource {
 			get;
 		}
 
-		public static LoadAssetSuccessEventArgs Create(int taskId, string assetName) {
+		public Object Asset
+		{
+			private set;
+			get;
+		}
+
+		public static LoadAssetSuccessEventArgs Create(int taskId, string assetName, Object asset) {
 			var loadSuccessEventArgs = Aure.GetModule<IReferencePoolModule>().Acquire<LoadAssetSuccessEventArgs>();
 			loadSuccessEventArgs.TaskId = taskId;
 			loadSuccessEventArgs.AssetName = assetName;
+			loadSuccessEventArgs.Asset = asset;
 			
 			return loadSuccessEventArgs;
 		}
@@ -34,6 +42,7 @@ namespace AureFramework.Resource {
 		public override void Clear() {
 			TaskId = -1;
 			AssetName = null;
+			Asset = null;
 		}
 	}
 }

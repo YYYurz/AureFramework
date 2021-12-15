@@ -24,7 +24,7 @@ namespace AureFramework.Resource {
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
 		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
-		void InstantiateAsync(string assetName, Action<int> beginCallBack, Action<GameObject> endCallBack = null);
+		void InstantiateAsync(string assetName, Action<int> beginCallBack = null, Action<GameObject> endCallBack = null);
 
 		/// <summary>
 		/// 同步加载
@@ -41,7 +41,7 @@ namespace AureFramework.Resource {
 		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
 		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
 		/// <typeparam name="T"></typeparam>
-		void LoadAssetAsync<T>(string assetName, Action<int> beginCallBack, Action<T> endCallBack = null) where T : UnityEngine.Object;
+		void LoadAssetAsync<T>(string assetName, Action<int> beginCallBack = null, Action<T> endCallBack = null) where T : UnityEngine.Object;
 
 		/// <summary>
 		/// 异步加载场景

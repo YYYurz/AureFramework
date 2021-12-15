@@ -70,9 +70,9 @@ namespace AureFramework.ObjectPool {
 		/// </summary>
 		/// <param name="obj"> 对象 </param>
 		/// <param name="isNeed"> 是否需要返回IObject对象 </param>
-		/// <param name="name"> 对象名称 </param>
+		/// <param name="objName"> 对象名称 </param>
 		/// <returns></returns>
-		IObject<T> Register(T obj, bool isNeed, string name = null);
+		IObject<T> Register(T obj, bool isNeed, string objName = null);
 
 
 		/// <summary>
@@ -84,9 +84,9 @@ namespace AureFramework.ObjectPool {
 		/// <summary>
 		/// 获取对象
 		/// </summary>
-		/// <param name="name"> 对象名称 </param>
+		/// <param name="objName"> 对象名称 </param>
 		/// <returns></returns>
-		IObject<T> Spawn(string name);
+		IObject<T> Spawn(string objName);
 		
 		/// <summary>
 		/// 回收对象
@@ -108,5 +108,12 @@ namespace AureFramework.ObjectPool {
 		/// 释放所有没有使用中的对象
 		/// </summary>
 		void ReleaseAllUnused();
+		
+		/// <summary>
+		/// 对象是否存在
+		/// </summary>
+		/// <param name="objName"> 对象名称 </param>
+		/// <returns></returns>
+		bool IsHasObject(string objName);
 	}
 }

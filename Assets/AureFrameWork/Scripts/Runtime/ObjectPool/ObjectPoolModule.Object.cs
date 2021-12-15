@@ -8,6 +8,7 @@
 
 using System;
 using AureFramework.ReferencePool;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace AureFramework.ObjectPool {
@@ -22,8 +23,6 @@ namespace AureFramework.ObjectPool {
 			private bool isLock;
 			private bool isInUse;
 
-			private Action onSpawnCallBack;
-			private Action onRecycleCallBack;
 			private Action onReleaseCallBack;
 
 			/// <summary>
@@ -127,10 +126,25 @@ namespace AureFramework.ObjectPool {
 			}
 
 			/// <summary>
+			/// 注册释放时回调
+			/// </summary>
+			/// <param name="callBack"> 回调 </param>
+			public void RegisterReleaseCallBack(Action callBack) {
+				if (callBack == null) {
+					return;
+				}
+
+				onReleaseCallBack += callBack;
+			}
+			
+			/// <summary>
 			/// 清理
 			/// </summary>
 			public override void Clear() {
-				target = null;
+				onReleaseCallBack?.Invoke();
+				onReleaseCallBack = null;
+				name = null;
+				Destroy(target);
 			}
 		}
 	}

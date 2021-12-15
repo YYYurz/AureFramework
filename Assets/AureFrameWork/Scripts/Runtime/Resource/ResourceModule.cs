@@ -66,7 +66,7 @@ namespace AureFramework.Resource {
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
 		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
-		public async void InstantiateAsync(string assetName, Action<int> beginCallBack, Action<GameObject> endCallBack = null) {
+		public async void InstantiateAsync(string assetName, Action<int> beginCallBack = null, Action<GameObject> endCallBack = null) {
 			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle)) {
 				endCallBack?.Invoke(null);
 				return;
@@ -81,7 +81,7 @@ namespace AureFramework.Resource {
 				loadingAssetDic.Remove(taskId);
 				endCallBack?.Invoke(handle.Result);
 				Addressables.Release(handle);
-				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName));
+				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName, handle.Result));
 				if (handle.Result == null) {
 					Addressables.Release(handle);
 					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId, assetName));
@@ -116,7 +116,7 @@ namespace AureFramework.Resource {
 		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
 		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
 		/// <typeparam name="T"></typeparam>
-		public async void LoadAssetAsync<T>(string assetName, Action<int> beginCallBack, Action<T> endCallBack = null) where T : Object{
+		public async void LoadAssetAsync<T>(string assetName, Action<int> beginCallBack = null, Action<T> endCallBack = null) where T : Object{
 			if (!InternalCreateLoadAsyncHandle<T>(assetName, out var handle)) {
 				endCallBack?.Invoke(null);
 				return;
@@ -131,7 +131,7 @@ namespace AureFramework.Resource {
 				loadingAssetDic.Remove(taskId);
 				endCallBack?.Invoke(handle.Result);
 				Addressables.Release(handle);
-				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName));
+				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName, handle.Result));
 				if (handle.Result == null) {
 					Addressables.Release(handle);
 					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId, assetName));

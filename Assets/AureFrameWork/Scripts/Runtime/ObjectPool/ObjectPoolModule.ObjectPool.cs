@@ -243,6 +243,21 @@ namespace AureFramework.ObjectPool {
 				InternalReleaseUnusedObject(false);
 			}
 
+			/// <summary>
+			/// 对象是否存在
+			/// </summary>
+			/// <param name="objName"> 对象名称 </param>
+			/// <returns></returns>
+			public bool IsHasObject(string objName) {
+				foreach (var internalObj in objectList) {
+					if (internalObj.Name.Equals(objName)) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
 			private ObjectBase InternalCreateObject(T obj, bool isNeed, string objName = null) {
 				for (var i = 0; i < objectList.Count; i++) {
 					if (objectList[i].TargetId.Equals(obj.GetHashCode())) {

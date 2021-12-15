@@ -46,5 +46,11 @@ namespace AureFramework.ObjectPool {
 			get;
 			set;
 		}
+
+		/// <summary>
+		/// 注册释放时回调
+		/// </summary>
+		/// <param name="callBack"> 回调 </param>
+		void RegisterReleaseCallBack(Action callBack);
 	}
 }

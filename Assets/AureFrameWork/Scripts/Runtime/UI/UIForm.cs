@@ -28,6 +28,9 @@ namespace AureFramework.UI {
 			}
 		}
 
+		/// <summary>
+		/// 是否被覆盖暂停
+		/// </summary>
 		public bool IsPause
 		{
 			get
@@ -36,6 +39,9 @@ namespace AureFramework.UI {
 			}
 		}
 
+		/// <summary>
+		/// 所属UI组
+		/// </summary>
 		public IUIGroup UIGroup
 		{
 			get

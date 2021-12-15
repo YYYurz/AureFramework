@@ -14,9 +14,9 @@ namespace AureFramework.UI {
 			/// </summary>
 			private enum UITaskType {
 				/// <summary>
-				/// 无操作
+				/// 丢弃
 				/// </summary>
-				None,
+				Discard,
 				
 				/// <summary>
 				/// 打开UI

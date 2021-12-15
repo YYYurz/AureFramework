@@ -36,7 +36,7 @@ namespace AureFramework.UI {
 				
 				public void Clear() {
 					UIName = null;
-					UITaskType = UITaskType.None;
+					UITaskType = UITaskType.Discard;
 				}
 			}
 		}
