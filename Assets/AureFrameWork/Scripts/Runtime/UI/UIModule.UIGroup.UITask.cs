@@ -21,21 +21,33 @@ namespace AureFramework.UI {
 					get;
 				}
 
+				public object UserData
+				{
+					private set;
+					get;
+				}
+				
 				public UITaskType UITaskType
 				{
 					private set;
 					get;
 				}
 
-				public static UITask Create(string uiName, UITaskType uiTaskType) {
+				public static UITask Create(string uiName, UITaskType uiTaskType, object userData) {
 					var uiTask = Aure.GetModule<IReferencePoolModule>().Acquire<UITask>();
 					uiTask.UIName = uiName;
+					uiTask.UserData = userData;
 					uiTask.UITaskType = uiTaskType;
 					return uiTask;
+				}
+
+				public void Discard() {
+					UITaskType = UITaskType.Discard;
 				}
 				
 				public void Clear() {
 					UIName = null;
+					UserData = null;
 					UITaskType = UITaskType.Discard;
 				}
 			}

@@ -105,6 +105,18 @@ namespace AureFramework.ObjectPool {
 		void UnlockAll();
 
 		/// <summary>
+		/// 对象加锁（同名所有对象）
+		/// </summary>
+		/// <param name="objName"> 对象名称 </param>
+		void Lock(string objName);
+		
+		/// <summary>
+		/// 对象解锁（同名所有对象）
+		/// </summary>
+		/// <param name="objName"> 对象名称 </param>
+		void Unlock(string objName);
+
+		/// <summary>
 		/// 释放所有没有使用中的对象
 		/// </summary>
 		void ReleaseAllUnused();

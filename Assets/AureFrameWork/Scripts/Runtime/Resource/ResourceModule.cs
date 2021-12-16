@@ -163,11 +163,11 @@ namespace AureFramework.Resource {
 		/// </summary>
 		/// <param name="taskId"> 加载任务Id </param>
 		public void ReleaseTask(int taskId) {
-			if (!loadingAssetDic.TryGetValue(taskId, out var asset)) {
+			if (!loadingAssetDic.TryGetValue(taskId, out var loadingHandle)) {
 				return;
 			}
 
-			Addressables.Release(asset);
+			Addressables.Release(loadingHandle);
 			loadingAssetDic.Remove(taskId);
 		}
 

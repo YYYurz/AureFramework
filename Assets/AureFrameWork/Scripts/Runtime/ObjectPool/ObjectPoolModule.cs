@@ -98,7 +98,7 @@ namespace AureFramework.ObjectPool {
 		/// <param name="poolName"> 对象池名称 </param>
 		/// </summary>
 		public void DestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : Object {
-			InternalDestroyObjectPool<T>(poolName, objPool);
+			InternalDestroyObjectPool(poolName, objPool);
 		}
 		
 		/// <summary>
@@ -121,7 +121,7 @@ namespace AureFramework.ObjectPool {
 			return objectPool;
 		}
 
-		private void InternalDestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : Object {
+		private static void InternalDestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : Object {
 			if (objPool == null || !TryGetObjectPool<T>(poolName, out var objectPool)) {
 				Debug.LogError($"AureFramework ObjectPoolModule : Object Pool is invalid.");
 				return;
@@ -139,7 +139,7 @@ namespace AureFramework.ObjectPool {
 			}
 		}
 
-		private bool TryGetObjectPool<T>(string poolName, out ObjectPoolBase objectPool) where T : Object {
+		private static bool TryGetObjectPool<T>(string poolName, out ObjectPoolBase objectPool) where T : Object {
 			objectPool = null;
 			foreach (var objPool in ObjectPoolList) {
 				if (objPool.ObjectType == typeof(T) && objPool.Name.Equals(poolName)) {

@@ -237,6 +237,30 @@ namespace AureFramework.ObjectPool {
 			}
 
 			/// <summary>
+			/// 对象加锁（同名所有对象）
+			/// </summary>
+			/// <param name="objName"> 对象名称 </param>
+			public void Lock(string objName) {
+				foreach (var internalObject in objectList) {
+					if (internalObject.Name.Equals(objName)) {
+						internalObject.IsLock = true;
+					}
+				}
+			}
+
+			/// <summary>
+			/// 对象解锁（同名所有对象）
+			/// </summary>
+			/// <param name="objName"> 对象名称 </param>
+			public void Unlock(string objName) {
+				foreach (var internalObject in objectList) {
+					if (internalObject.Name.Equals(objName)) {
+						internalObject.IsLock = false;
+					}
+				}
+			}
+
+			/// <summary>
 			/// 释放所有没有使用中的对象
 			/// </summary>
 			public override void ReleaseAllUnused() {

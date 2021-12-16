@@ -23,8 +23,6 @@ namespace AureFramework.ObjectPool {
 			private bool isLock;
 			private bool isInUse;
 
-			private Action onReleaseCallBack;
-
 			/// <summary>
 			/// 获取对象唯一Id
 			/// </summary>
@@ -126,23 +124,9 @@ namespace AureFramework.ObjectPool {
 			}
 
 			/// <summary>
-			/// 注册释放时回调
-			/// </summary>
-			/// <param name="callBack"> 回调 </param>
-			public void RegisterReleaseCallBack(Action callBack) {
-				if (callBack == null) {
-					return;
-				}
-
-				onReleaseCallBack += callBack;
-			}
-			
-			/// <summary>
 			/// 清理
 			/// </summary>
 			public override void Clear() {
-				onReleaseCallBack?.Invoke();
-				onReleaseCallBack = null;
 				name = null;
 				Destroy(target);
 			}

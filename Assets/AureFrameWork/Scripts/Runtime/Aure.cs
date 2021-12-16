@@ -86,25 +86,20 @@ namespace AureFramework
 					break;
 				}
 			}
-		
+
 			if (tempModule != null) {
 				var curNode = ModuleLinked.First;
-				while (curNode != null)
-				{
-					if (tempModule.Priority > curNode.Value.Priority)
-					{
+				while (curNode != null) {
+					if (tempModule.Priority > curNode.Value.Priority) {
 						break;
 					}
-		
+
 					curNode = curNode.Next;
 				}
-		
-				if (curNode != null)
-				{
+
+				if (curNode != null) {
 					ModuleLinked.AddBefore(curNode, tempModule);
-				}
-				else
-				{
+				} else {
 					ModuleLinked.AddLast(tempModule);
 				}
 

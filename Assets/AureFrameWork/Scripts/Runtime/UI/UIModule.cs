@@ -20,7 +20,7 @@ namespace AureFramework.UI
 	public sealed partial class UIModule : AureFrameworkModule, IUIModule
 	{
 		private readonly Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string, UIGroup>();
-		private readonly Dictionary<string, int> loadingUIDic = new Dictionary<string, int>();
+		private readonly List<int> loadingUITaskIdDic = new List<int>();
 		private IObjectPool<GameObject> uiObjectPool;
 		private IResourceModule resourceModule;
 
@@ -42,6 +42,12 @@ namespace AureFramework.UI
 			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
 		}
 		
+		/// <summary>
+		/// 打开UI
+		/// </summary>
+		/// <param name="uiName"> UI名称 </param>
+		/// <param name="uiGroupName"> UI组名称 </param>
+		/// <param name="userData"> 用户数据 </param>
 		public void OpenUI(string uiName, string uiGroupName, object userData) {
 			if (string.IsNullOrEmpty(uiName)) {
 				Debug.LogError("AureFramework UIModule : UI name is null.");
@@ -53,11 +59,15 @@ namespace AureFramework.UI
 				return;
 			}
 
+			if (!uiGroupDic.ContainsKey(uiGroupName)) {
+				Debug.LogError("AureFramework UIModule : UI group is not exist.");
+			}
+
 			if (!uiObjectPool.IsHasObject(uiName)) {
-				resourceModule.LoadAssetAsync<GameObject>(uiName);
+				resourceModule.LoadAssetAsync<GameObject>(uiName, OnLoadAssetBegin);
 			}
 			
-			
+			uiGroupDic[uiGroupName].OpenUI(uiName, userData);
 		}
 		
 		/// <summary>
@@ -125,32 +135,90 @@ namespace AureFramework.UI
 				Debug.LogError("AureFramework UIModule : UI group name is null.");
 				return;
 			}
-			
-			foreach (var uiGroup in uiGroupDic) {
-				if (uiGroup.Value.GroupName.Equals(groupName)){
-					uiGroup.Value.CloseAllUI();
-					break;
-				}
-			}
+
+			var uiGroup = InternalGetUIGroup(groupName);
+			uiGroup?.CloseAllUI();
 		}
 
 		/// <summary>
-		/// 取消所有处理中的UI（如加载中未打开的界面，由于前者未加载完成排在后面未能关闭的）
+		/// 取消所有处理中、加载中的UI（如加载中未打开的界面，由于前者未加载完成排在后面未能关闭的）
 		/// </summary>
 		public void CancelAllProcessingUI() {
+			foreach (var taskId in loadingUITaskIdDic) {
+				resourceModule.ReleaseTask(taskId);
+			}
 			
+			foreach (var uiGroup in uiGroupDic) {
+				uiGroup.Value.ClearAllWaitingUITask();
+			}
+			
+			loadingUITaskIdDic.Clear();
 		}
 
-		public UIForm GetAlreadyOpenUI(string uiName) {
+		/// <summary>
+		/// UI对象加锁
+		/// </summary>
+		/// <param name="uiName"> UI名称 </param>
+		public void LockUIObject(string uiName) {
+			if (string.IsNullOrEmpty(uiName)) {
+				Debug.LogError("AureFramework UIModule : UI name is null.");
+				return;
+			}
+			
+			uiObjectPool.Lock(uiName);
+		}
+		
+		/// <summary>
+		/// UI对象解锁
+		/// </summary>
+		/// <param name="uiName"> UI名称 </param>
+		public void UnlockUIObject(string uiName) {
+			if (string.IsNullOrEmpty(uiName)) {
+				Debug.LogError("AureFramework UIModule : UI name is null.");
+				return;
+			}
+			
+			uiObjectPool.Unlock(uiName);
+		}
+
+		/// <summary>
+		/// 添加UI组
+		/// </summary>
+		/// <param name="groupName">  </param>
+		/// <param name="groupDepth"></param>
+		public void AddUIGroup(string groupName, int groupDepth) {
+			if (uiGroupDic.ContainsKey(groupName)) {
+				Debug.LogError("AureFramework UIModule : UI group is already exist.");
+				return;
+			}
+			
+			var uiGroup = new UIGroup(uiObjectPool, groupName, groupDepth);
+			uiGroupDic.Add(groupName, uiGroup);
+		}
+
+		/// <summary>
+		/// 获取UI组
+		/// </summary>
+		/// <param name="groupName"> UI组名称 </param>
+		/// <returns></returns>
+		public IUIGroup GetUIGroup(string groupName) {
+			return InternalGetUIGroup(groupName);
+		}
+
+		private UIGroup InternalGetUIGroup(string groupName) {
+			foreach (var uiGroup in uiGroupDic) {
+				if (uiGroup.Value.GroupName.Equals(groupName)) {
+					return uiGroup.Value;
+				}
+			}
+			
 			return null;
 		}
 
-		public void SetUIObjectLock(bool isLock) {
-			
-		}
-
-		public IUIGroup GetUIGroup() {
-			return null;
+		private void OnLoadAssetBegin(int taskId) {
+			if (!loadingUITaskIdDic.Contains(taskId)) {
+				loadingUITaskIdDic.Add(taskId);
+			}
 		}
 		
 		private void OnLoadAssetSuccess(object sender, AureEventArgs e) {
@@ -159,11 +227,10 @@ namespace AureFramework.UI
 		}
 		
 		private void OnLoadAssetFailed(object sender, AureEventArgs e) {
-			
-		}
-
-		private void OnUIObjectRelease(IObject<GameObject> uiObject) {
-			
+			var loadAssetFailedEventArgs = (LoadAssetFailedEventArgs) e;
+			foreach (var uiGroup in uiGroupDic) {
+				uiGroup.Value.DiscardUITask(loadAssetFailedEventArgs.AssetName);
+			}
 		}
 	}
 }

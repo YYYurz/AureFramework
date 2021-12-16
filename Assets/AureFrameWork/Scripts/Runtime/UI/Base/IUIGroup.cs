@@ -15,24 +15,24 @@ namespace AureFramework.UI {
 		/// </summary>
 		/// <param name="uiName"> 界面资源 </param>
 		/// <returns></returns>
-		bool HasUIForm(string uiName);
+		// bool HasUIForm(string uiName);
 
 		/// <summary>
 		/// 获取界面
 		/// </summary>
 		/// <param name="uiName"></param>
 		/// <returns></returns>
-		IUIForm GetUIForm(string uiName);
+		// IUIForm GetUIForm(string uiName);
 
 		/// <summary>
 		/// 获取所有界面
 		/// </summary>
 		/// <returns></returns>
-		IUIForm GetAllUIForm();
+		// IUIForm GetAllUIForm();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		void OpenUIForm();
+		// void OpenUIForm();
 	}
 }
