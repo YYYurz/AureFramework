@@ -18,6 +18,14 @@ namespace AureFramework
 	public class Aure : MonoBehaviour {
 		private static readonly List<AureFrameworkModule> RegisteredModuleList = new List<AureFrameworkModule>();
 		private static readonly LinkedList<AureFrameworkModule> ModuleLinked= new LinkedList<AureFrameworkModule>();
+		private const string frameworkVersion = "0.0.0.1";
+		private const string gameVersion = "0.0.0.1";
+
+		private void Awake() {
+			Debug.Log($"Aure Framework Version:{frameworkVersion}");
+			Debug.Log($"Game Version:{gameVersion}");
+			Debug.Log($"Unity Version:{Application.unityVersion}");
+		}
 
 		/// <summary>
 		/// 框架轮询
@@ -35,6 +43,7 @@ namespace AureFramework
 			foreach (var module in ModuleLinked) {
 				module.Clear();
 			}
+			
 			ModuleLinked.Clear();
 			Application.Quit();
 		}

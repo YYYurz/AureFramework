@@ -7,7 +7,6 @@
 //------------------------------------------------------------
 
 using System.Collections.Generic;
-using AureFramework.Event;
 using AureFramework.ObjectPool;
 using AureFramework.Resource;
 using UnityEngine;
@@ -21,7 +20,7 @@ namespace AureFramework.UI
 	{
 		private readonly Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string, UIGroup>();
 		private readonly Dictionary<int, string> loadingUIDic = new Dictionary<int, string>();
-		private LoadAssetCallbacks loadAssetCallbacks;
+		private InstantiateGameObjectCallbacks instantiateGameObjectCallbacks;
 		private IObjectPool<GameObject> uiObjectPool;
 		private IResourceModule resourceModule;
 
@@ -30,7 +29,7 @@ namespace AureFramework.UI
 		public override void Init() {
 			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<GameObject>("UI Pool", 100, 240);
 			resourceModule = Aure.GetModule<IResourceModule>();
-			loadAssetCallbacks = new LoadAssetCallbacks(OnLoadAssetBegin, OnLoadAssetSuccess, null, OnLoadAssetFailed);
+			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin, OnInstantiateUISuccess, null, OnInstantiateUIFailed);
 		}
 
 		public override void Tick(float elapseTime, float realElapseTime) {
@@ -62,8 +61,8 @@ namespace AureFramework.UI
 				Debug.LogError("AureFramework UIModule : UI group is not exist.");
 			}
 
-			if (!uiObjectPool.IsHasObject(uiName)) {
-				resourceModule.LoadAssetAsync<GameObject>(uiName, loadAssetCallbacks);
+			if (!uiObjectPool.IsHasObject(uiName) && !loadingUIDic.ContainsValue(uiName)) {
+				resourceModule.InstantiateAsync(uiName, instantiateGameObjectCallbacks);
 			}
 			
 			uiGroupDic[uiGroupName].OpenUI(uiName, userData);
@@ -143,15 +142,15 @@ namespace AureFramework.UI
 		/// 取消所有处理中、加载中的UI
 		/// </summary>
 		public void CancelAllProcessingUI() {
-			// foreach (var taskId in loadingUIDic) {
-			// 	resourceModule.ReleaseTask(taskId);
-			// }
-			//
-			// foreach (var uiGroup in uiGroupDic) {
-			// 	uiGroup.Value.ClearAllUITask();
-			// }
-			//
-			// loadingUITaskIdDic.Clear();
+			foreach (var loadingTask in loadingUIDic) {
+				resourceModule.ReleaseTask(loadingTask.Key);
+			}
+			
+			foreach (var uiGroup in uiGroupDic) {
+				uiGroup.Value.ClearAllUITask();
+			}
+			
+			loadingUIDic.Clear();
 		}
 
 		/// <summary>
@@ -214,21 +213,23 @@ namespace AureFramework.UI
 			return null;
 		}
 
-		private void OnLoadAssetBegin(string assetName, int taskId) {
+		private void OnInstantiateUIBegin(string uiName, int taskId) {
 			if (!loadingUIDic.ContainsKey(taskId)) {
-				
+				loadingUIDic.Add(taskId, uiName);
 			}
 		}
 		
-		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset) {
-			uiObjectPool.Register((GameObject) asset, false, assetName);
+		private void OnInstantiateUISuccess(string uiName, int taskId, GameObject uiGameObject) {
+			uiObjectPool.Register(uiGameObject, false, uiName);
+			loadingUIDic.Remove(taskId);
 		}
 		
-		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage) {
+		private void OnInstantiateUIFailed(string uiName, int taskId, string errorMessage) {
 			foreach (var uiGroup in uiGroupDic) {
-				uiGroup.Value.DiscardUITask(assetName);
+				uiGroup.Value.DiscardUITask(uiName);
 			}
 			
+			loadingUIDic.Remove(taskId);
 			Debug.LogError(errorMessage);
 		}
 	}

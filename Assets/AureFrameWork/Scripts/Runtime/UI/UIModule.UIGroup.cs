@@ -72,7 +72,7 @@ namespace AureFramework.UI {
 					referencePoolModule.Release(uiTask);
 					waitTime = 0f;
 				} else {
-					waitTime = TryProcessTask() ? 0f : waitTime;
+					waitTime = InternalTryProcessTask() ? 0f : waitTime;
 				}
 				
 				foreach (var uiForm in uiFormLinked) {
@@ -114,7 +114,7 @@ namespace AureFramework.UI {
 			/// <param name="uiName"> UI名称 </param>
 			/// <param name="userData"> 用户数据 </param>
 			public void OpenUI(string uiName, object userData) {
-				waitingUITaskQue.Enqueue(UITask.Create(uiName, UITaskType.OpenUI, userData));
+				InternalCreateUITask(uiName, UITaskType.OpenUI, userData);
 			}
 
 			/// <summary>
@@ -122,7 +122,7 @@ namespace AureFramework.UI {
 			/// </summary>
 			/// <param name="uiName"> UI名称 </param>
 			public void CloseUI(string uiName) {
-				waitingUITaskQue.Enqueue(UITask.Create(uiName, UITaskType.CloseUI, null));
+				InternalCreateUITask(uiName, UITaskType.CloseUI, null);
 			}
 
 			/// <summary>
@@ -141,18 +141,16 @@ namespace AureFramework.UI {
 				var curNode = uiFormLinked.Last;
 				while (curNode != null) {
 					if (curNode.Value.UIName.Equals(uiName)) {
-						waitingUITaskQue.Enqueue(UITask.Create(curNode.Value.UIName, UITaskType.CloseUI, null));
+						InternalCreateUITask(curNode.Value.UIName, UITaskType.CloseUI, null);
 					}
 					curNode = curNode.Previous;
 				}
 			}
 
-			private void CreateUITask(string uiName, UITaskType uiTaskType, object userData) {
-				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiTaskType, userData));
-				TryProcessTask();
-			}
-
 			public void ClearAllUITask() {
+				foreach (var uiTask in waitingUITaskQue) {
+					referencePoolModule.Release(uiTask);
+				}
 				waitingUITaskQue.Clear();
 			}
 
@@ -164,7 +162,12 @@ namespace AureFramework.UI {
 				}
 			}
 			
-			private bool TryProcessTask() {
+			private void InternalCreateUITask(string uiName, UITaskType uiTaskType, object userData) {
+				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiTaskType, userData));
+				InternalTryProcessTask();
+			}
+			
+			private bool InternalTryProcessTask() {
 				if (waitingUITaskQue.Count == 0) {
 					return true;
 				}
@@ -175,22 +178,22 @@ namespace AureFramework.UI {
 						waitingUITaskQue.Dequeue();
 						return true;
 					case UITaskType.OpenUI:
-						return TryOpenUI(uiTask.UIName, uiTask.UserData);
+						return InternalTryOpenUI(uiTask.UIName, uiTask.UserData);
 					case UITaskType.CloseUI:
-						return TryCloseUI(uiTask.UIName);
+						return InternalTryCloseUI(uiTask.UIName);
 				}
 				
 				Refresh();
 				return true;
 			}
 
-			private bool TryOpenUI(string uiName, object userData) {
+			private bool InternalTryOpenUI(string uiName, object userData) {
 				var uiNode = GetUINode(uiName);
 				if (uiNode != null) {
 					uiNode.Value.OnOpen(userData);
 					uiFormLinked.Remove(uiNode);
 					uiFormLinked.AddLast(uiNode);
-					waitingUITaskQue.Dequeue();
+					referencePoolModule.Release(waitingUITaskQue.Dequeue());
 					return true;
 				}
 
@@ -204,7 +207,6 @@ namespace AureFramework.UI {
 					uiForm.OnOpen(userData);
 					uiFormLinked.AddLast(uiForm);
 					usingUIObject.Add(uiName, uiObject);
-					waitingUITaskQue.Dequeue();
 				}
 				catch (Exception e) {
 					Debug.LogError(e.Message);
@@ -213,7 +215,7 @@ namespace AureFramework.UI {
 				return true;
 			}
 
-			private bool TryCloseUI(string uiName) {
+			private bool InternalTryCloseUI(string uiName) {
 				var uiNode = GetUINode(uiName);
 				if (uiNode != null) {
 					var uiObject = usingUIObject[uiName];
@@ -221,7 +223,7 @@ namespace AureFramework.UI {
 					uiNode.Value.OnClose();
 					uiFormLinked.Remove(uiNode);
 					usingUIObject.Remove(uiName);
-					waitingUITaskQue.Dequeue();
+					referencePoolModule.Release(waitingUITaskQue.Dequeue());
 					return true;
 				}
 

@@ -14,15 +14,21 @@ using UnityEngine;
 namespace GameTest {
 	public class ProcedureMain : ProcedureBase {
 		private LoadAssetCallbacks loadAssetCallbacks;
-
+		private InstantiateGameObjectCallbacks instantiateGameObjectCallbacks;
+		private IResourceModule resourceModule;
 		
 		public override void OnEnter(params object[] args) {
 			base.OnEnter(args);
-
+			resourceModule = Aure.GetModule<IResourceModule>();
 			loadAssetCallbacks = new LoadAssetCallbacks(OnLoadAssetBegin, OnLoadAssetSuccess, OnLoadAssetUpdate, OnLoadAssetFailed);
+			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnLoadAssetBegin, OnLoadAssetSuccess, OnLoadAssetUpdate, OnLoadAssetFailed);
 			
-			Aure.GetModule<IResourceModule>().LoadAssetAsync<GameObject>("Ball", loadAssetCallbacks);
-			Debug.Log($"OnEnter");
+			// resourceModule.LoadAssetAsync<GameObject>("Boom", loadAssetCallbacks);
+			// resourceModule.LoadAssetAsync<GameObject>("Boom", loadAssetCallbacks);
+			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
+			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
+			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
+			resourceModule.LoadSceneAsync("TestScene");
 		}
 
 		public override void OnUpdate() {
@@ -30,19 +36,21 @@ namespace GameTest {
 
 		}
 		
-		private static void OnLoadAssetBegin(string assetName, int taskId) {
+		private void OnLoadAssetBegin(string assetName, int taskId) {
 			Debug.Log($"OnLoadAssetBegin  assetName:{assetName}  taskId:{taskId}");
 		}			
 
-		private static void OnLoadAssetSuccess(string assetName, int taskId, Object asset) {
+		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset) {
 			Debug.Log($"OnLoadAssetSuccess  assetName:{assetName}  taskId:{taskId}");
+			Object.Instantiate((GameObject)asset);
+			// resourceModule.ReleaseAsset(asset);
 		}
 
-		private static void OnLoadAssetUpdate(int taskId, float progress) {
+		private void OnLoadAssetUpdate(int taskId, float progress) {
 			Debug.Log($"OnLoadAssetUpdate  taskId:{taskId}  progress:{progress}");
 		}
 		
-		private static void OnLoadAssetFailed(string assetName, int taskId, string errorMessage) {
+		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage) {
 			Debug.Log($"OnLoadAssetFailed  assetName:{assetName}  taskId:{taskId}  errorMessage:{errorMessage}");
 		}
 	}

@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace AureFramework.Resource {
@@ -134,7 +135,7 @@ namespace AureFramework.Resource {
 			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle)) {
 				return;
 			}
-			var taskId = GetTaskId();
+			var taskId = GetTaskId(); 
 			loadingAssetDic.Add(taskId, handle);
 			instantiateCallbackDic.Add(taskId, instantiateGameObjectCallbacks);
 			instantiateGameObjectCallbacks?.InstantiateGameObjectBeginCallback?.Invoke(assetName, taskId);
@@ -146,11 +147,11 @@ namespace AureFramework.Resource {
 					instantiateGameObjectCallbacks?.InstantiateGameObjectSuccessCallback?.Invoke(assetName, taskId, handle.Result);
 				} else {
 					instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, taskId, handle.OperationException.Message);
+					Addressables.Release(handle);
 				}
 				
 				loadingAssetDic.Remove(taskId);
 				instantiateCallbackDic.Remove(taskId);
-				Addressables.Release(handle);
 			}
 		}
 
@@ -179,7 +180,7 @@ namespace AureFramework.Resource {
 					Addressables.Release(handle);
 				}
 				
-				loadingAssetDic.Remove(taskId);
+				sceneCallbackDic.Remove(taskId);
 				instantiateCallbackDic.Remove(taskId);
 			}
 		}
@@ -250,7 +251,7 @@ namespace AureFramework.Resource {
 				return false;
 			}
 
-			handle = Addressables.LoadSceneAsync(sceneName);
+			handle = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 			return true;
 		}
 		
