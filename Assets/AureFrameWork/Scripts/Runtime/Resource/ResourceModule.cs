@@ -7,9 +7,7 @@
 //------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using AureFramework.Event;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -17,10 +15,15 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 using Object = UnityEngine.Object;
 
 namespace AureFramework.Resource {
+	/// <summary>
+	/// 资源加载模块
+	/// </summary>
 	public sealed class ResourceModule : AureFrameworkModule, IResourceModule {
 		private readonly Dictionary<int, AsyncOperationHandle> loadingAssetDic = new Dictionary<int, AsyncOperationHandle>();
+		private readonly Dictionary<int, LoadAssetCallbacks> assetCallbackDic = new Dictionary<int, LoadAssetCallbacks>();
+		private readonly Dictionary<int, InstantiateGameObjectCallbacks> instantiateCallbackDic = new Dictionary<int, InstantiateGameObjectCallbacks>();
+		private readonly Dictionary<int, LoadSceneCallbacks> sceneCallbackDic = new Dictionary<int, LoadSceneCallbacks>();
 		private int taskIdAccumulator;
-		private IEventModule eventModule;
 
 		/// <summary>
 		/// 框架优先级，最小的优先初始化以及轮询
@@ -29,11 +32,23 @@ namespace AureFramework.Resource {
 		
 		public override void Init() {
 			Addressables.InitializeAsync();
-			eventModule = Aure.GetModule<IEventModule>();
 		}
 		
 		public override void Tick(float elapseTime, float realElapseTime) {
+			foreach (var assetCallback in assetCallbackDic) {
+				var handle = loadingAssetDic[assetCallback.Key];
+				assetCallback.Value?.LoadAssetUpdateCallback?.Invoke(assetCallback.Key, handle.PercentComplete);
+			}
 			
+			foreach (var instantiateCallback in instantiateCallbackDic) {
+				var handle = loadingAssetDic[instantiateCallback.Key];
+				instantiateCallback.Value?.InstantiateGameObjectUpdateCallback?.Invoke(instantiateCallback.Key, handle.PercentComplete);
+			}
+			
+			foreach (var sceneCallback in sceneCallbackDic) {
+				var handle = loadingAssetDic[sceneCallback.Key];
+				sceneCallback.Value?.LoadSceneUpdateCallback?.Invoke(sceneCallback.Key, handle.PercentComplete);
+			}
 		}
 		
 		public override void Clear() {
@@ -58,35 +73,6 @@ namespace AureFramework.Resource {
 			}
 			Addressables.Release(handle);
 			return null;
-		}
-		
-		/// <summary>
-		/// 异步克隆
-		/// </summary>
-		/// <param name="assetName"> 资源Key </param>
-		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
-		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
-		public async void InstantiateAsync(string assetName, Action<int> beginCallBack = null, Action<GameObject> endCallBack = null) {
-			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle)) {
-				endCallBack?.Invoke(null);
-				return;
-			}
-			var taskId = GetTaskId();
-			beginCallBack?.Invoke(taskId);
-			loadingAssetDic.Add(taskId, handle);
-
-			await handle.Task;
-
-			if (loadingAssetDic.ContainsKey(taskId)) {
-				loadingAssetDic.Remove(taskId);
-				endCallBack?.Invoke(handle.Result);
-				Addressables.Release(handle);
-				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName, handle.Result));
-				if (handle.Result == null) {
-					Addressables.Release(handle);
-					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId, assetName));
-				}
-			}
 		}
 
 		/// <summary>
@@ -113,41 +99,89 @@ namespace AureFramework.Resource {
 		/// 异步加载资源
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
-		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
-		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
+		/// <param name="loadAssetCallbacks"> 加载资源回调 </param>
 		/// <typeparam name="T"></typeparam>
-		public async void LoadAssetAsync<T>(string assetName, Action<int> beginCallBack = null, Action<T> endCallBack = null) where T : Object{
+		public async void LoadAssetAsync<T>(string assetName, LoadAssetCallbacks loadAssetCallbacks = null) where T : Object{
 			if (!InternalCreateLoadAsyncHandle<T>(assetName, out var handle)) {
-				endCallBack?.Invoke(null);
 				return;
 			}
 			var taskId = GetTaskId();
-			beginCallBack?.Invoke(taskId);
 			loadingAssetDic.Add(taskId, handle);
-			
+			assetCallbackDic.Add(taskId, loadAssetCallbacks);
+			loadAssetCallbacks?.LoadAssetBeginCallback?.Invoke(assetName, taskId);
+
 			await handle.Task;
 
 			if (loadingAssetDic.ContainsKey(taskId)) {
-				loadingAssetDic.Remove(taskId);
-				endCallBack?.Invoke(handle.Result);
-				Addressables.Release(handle);
-				eventModule.Fire(this, LoadAssetSuccessEventArgs.Create(taskId, assetName, handle.Result));
-				if (handle.Result == null) {
+				if (handle.Status == AsyncOperationStatus.Succeeded) {
+					loadAssetCallbacks?.LoadAssetSuccessCallback?.Invoke(assetName, taskId, handle.Result);
+				} else {
+					loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, taskId, handle.OperationException.Message);
 					Addressables.Release(handle);
-					eventModule.Fire(this, LoadAssetFailedEventArgs.Create(taskId, assetName));
 				}
+				
+				loadingAssetDic.Remove(taskId);
+				assetCallbackDic.Remove(taskId);
+			}
+		}
+		
+		/// <summary>
+		/// 异步克隆
+		/// </summary>
+		/// <param name="assetName"> 资源Key </param>
+		/// <param name="instantiateGameObjectCallbacks"> 克隆游戏物体回调 </param>
+		public async void InstantiateAsync(string assetName, InstantiateGameObjectCallbacks instantiateGameObjectCallbacks = null) {
+			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle)) {
+				return;
+			}
+			var taskId = GetTaskId();
+			loadingAssetDic.Add(taskId, handle);
+			instantiateCallbackDic.Add(taskId, instantiateGameObjectCallbacks);
+			instantiateGameObjectCallbacks?.InstantiateGameObjectBeginCallback?.Invoke(assetName, taskId);
+
+			await handle.Task;
+
+			if (loadingAssetDic.ContainsKey(taskId)) {
+				if (handle.Status == AsyncOperationStatus.Succeeded) {
+					instantiateGameObjectCallbacks?.InstantiateGameObjectSuccessCallback?.Invoke(assetName, taskId, handle.Result);
+				} else {
+					instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, taskId, handle.OperationException.Message);
+				}
+				
+				loadingAssetDic.Remove(taskId);
+				instantiateCallbackDic.Remove(taskId);
+				Addressables.Release(handle);
 			}
 		}
 
 		/// <summary>
 		/// 异步加载场景
 		/// </summary>
-		/// <param name="sceneName"> 场景资源Key </param>
-		/// <param name="percentCallBack"> 加载百分比回调 </param>
-		/// <param name="endCallBack"> 加载完成回调 </param>
+		/// <param name="sceneAssetName"> 场景资源Key </param>
+		/// <param name="loadSceneCallbacks"> 加载场景资源回调 </param>
 		/// <returns></returns>
-		public void LoadSceneAsync(string sceneName, Action<float> percentCallBack, Action<SceneInstance> endCallBack) {
-			StartCoroutine(InternalLoadSceneAsync(sceneName, percentCallBack, endCallBack));
+		public async void LoadSceneAsync(string sceneAssetName, LoadSceneCallbacks loadSceneCallbacks = null) {
+			if (!InternalCreateSceneAsyncHandle(sceneAssetName, out var handle)) {
+				return;
+			}
+			var taskId = GetTaskId();
+			loadingAssetDic.Add(taskId, handle);
+			sceneCallbackDic.Add(taskId, loadSceneCallbacks);
+			loadSceneCallbacks?.LoadSceneBeginCallback?.Invoke(sceneAssetName, taskId);
+
+			await handle.Task;
+			
+			if (loadingAssetDic.ContainsKey(taskId)) {
+				if (handle.Status == AsyncOperationStatus.Succeeded) {
+					loadSceneCallbacks?.LoadSceneSuccessCallback?.Invoke(sceneAssetName, taskId, handle.Result);
+				} else {
+					loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, taskId, handle.OperationException.Message);
+					Addressables.Release(handle);
+				}
+				
+				loadingAssetDic.Remove(taskId);
+				instantiateCallbackDic.Remove(taskId);
+			}
 		}
 		
 		/// <summary>
@@ -169,6 +203,9 @@ namespace AureFramework.Resource {
 
 			Addressables.Release(loadingHandle);
 			loadingAssetDic.Remove(taskId);
+			assetCallbackDic.Remove(taskId);
+			instantiateCallbackDic.Remove(taskId);
+			sceneCallbackDic.Remove(taskId);
 		}
 
 		/// <summary>
@@ -215,20 +252,6 @@ namespace AureFramework.Resource {
 
 			handle = Addressables.LoadSceneAsync(sceneName);
 			return true;
-		}
-		
-		private static IEnumerator InternalLoadSceneAsync(string sceneName, Action<float> percentCallBack = null, Action<SceneInstance> endCallBack = null) {
-			if (!InternalCreateSceneAsyncHandle(sceneName, out var handle)) {
-				endCallBack?.Invoke(default);
-				yield break;
-			}
-
-			while (!handle.IsDone) {
-				percentCallBack?.Invoke(handle.PercentComplete);
-				yield return null;
-			}
-			
-			endCallBack?.Invoke(handle.Result);
 		}
 		
 		private int GetTaskId() {

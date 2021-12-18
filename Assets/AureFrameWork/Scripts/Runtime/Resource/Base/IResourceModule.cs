@@ -19,14 +19,6 @@ namespace AureFramework.Resource {
 		GameObject InstantiateSync(string assetName);
 
 		/// <summary>
-		/// 异步克隆
-		/// </summary>
-		/// <param name="assetName"> 资源Key </param>
-		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
-		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
-		void InstantiateAsync(string assetName, Action<int> beginCallBack = null, Action<GameObject> endCallBack = null);
-
-		/// <summary>
 		/// 同步加载
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
@@ -38,19 +30,24 @@ namespace AureFramework.Resource {
 		/// 异步加载资源
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
-		/// <param name="beginCallBack"> 克隆开始回调，返回异步任务Id </param>
-		/// <param name="endCallBack"> 克隆完成回调，返回结果 </param>
+		/// <param name="loadAssetCallbacks"> 加载资源回调 </param>
 		/// <typeparam name="T"></typeparam>
-		void LoadAssetAsync<T>(string assetName, Action<int> beginCallBack = null, Action<T> endCallBack = null) where T : UnityEngine.Object;
+		void LoadAssetAsync<T>(string assetName, LoadAssetCallbacks loadAssetCallbacks = null) where T : UnityEngine.Object;
+				
+		/// <summary>
+		/// 异步克隆
+		/// </summary>
+		/// <param name="assetName"> 资源Key </param>
+		/// <param name="instantiateGameObjectCallbacks"> 克隆游戏物体回调 </param>
+		void InstantiateAsync(string assetName, InstantiateGameObjectCallbacks instantiateGameObjectCallbacks = null);
 
 		/// <summary>
 		/// 异步加载场景
 		/// </summary>
-		/// <param name="sceneName"> 场景资源Key </param>
-		/// <param name="percentCallBack"> 加载百分比回调 </param>
-		/// <param name="endCallBack"> 加载完成回调 </param>
+		/// <param name="sceneAssetName"> 场景资源Key </param>
+		/// <param name="loadSceneCallbacks"> 加载场景资源回调 </param>
 		/// <returns></returns>
-		void LoadSceneAsync(string sceneName, Action<float> percentCallBack, Action<SceneInstance> endCallBack);
+		void LoadSceneAsync(string sceneAssetName, LoadSceneCallbacks loadSceneCallbacks = null);
 
 		/// <summary>
 		/// 卸载资源

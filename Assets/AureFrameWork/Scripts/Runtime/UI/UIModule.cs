@@ -20,17 +20,17 @@ namespace AureFramework.UI
 	public sealed partial class UIModule : AureFrameworkModule, IUIModule
 	{
 		private readonly Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string, UIGroup>();
-		private readonly List<int> loadingUITaskIdDic = new List<int>();
+		private readonly Dictionary<int, string> loadingUIDic = new Dictionary<int, string>();
+		private LoadAssetCallbacks loadAssetCallbacks;
 		private IObjectPool<GameObject> uiObjectPool;
 		private IResourceModule resourceModule;
 
 		public override int Priority => 10;
 
 		public override void Init() {
-			Aure.GetModule<IEventModule>().Subscribe<LoadAssetSuccessEventArgs>(OnLoadAssetSuccess);
-			Aure.GetModule<IEventModule>().Subscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
 			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<GameObject>("UI Pool", 100, 240);
 			resourceModule = Aure.GetModule<IResourceModule>();
+			loadAssetCallbacks = new LoadAssetCallbacks(OnLoadAssetBegin, OnLoadAssetSuccess, null, OnLoadAssetFailed);
 		}
 
 		public override void Tick(float elapseTime, float realElapseTime) {
@@ -38,8 +38,7 @@ namespace AureFramework.UI
 		}
 
 		public override void Clear() {
-			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
-			Aure.GetModule<IEventModule>().Unsubscribe<LoadAssetFailedEventArgs>(OnLoadAssetFailed);
+			
 		}
 		
 		/// <summary>
@@ -64,7 +63,7 @@ namespace AureFramework.UI
 			}
 
 			if (!uiObjectPool.IsHasObject(uiName)) {
-				resourceModule.LoadAssetAsync<GameObject>(uiName, OnLoadAssetBegin);
+				resourceModule.LoadAssetAsync<GameObject>(uiName, loadAssetCallbacks);
 			}
 			
 			uiGroupDic[uiGroupName].OpenUI(uiName, userData);
@@ -141,18 +140,18 @@ namespace AureFramework.UI
 		}
 
 		/// <summary>
-		/// 取消所有处理中、加载中的UI（如加载中未打开的界面，由于前者未加载完成排在后面未能关闭的）
+		/// 取消所有处理中、加载中的UI
 		/// </summary>
 		public void CancelAllProcessingUI() {
-			foreach (var taskId in loadingUITaskIdDic) {
-				resourceModule.ReleaseTask(taskId);
-			}
-			
-			foreach (var uiGroup in uiGroupDic) {
-				uiGroup.Value.ClearAllWaitingUITask();
-			}
-			
-			loadingUITaskIdDic.Clear();
+			// foreach (var taskId in loadingUIDic) {
+			// 	resourceModule.ReleaseTask(taskId);
+			// }
+			//
+			// foreach (var uiGroup in uiGroupDic) {
+			// 	uiGroup.Value.ClearAllUITask();
+			// }
+			//
+			// loadingUITaskIdDic.Clear();
 		}
 
 		/// <summary>
@@ -215,22 +214,22 @@ namespace AureFramework.UI
 			return null;
 		}
 
-		private void OnLoadAssetBegin(int taskId) {
-			if (!loadingUITaskIdDic.Contains(taskId)) {
-				loadingUITaskIdDic.Add(taskId);
+		private void OnLoadAssetBegin(string assetName, int taskId) {
+			if (!loadingUIDic.ContainsKey(taskId)) {
+				
 			}
 		}
 		
-		private void OnLoadAssetSuccess(object sender, AureEventArgs e) {
-			var loadAssetSuccessEventArgs = (LoadAssetSuccessEventArgs) e;
-			uiObjectPool.Register((GameObject) loadAssetSuccessEventArgs.Asset, false, loadAssetSuccessEventArgs.AssetName);
+		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset) {
+			uiObjectPool.Register((GameObject) asset, false, assetName);
 		}
 		
-		private void OnLoadAssetFailed(object sender, AureEventArgs e) {
-			var loadAssetFailedEventArgs = (LoadAssetFailedEventArgs) e;
+		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage) {
 			foreach (var uiGroup in uiGroupDic) {
-				uiGroup.Value.DiscardUITask(loadAssetFailedEventArgs.AssetName);
+				uiGroup.Value.DiscardUITask(assetName);
 			}
+			
+			Debug.LogError(errorMessage);
 		}
 	}
 }

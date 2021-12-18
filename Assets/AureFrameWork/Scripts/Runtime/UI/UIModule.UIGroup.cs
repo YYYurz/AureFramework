@@ -12,6 +12,7 @@ using System.Linq;
 using AureFramework.ObjectPool;
 using AureFramework.ReferencePool;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AureFramework.UI {
 	public sealed partial class UIModule : AureFrameworkModule, IUIModule {
@@ -20,6 +21,7 @@ namespace AureFramework.UI {
 		/// </summary>
 		private sealed partial class UIGroup : IUIGroup {
 			private readonly IObjectPool<GameObject> uiObjectPool;
+			private readonly IReferencePoolModule referencePoolModule;
 			private readonly Dictionary<string, IObject<GameObject>> usingUIObject = new Dictionary<string, IObject<GameObject>>();
 			private readonly LinkedList<UIForm> uiFormLinked = new LinkedList<UIForm>();
 			private readonly Queue<UITask> waitingUITaskQue = new Queue<UITask>();
@@ -33,6 +35,7 @@ namespace AureFramework.UI {
 				this.uiObjectPool = uiObjectPool;
 				this.groupName = groupName;
 				this.groupDepth = groupDepth;
+				referencePoolModule = Aure.GetModule<IReferencePoolModule>();
 			}
 			
 			/// <summary>
@@ -47,6 +50,17 @@ namespace AureFramework.UI {
 			}
 
 			/// <summary>
+			/// 获取UI组深度
+			/// </summary>
+			public int GroupDepth
+			{
+				get
+				{
+					return groupDepth;
+				}
+			}
+
+			/// <summary>
 			/// 轮询打开的UI
 			/// 处理未处理的UI操作
 			/// </summary>
@@ -55,7 +69,7 @@ namespace AureFramework.UI {
 				waitTime += elapseTime;
 				if (waitTime > taskExpireTime) {
 					var uiTask = waitingUITaskQue.Dequeue();
-					Aure.GetModule<IReferencePoolModule>().Release(uiTask);
+					referencePoolModule.Release(uiTask);
 					waitTime = 0f;
 				} else {
 					waitTime = TryProcessTask() ? 0f : waitTime;
@@ -115,43 +129,33 @@ namespace AureFramework.UI {
 			/// 清除队列中所有未处理操作，关闭所有已打开UI
 			/// </summary>
 			public void CloseAllUI() {
-				ClearAllWaitingUITask();
-				var curNode = uiFormLinked.Last;
-				while (curNode != null) {
-					waitingUITaskQue.Enqueue(UITask.Create(curNode.Value.UIName, UITaskType.CloseUI, null));
-					curNode = curNode.Previous;
-					uiFormLinked.RemoveLast();
-				}
+				CloseAllExcept();
 			}
 
 			/// <summary>
-			/// 除了传入UI，清除队列中所有未处理操作，关闭所有已打开UI
+			/// 除了传入UI，关闭所有已打开UI
 			/// </summary>
 			/// <param name="uiName"> UI名称 </param>
-			public void CloseAllExcept(string uiName) {
-				ClearAllWaitingUITask();
+			public void CloseAllExcept(string uiName = null) {
+				ClearAllUITask();
 				var curNode = uiFormLinked.Last;
 				while (curNode != null) {
-					var curNodeName = curNode.Value.UIName;
-					curNode = curNode.Previous;
-					if (!curNodeName.Equals(uiName)) {
-						waitingUITaskQue.Enqueue(UITask.Create(curNodeName, UITaskType.CloseUI, null));
-						uiFormLinked.RemoveLast();
+					if (curNode.Value.UIName.Equals(uiName)) {
+						waitingUITaskQue.Enqueue(UITask.Create(curNode.Value.UIName, UITaskType.CloseUI, null));
 					}
+					curNode = curNode.Previous;
 				}
 			}
 
-			/// <summary>
-			/// 清除队列中所有未处理的UI操作
-			/// </summary>
-			public void ClearAllWaitingUITask() {
+			private void CreateUITask(string uiName, UITaskType uiTaskType, object userData) {
+				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiTaskType, userData));
+				TryProcessTask();
+			}
+
+			public void ClearAllUITask() {
 				waitingUITaskQue.Clear();
 			}
-			
-			/// <summary>
-			/// 丢弃队列中UI的操作
-			/// </summary>
-			/// <param name="uiName"> UI名称 </param>
+
 			public void DiscardUITask(string uiName) {
 				foreach (var uiTask in waitingUITaskQue) {
 					if (uiTask.UIName.Equals(uiName)) {
@@ -195,11 +199,17 @@ namespace AureFramework.UI {
 					return false;
 				}
 
-				var uiForm = uiObject.Target.GetComponent<UIForm>();
-				uiForm.OnOpen(userData);
-				uiFormLinked.AddLast(uiForm);
-				usingUIObject.Add(uiName, uiObject);
-				waitingUITaskQue.Dequeue();
+				try {
+					var uiForm = uiObject.Target.GetComponent<UIForm>();
+					uiForm.OnOpen(userData);
+					uiFormLinked.AddLast(uiForm);
+					usingUIObject.Add(uiName, uiObject);
+					waitingUITaskQue.Dequeue();
+				}
+				catch (Exception e) {
+					Debug.LogError(e.Message);
+				}
+				
 				return true;
 			}
 
@@ -219,7 +229,10 @@ namespace AureFramework.UI {
 			}
 			
 			private void Refresh() {
-				
+				var curNode = uiFormLinked.Last;
+				while (curNode != null) {
+					
+				}
 			}
 			
 			private LinkedListNode<UIForm> GetUINode(string uiName) {
