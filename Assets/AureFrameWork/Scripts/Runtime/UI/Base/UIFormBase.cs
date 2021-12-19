@@ -6,56 +6,17 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
 using UnityEngine;
 
 namespace AureFramework.UI {
 	/// <summary>
 	/// UI实体类
 	/// </summary>
-	public abstract class UIForm : MonoBehaviour {
-		private string uiName;
-		private bool isPause;
-		private IUIGroup uiGroup;
-
-		/// <summary>
-		/// UI名称
-		/// </summary>
-		public string UIName
-		{
-			get
-			{
-				return uiName;
-			}
-		}
-
-		/// <summary>
-		/// 是否被覆盖暂停
-		/// </summary>
-		public bool IsPause
-		{
-			get
-			{
-				return isPause;
-			}
-		}
-
-		/// <summary>
-		/// 所属UI组
-		/// </summary>
-		public IUIGroup UIGroup
-		{
-			get
-			{
-				return uiGroup;
-			}
-		}
-
+	public abstract class UIFormBase : MonoBehaviour {
 		/// <summary>
 		/// 初始化
 		/// </summary>
-		public virtual void OnInit() {
-		}
+		public virtual void OnInit() { }
 
 		/// <summary>
 		/// 打开

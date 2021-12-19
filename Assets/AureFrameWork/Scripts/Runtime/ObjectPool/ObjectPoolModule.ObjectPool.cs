@@ -113,6 +113,7 @@ namespace AureFramework.ObjectPool {
 					}
 					
 					capacity = value;
+					InternalReleaseUnusedObject(false);
 				}
 			}
 
@@ -185,6 +186,11 @@ namespace AureFramework.ObjectPool {
 			public IObject<T> Register(T obj, bool isNeed, string objName = null) {
 				if (obj == null) {
 					Debug.LogError("AureFramework ObjectPoolModule : Object is null.");
+					return null;
+				}
+
+				if (objectList.Count >= capacity) {
+					Debug.Log($"AureFramework ObjectPoolModule : Register failed because capacity exceeded, Object Name :{objName}");
 					return null;
 				}
 				

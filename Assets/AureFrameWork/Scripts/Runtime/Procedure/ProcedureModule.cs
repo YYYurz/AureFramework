@@ -14,11 +14,11 @@ using UnityEngine;
 
 namespace AureFramework.Procedure {
 	public class ProcedureModule : AureFrameworkModule, IProcedureModule {
-		[SerializeField] private string[] allProcedureTypeNameList;
-		[SerializeField] private string entranceProcedureTypeName;
-		
 		private Type entranceProcedure;
 		private IFsm procedureFsm;
+		
+		[SerializeField] private string[] allProcedureTypeNameList;
+		[SerializeField] private string entranceProcedureTypeName;
 
 		public ProcedureBase CurrentProcedure => (ProcedureBase)procedureFsm.CurrentState;
 

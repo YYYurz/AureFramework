@@ -120,7 +120,6 @@ namespace AureFramework.Resource {
 					loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, taskId, handle.OperationException.Message);
 					Addressables.Release(handle);
 				}
-				
 				loadingAssetDic.Remove(taskId);
 				assetCallbackDic.Remove(taskId);
 			}

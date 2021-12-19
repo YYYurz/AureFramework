@@ -6,10 +6,12 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using AureFramework.ObjectPool;
 using AureFramework.Resource;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace AureFramework.UI
 {
@@ -23,13 +25,55 @@ namespace AureFramework.UI
 		private InstantiateGameObjectCallbacks instantiateGameObjectCallbacks;
 		private IObjectPool<GameObject> uiObjectPool;
 		private IResourceModule resourceModule;
+		
+		[SerializeField]private Transform uiRoot;
+		[SerializeField] private int objectPoolCapacity;
+		[SerializeField] private float objectPoolExpireTime;
+		[SerializeField] private string[] uiGroupList;
 
 		public override int Priority => 10;
 
+		/// <summary>
+		/// 获取或设置UI对象池容量
+		/// </summary>
+		public int ObjectPoolCapacity
+		{
+			get
+			{
+				return uiObjectPool.Capacity;
+			}
+			set
+			{
+				uiObjectPool.Capacity = objectPoolCapacity = value;
+			}
+		}
+
+		/// <summary>
+		/// 获取或设置UI对象池过期时间
+		/// </summary>
+		public float ObjectPoolExpireTime
+		{
+			get
+			{
+				return objectPoolExpireTime;
+			}
+			set
+			{
+				uiObjectPool.ExpireTime = objectPoolExpireTime = value;
+			}
+		}
+
 		public override void Init() {
+			uiRoot.gameObject.layer = LayerMask.NameToLayer("UI");
 			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<GameObject>("UI Pool", 100, 240);
 			resourceModule = Aure.GetModule<IResourceModule>();
 			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin, OnInstantiateUISuccess, null, OnInstantiateUIFailed);
+			
+			var tempGroupDepth = 0;
+			foreach (var groupName in uiGroupList) {
+				AddUIGroup(groupName, tempGroupDepth);
+				tempGroupDepth += 3000;
+			}
 		}
 
 		public override void Tick(float elapseTime, float realElapseTime) {
@@ -180,6 +224,20 @@ namespace AureFramework.UI
 		}
 
 		/// <summary>
+		/// 所有UI对象加锁
+		/// </summary>
+		public void LockAllUIObject() {
+			uiObjectPool.LockAll();
+		}
+
+		/// <summary>
+		/// 所有UI对象解锁
+		/// </summary>
+		public void UnlockAllUIObject() {
+			uiObjectPool.UnlockAll();
+		}
+
+		/// <summary>
 		/// 添加UI组
 		/// </summary>
 		/// <param name="groupName">  </param>
@@ -190,7 +248,14 @@ namespace AureFramework.UI
 				return;
 			}
 			
-			var uiGroup = new UIGroup(uiObjectPool, groupName, groupDepth);
+			var groupGameObject = new GameObject(groupName);
+			var canvas = groupGameObject.AddComponent<Canvas>();
+			canvas.sortingOrder = groupDepth;
+			groupGameObject.AddComponent<GraphicRaycaster>();
+			groupGameObject.transform.SetParent(uiRoot);
+			groupGameObject.layer = LayerMask.NameToLayer("UI");
+
+			var uiGroup = new UIGroup(uiObjectPool, groupName, groupDepth, groupGameObject.transform);
 			uiGroupDic.Add(groupName, uiGroup);
 		}
 
@@ -220,6 +285,18 @@ namespace AureFramework.UI
 		}
 		
 		private void OnInstantiateUISuccess(string uiName, int taskId, GameObject uiGameObject) {
+			var uiForm = uiGameObject.GetComponent<UIFormBase>();
+			if (uiForm == null) {
+				foreach (var uiGroup in uiGroupDic) {
+					uiGroup.Value.DiscardUITask(uiName);
+				}
+			
+				loadingUIDic.Remove(taskId);
+				resourceModule.ReleaseAsset(uiGameObject);
+				Debug.LogError("AureFramework UIModule : Can not find UIForm.");
+			}
+			
+			uiForm.OnInit();
 			uiObjectPool.Register(uiGameObject, false, uiName);
 			loadingUIDic.Remove(taskId);
 		}

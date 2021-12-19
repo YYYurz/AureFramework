@@ -27,8 +27,9 @@ namespace GameTest {
 			// resourceModule.LoadAssetAsync<GameObject>("Boom", loadAssetCallbacks);
 			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
 			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
-			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
-			resourceModule.LoadSceneAsync("TestScene");
+			// resourceModule.InstantiateAsync("Ball", instantiateGameObjectCallbacks);
+			// resourceModule.LoadSceneAsync("TestScene");
+			GameMain.UI.OpenUI("TestWindow", "Normal", null);
 		}
 
 		public override void OnUpdate() {
@@ -42,8 +43,7 @@ namespace GameTest {
 
 		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset) {
 			Debug.Log($"OnLoadAssetSuccess  assetName:{assetName}  taskId:{taskId}");
-			Object.Instantiate((GameObject)asset);
-			// resourceModule.ReleaseAsset(asset);
+			resourceModule.ReleaseAsset(asset);
 		}
 
 		private void OnLoadAssetUpdate(int taskId, float progress) {

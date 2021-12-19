@@ -41,6 +41,10 @@ MonoBehaviour:
     m_Address: TestScene
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: b6ff647a723ae7949b20e532f5268f44
+    m_Address: TestWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d8112eb284d33884b9ee3fb88b0a6b16, type: 2}
   m_SchemaSet:
