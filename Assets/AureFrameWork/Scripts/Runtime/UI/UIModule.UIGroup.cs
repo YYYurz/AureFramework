@@ -6,7 +6,6 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using AureFramework.ObjectPool;
 using AureFramework.ReferencePool;
@@ -20,24 +19,30 @@ namespace AureFramework.UI {
 		private sealed partial class UIGroup : IUIGroup {
 			private readonly IObjectPool<GameObject> uiObjectPool;
 			private readonly IReferencePoolModule referencePoolModule;
-			private readonly Dictionary<string, IObject<GameObject>> usingUIObject = new Dictionary<string, IObject<GameObject>>();
+
+			private readonly Dictionary<string, IObject<GameObject>> usingUIObject =
+				new Dictionary<string, IObject<GameObject>>();
+
 			private readonly LinkedList<UIFormInfo> uiFormInfoLinked = new LinkedList<UIFormInfo>();
 			private readonly Queue<UITask> waitingUITaskQue = new Queue<UITask>();
 			private readonly Transform groupRoot;
+			private readonly UIGroupAdapter uiGroupAdapter;
 			private readonly string groupName;
-			private readonly int groupDepth;
+			private int groupDepth;
 			private int curUIDepth;
 			private float waitTime;
 			private const float taskExpireTime = 5f;
 
-			public UIGroup(IObjectPool<GameObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot) {
+			public UIGroup(IObjectPool<GameObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot,
+				UIGroupAdapter uiGroupAdapter) {
 				this.uiObjectPool = uiObjectPool;
 				this.groupName = groupName;
 				this.groupDepth = groupDepth;
 				this.groupRoot = groupRoot;
+				this.uiGroupAdapter = uiGroupAdapter;
 				referencePoolModule = Aure.GetModule<IReferencePoolModule>();
 			}
-			
+
 			/// <summary>
 			/// 获取UI组名称
 			/// </summary>
@@ -50,13 +55,22 @@ namespace AureFramework.UI {
 			}
 
 			/// <summary>
-			/// 获取UI组深度
+			/// 获取或设置UI组深度
 			/// </summary>
 			public int GroupDepth
 			{
 				get
 				{
 					return groupDepth;
+				}
+				set
+				{
+					if (groupDepth == value) {
+						return;
+					}
+
+					groupDepth = value;
+					uiGroupAdapter.SetDepth(groupDepth);
 				}
 			}
 
@@ -65,7 +79,7 @@ namespace AureFramework.UI {
 			/// 处理未处理的UI操作
 			/// </summary>
 			/// <param name="realElapseTime"> 真实流逝时间 </param>
-			public void Update(float realElapseTime) {
+			public void InternalUpdate(float realElapseTime) {
 				waitTime += realElapseTime;
 				waitTime = InternalTryProcessTask() ? 0f : waitTime;
 				if (waitingUITaskQue.Count == 0) {
@@ -113,7 +127,7 @@ namespace AureFramework.UI {
 					curNode = curNode.Next;
 					index++;
 				}
-				
+
 				return result;
 			}
 
@@ -152,6 +166,7 @@ namespace AureFramework.UI {
 					if (curNode.Value.UIName.Equals(uiName)) {
 						InternalCreateUITask(curNode.Value.UIName, UITaskType.CloseUI, null);
 					}
+
 					curNode = curNode.Previous;
 				}
 			}
@@ -160,6 +175,7 @@ namespace AureFramework.UI {
 				foreach (var uiTask in waitingUITaskQue) {
 					referencePoolModule.Release(uiTask);
 				}
+
 				waitingUITaskQue.Clear();
 			}
 
@@ -170,19 +186,19 @@ namespace AureFramework.UI {
 					}
 				}
 			}
-			
+
 			private void InternalCreateUITask(string uiName, UITaskType uiTaskType, object userData) {
 				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiTaskType, userData));
 				InternalTryProcessTask();
 			}
-			
+
 			private bool InternalTryProcessTask() {
 				if (waitingUITaskQue.Count == 0) {
 					return true;
 				}
 
 				var processTaskNum = 0;
-				while (waitingUITaskQue.Count > 0 ) {
+				while (waitingUITaskQue.Count > 0) {
 					var uiTask = waitingUITaskQue.Peek();
 					switch (uiTask.UITaskType) {
 						case UITaskType.OpenUI:
@@ -203,10 +219,10 @@ namespace AureFramework.UI {
 					} else {
 						break;
 					}
-					
+
 					Refresh();
 				}
-				
+
 				return processTaskNum > 0;
 			}
 
@@ -220,27 +236,19 @@ namespace AureFramework.UI {
 					return;
 				}
 
-				var uiObject = uiObjectPool.Spawn(uiTask.UIName);
-				if (uiObject == null) {
-					return;
-				}
-
-				try {
+				if (InternalTrySpawnUIObject(uiTask.UIName, out var uiObject)) {
 					var uiForm = uiObject.Target.GetComponent<UIFormBase>();
+					uiForm.OnOpen(uiTask.UserData);
+					
 					uiObject.Target.transform.SetParent(groupRoot);
 					uiObject.Target.SetActive(true);
-
-					if (!uiForm.IsAlreadyInit) {
-						uiForm.OnInit();
-					}
 					
-					uiForm.OnOpen(uiTask.UserData);
-					usingUIObject.Add(uiTask.UIName, uiObject);
+					if (!uiForm.IsAlreadyInit) {
+						uiForm.OnInit(uiTask.UserData);
+					}
+
 					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiTask.UIName));
 					uiTask.UITaskType = UITaskType.Complete;
-				}
-				catch (Exception e) {
-					Debug.LogError(e.Message);
 				}
 			}
 
@@ -248,16 +256,32 @@ namespace AureFramework.UI {
 				var uiNode = GetUINode(uiTask.UIName);
 				if (uiNode != null) {
 					var uiObject = usingUIObject[uiTask.UIName];
+					uiNode.Value.UIFormBase.OnClose();
+					
 					uiObject.Target.SetActive(false);
 					uiObjectPool.Recycle(uiObject);
-					uiNode.Value.UIFormBase.OnClose();
+					
 					uiFormInfoLinked.Remove(uiNode);
 					usingUIObject.Remove(uiTask.UIName);
+					
+					referencePoolModule.Release(uiNode.Value);
 				}
-				
+
 				uiTask.UITaskType = UITaskType.Complete;
 			}
-			
+
+			private bool InternalTrySpawnUIObject(string uiName, out IObject<GameObject> uiObject) {
+				uiObject = uiObjectPool.Spawn(uiName);
+
+				var uiForm = uiObject?.Target.GetComponent<UIFormBase>();
+				if (uiForm != null) {
+					usingUIObject.Add(uiName, uiObject);
+					return true;
+				}
+
+				return false;
+			}
+
 			private void Refresh() {
 				var curNode = uiFormInfoLinked.Last;
 				var curDepth = uiFormInfoLinked.Count * 100;
@@ -267,7 +291,7 @@ namespace AureFramework.UI {
 						if (curNode.Value.IsPause) {
 							curNode.Value.UIFormBase.OnResume();
 						}
-						
+
 						curNode.Value.IsPause = false;
 						isTop = false;
 					} else {
@@ -275,18 +299,18 @@ namespace AureFramework.UI {
 							curNode.Value.UIFormBase.OnPause();
 							curNode.Value.IsPause = true;
 						}
-						
+
 						if (curNode.Value.Depth != curDepth) {
 							curNode.Value.UIFormBase.OnDepthChange();
 						}
-						
+
 						curNode.Value.Depth = curDepth;
 					}
 
 					curNode = curNode.Previous;
 				}
 			}
-			
+
 			private LinkedListNode<UIFormInfo> GetUINode(string uiName) {
 				var curNode = uiFormInfoLinked.First;
 				while (curNode != null) {

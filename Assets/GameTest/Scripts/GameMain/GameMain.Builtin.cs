@@ -11,7 +11,6 @@ using AureFramework;
 using AureFramework.Fsm;
 using AureFramework.Resource;
 using AureFramework.Event;
-using AureFramework.Lua;
 using AureFramework.ObjectPool;
 using AureFramework.Procedure;
 using AureFramework.ReferencePool;
@@ -51,12 +50,6 @@ namespace GameTest
 			private set;
 		}
 
-		public static ILuaModule Lua
-		{
-			get;
-			private set;
-		}
-
 		public static IReferencePoolModule ReferencePool
 		{
 			get;
@@ -74,7 +67,6 @@ namespace GameTest
 			Procedure = Aure.GetModule<IProcedureModule>();
 			Event = Aure.GetModule<IEventModule>();
 			UI = Aure.GetModule<IUIModule>();
-			Lua = Aure.GetModule<ILuaModule>();
 			ReferencePool = Aure.GetModule<IReferencePoolModule>();
 			ObjectPool = Aure.GetModule<IObjectPoolModule>();
 		}

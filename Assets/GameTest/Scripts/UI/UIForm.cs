@@ -4,8 +4,8 @@ using UnityEngine;
 namespace GameTest {
 	public class UIForm : UIFormBase
 	{
-		public override void OnInit() {
-			base.OnInit();
+		public override void OnInit(object userData) {
+			base.OnInit(userData);
 			
 			Debug.Log("UIForm OnInit");
 		}

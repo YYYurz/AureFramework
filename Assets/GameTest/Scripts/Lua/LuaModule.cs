@@ -7,10 +7,11 @@
 //------------------------------------------------------------
 
 using System;
+using AureFramework;
 using UnityEngine;
 using XLua;
 
-namespace AureFramework.Lua {
+namespace GameTest {
 	public class LuaModule : AureFrameworkModule, ILuaModule {
 		private LuaEnv luaEnv;
 		private float tickRecord;
@@ -121,8 +122,35 @@ namespace AureFramework.Lua {
 				return result;
 			}
 			catch (Exception e) {
-				Debug.LogError("AureFramework LuaModule " + e.Message);
+				Debug.LogError("AureFramework LuaModule :" + e.Message);
 				return null;
+			}
+		}
+		
+		/// <summary>
+		/// 调用LuaTable函数
+		/// </summary>
+		/// <param name="luaTable"> 类名 </param>
+		/// <param name="funcName"> 函数名 </param>
+		/// <param name="args"> 函数调用参数 </param>
+		public void CallLuaFunction(LuaTable luaTable, string funcName, params object[] args)
+		{
+			if (luaTable != null)
+			{
+				try
+				{
+					var luaFunction = luaTable.Get<LuaFunction>(funcName);
+					luaFunction.Call(args, null);
+					luaFunction.Dispose();
+				}
+				catch (Exception exception)
+				{
+					Debug.Log(exception.Message);
+				}
+			}
+			else
+			{
+				Debug.LogError("AureFramework LuaModule: LuaTable is invalid.");
 			}
 		}
 		

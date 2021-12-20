@@ -7,12 +7,20 @@
 //------------------------------------------------------------
 
 
+using AureFramework;
+
 namespace GameTest
 {
 	public partial class GameMain
 	{
+		public static ILuaModule Lua
+		{
+			get;
+			private set;
+		}
+		
 		public static void InitCustomManagers() {
-			
+			Lua = Aure.GetModule<ILuaModule>();
 		}
 	}
 }

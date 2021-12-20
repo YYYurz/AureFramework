@@ -29,7 +29,8 @@ namespace AureFramework.UI {
 		/// <summary>
 		/// 初始化
 		/// </summary>
-		public virtual void OnInit() {
+		/// <param name="userData"> 用户自定义数据 </param>
+		public virtual void OnInit(object userData) {
 			cachedCanvas = gameObject.GetOrAddComponent<Canvas>();
 			cachedCanvas.overrideSorting = true;
 

@@ -6,29 +6,24 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using AureFramework.ObjectPool;
 using AureFramework.Resource;
 using AureFramework.Utility;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace AureFramework.UI
-{
+namespace AureFramework.UI {
 	/// <summary>
 	/// UI模块
 	/// </summary>
-	public sealed partial class UIModule : AureFrameworkModule, IUIModule
-	{
+	public sealed partial class UIModule : AureFrameworkModule, IUIModule {
 		private readonly Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string, UIGroup>();
 		private readonly Dictionary<int, string> loadingUIDic = new Dictionary<int, string>();
 		private InstantiateGameObjectCallbacks instantiateGameObjectCallbacks;
 		private IObjectPool<GameObject> uiObjectPool;
 		private IResourceModule resourceModule;
-		
-		[SerializeField]private Transform uiRoot;
+
+		[SerializeField] private Transform uiRoot;
 		[SerializeField] private int objectPoolCapacity;
 		[SerializeField] private float objectPoolExpireTime;
 		[SerializeField] private string[] uiGroupList;
@@ -69,8 +64,9 @@ namespace AureFramework.UI
 			uiRoot.gameObject.layer = LayerMask.NameToLayer("UI");
 			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<GameObject>("UI Pool", 100, 240);
 			resourceModule = Aure.GetModule<IResourceModule>();
-			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin, OnInstantiateUISuccess, null, OnInstantiateUIFailed);
-			
+			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin,
+				OnInstantiateUISuccess, null, OnInstantiateUIFailed);
+
 			var tempGroupDepth = 0;
 			foreach (var groupName in uiGroupList) {
 				AddUIGroup(groupName, tempGroupDepth);
@@ -80,14 +76,13 @@ namespace AureFramework.UI
 
 		public override void Tick(float elapseTime, float realElapseTime) {
 			foreach (var uiGroup in uiGroupDic) {
-				uiGroup.Value.Update(realElapseTime);
+				uiGroup.Value.InternalUpdate(realElapseTime);
 			}
 		}
 
 		public override void Clear() {
-			
 		}
-		
+
 		/// <summary>
 		/// 打开UI
 		/// </summary>
@@ -112,10 +107,10 @@ namespace AureFramework.UI
 			if (!uiObjectPool.IsHasObject(uiName) && !loadingUIDic.ContainsValue(uiName)) {
 				resourceModule.InstantiateAsync(uiName, instantiateGameObjectCallbacks);
 			}
-			
+
 			uiGroupDic[uiGroupName].OpenUI(uiName, userData);
 		}
-		
+
 		/// <summary>
 		/// 关闭UI
 		/// </summary>
@@ -164,9 +159,9 @@ namespace AureFramework.UI
 				Debug.LogError("AureFramework UIModule : UI group name is null.");
 				return;
 			}
-			
+
 			foreach (var uiGroup in uiGroupDic) {
-				if (!uiGroup.Value.GroupName.Equals(groupName)){
+				if (!uiGroup.Value.GroupName.Equals(groupName)) {
 					uiGroup.Value.CloseAllUI();
 				}
 			}
@@ -193,11 +188,11 @@ namespace AureFramework.UI
 			foreach (var loadingTask in loadingUIDic) {
 				resourceModule.ReleaseTask(loadingTask.Key);
 			}
-			
+
 			foreach (var uiGroup in uiGroupDic) {
 				uiGroup.Value.ClearAllUITask();
 			}
-			
+
 			loadingUIDic.Clear();
 		}
 
@@ -210,10 +205,10 @@ namespace AureFramework.UI
 				Debug.LogError("AureFramework UIModule : UI name is null.");
 				return;
 			}
-			
+
 			uiObjectPool.Lock(uiName);
 		}
-		
+
 		/// <summary>
 		/// UI对象解锁
 		/// </summary>
@@ -223,7 +218,7 @@ namespace AureFramework.UI
 				Debug.LogError("AureFramework UIModule : UI name is null.");
 				return;
 			}
-			
+
 			uiObjectPool.Unlock(uiName);
 		}
 
@@ -251,11 +246,14 @@ namespace AureFramework.UI
 				Debug.LogError("AureFramework UIModule : UI group is already exist.");
 				return;
 			}
-			
-			var groupGameObject = new GameObject(groupName);
-			StartCoroutine(InitUIGroup(groupGameObject, groupDepth));
 
-			var uiGroup = new UIGroup(uiObjectPool, groupName, groupDepth, groupGameObject.transform);
+			var groupGameObject = new GameObject(groupName);
+			groupGameObject.transform.SetParent(uiRoot.transform);
+
+			var uiGroupAdapter = groupGameObject.GetOrAddComponent<UIGroupAdapter>();
+			uiGroupAdapter.SetDepth(groupDepth);
+
+			var uiGroup = new UIGroup(uiObjectPool, groupName, groupDepth, groupGameObject.transform, uiGroupAdapter);
 			uiGroupDic.Add(groupName, uiGroup);
 		}
 
@@ -268,32 +266,13 @@ namespace AureFramework.UI
 			return InternalGetUIGroup(groupName);
 		}
 
-		private IEnumerator InitUIGroup(GameObject uiGroupGameObject, int groupDepth) {
-			var canvas = uiGroupGameObject.GetOrAddComponent<Canvas>();
-			var rectTransform = uiGroupGameObject.GetComponent<RectTransform>();
-			uiGroupGameObject.GetOrAddComponent<GraphicRaycaster>();
-			uiGroupGameObject.transform.SetParent(uiRoot.transform);
-			uiGroupGameObject.layer = LayerMask.NameToLayer("UI");
-
-			yield return null;
-			
-			canvas.overrideSorting = true;
-			canvas.sortingOrder = groupDepth;
-
-			rectTransform.anchorMin = Vector2.zero;
-			rectTransform.anchorMax = Vector2.one;
-			rectTransform.sizeDelta = Vector2.zero;
-			rectTransform.localScale = Vector2.one;
-			rectTransform.anchoredPosition3D = Vector3.zero;
-		}
-
 		private UIGroup InternalGetUIGroup(string groupName) {
 			foreach (var uiGroup in uiGroupDic) {
 				if (uiGroup.Value.GroupName.Equals(groupName)) {
 					return uiGroup.Value;
 				}
 			}
-			
+
 			return null;
 		}
 
@@ -302,28 +281,28 @@ namespace AureFramework.UI
 				loadingUIDic.Add(taskId, uiName);
 			}
 		}
-		
+
 		private void OnInstantiateUISuccess(string uiName, int taskId, GameObject uiGameObject) {
 			var uiForm = uiGameObject.GetComponent<UIFormBase>();
 			if (uiForm == null) {
 				foreach (var uiGroup in uiGroupDic) {
 					uiGroup.Value.DiscardUITask(uiName);
 				}
-			
+
 				loadingUIDic.Remove(taskId);
 				resourceModule.ReleaseAsset(uiGameObject);
 				Debug.LogError("AureFramework UIModule : Can not find UIForm.");
 			}
-			
+
 			uiObjectPool.Register(uiGameObject, false, uiName);
 			loadingUIDic.Remove(taskId);
 		}
-		
+
 		private void OnInstantiateUIFailed(string uiName, int taskId, string errorMessage) {
 			foreach (var uiGroup in uiGroupDic) {
 				uiGroup.Value.DiscardUITask(uiName);
 			}
-			
+
 			loadingUIDic.Remove(taskId);
 			Debug.LogError(errorMessage);
 		}

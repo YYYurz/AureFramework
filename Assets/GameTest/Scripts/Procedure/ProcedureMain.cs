@@ -30,11 +30,11 @@ namespace GameTest {
 			// resourceModule.InstantiateAsync("TestWindow", instantiateGameObjectCallbacks);
 			// resourceModule.LoadSceneAsync("TestScene");
 			GameMain.UI.OpenUI("TestWindow", "Normal", null);
-			GameMain.UI.CloseUI("TestWindow");
-			GameMain.UI.OpenUI("TestWindow", "Normal", null);
-			GameMain.UI.CloseUI("TestWindow");
-			GameMain.UI.OpenUI("TestWindow", "Normal", null);
-			GameMain.UI.CloseUI("TestWindow");
+			// GameMain.UI.CloseUI("TestWindow");
+			// GameMain.UI.OpenUI("TestWindow", "Normal", null);
+			// GameMain.UI.CloseUI("TestWindow");
+			// GameMain.UI.OpenUI("TestWindow", "Normal", null);
+			// GameMain.UI.CloseUI("TestWindow");
 		}
 
 		public override void OnUpdate() {
