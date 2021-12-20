@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using AureFramework.Fsm;
+using AureFramework.Utility;
 using UnityEngine;
 
 namespace AureFramework.Procedure {
@@ -37,7 +38,7 @@ namespace AureFramework.Procedure {
 		private IEnumerator Start() {
 			var procedureList = new List<Type>();
 			foreach (var procedureTypeName in allProcedureTypeNameList) {
-				var procedureType = Utility.Assembly.GetType(procedureTypeName);
+				var procedureType = Assembly.GetType(procedureTypeName);
 				if (procedureType == null) {
 					Debug.LogError("ProcedureManager : Can not find procedure type.");
 					continue;

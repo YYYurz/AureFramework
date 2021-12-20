@@ -178,6 +178,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: AureFrameWork
       objectReference: {fileID: 0}
+    - target: {fileID: 1536126187698328240, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: m_ClearFlags
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1536126187698328240, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
+      propertyPath: m_Depth
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 3664227901557337116, guid: 2a0adf4cf5f6c5b40a79257c7712911b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.99

@@ -20,7 +20,7 @@ namespace AureFramework.UI {
 				private bool isPause;
 				private int depth;
 				
-				public UIFormBase FormBase
+				public UIFormBase UIFormBase
 				{
 					get
 					{

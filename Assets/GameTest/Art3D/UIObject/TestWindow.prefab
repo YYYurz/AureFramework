@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7626891666401015857}
   - component: {fileID: 7626891666401015871}
   - component: {fileID: 7626891666401015856}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 7626891666590068248}
   - component: {fileID: 7626891666590068262}
   - component: {fileID: 7626891666590068263}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: TestWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 7626891667187404482}
   - component: {fileID: 7626891667187404480}
   - component: {fileID: 7626891667187404481}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}

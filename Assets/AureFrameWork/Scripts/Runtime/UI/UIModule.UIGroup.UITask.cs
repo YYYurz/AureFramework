@@ -29,7 +29,7 @@ namespace AureFramework.UI {
 				
 				public UITaskType UITaskType
 				{
-					private set;
+					set;
 					get;
 				}
 
@@ -40,15 +40,11 @@ namespace AureFramework.UI {
 					uiTask.UITaskType = uiTaskType;
 					return uiTask;
 				}
-
-				public void Discard() {
-					UITaskType = UITaskType.Discard;
-				}
 				
 				public void Clear() {
 					UIName = null;
 					UserData = null;
-					UITaskType = UITaskType.Discard;
+					UITaskType = UITaskType.None;
 				}
 			}
 		}

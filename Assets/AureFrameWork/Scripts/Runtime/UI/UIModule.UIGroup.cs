@@ -28,7 +28,7 @@ namespace AureFramework.UI {
 			private readonly int groupDepth;
 			private int curUIDepth;
 			private float waitTime;
-			private const float taskExpireTime = 1f;
+			private const float taskExpireTime = 5f;
 
 			public UIGroup(IObjectPool<GameObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot) {
 				this.uiObjectPool = uiObjectPool;
@@ -64,19 +64,19 @@ namespace AureFramework.UI {
 			/// 轮询打开的UI
 			/// 处理未处理的UI操作
 			/// </summary>
-			/// <param name="elapseTime"></param>
-			public void Update(float elapseTime) {
-				waitTime += elapseTime;
-				if (waitTime > taskExpireTime) {
-					var uiTask = waitingUITaskQue.Dequeue();
-					referencePoolModule.Release(uiTask);
+			/// <param name="realElapseTime"> 真实流逝时间 </param>
+			public void Update(float realElapseTime) {
+				waitTime += realElapseTime;
+				waitTime = InternalTryProcessTask() ? 0f : waitTime;
+				if (waitingUITaskQue.Count == 0) {
 					waitTime = 0f;
-				} else {
-					waitTime = InternalTryProcessTask() ? 0f : waitTime;
+				} else if (waitingUITaskQue.Count > 0 && waitTime > taskExpireTime) {
+					referencePoolModule.Release(waitingUITaskQue.Dequeue());
+					waitTime = 0f;
 				}
-				
+
 				foreach (var uiFormInfo in uiFormInfoLinked) {
-					uiFormInfo.FormBase.OnUpdate(elapseTime);
+					uiFormInfo.UIFormBase.OnUpdate(realElapseTime);
 				}
 			}
 
@@ -97,7 +97,7 @@ namespace AureFramework.UI {
 			/// <returns></returns>
 			public UIFormBase GetUIForm(string uiName) {
 				var uiNode = GetUINode(uiName);
-				return uiNode?.Value.FormBase;
+				return uiNode?.Value.UIFormBase;
 			}
 
 			/// <summary>
@@ -109,7 +109,7 @@ namespace AureFramework.UI {
 				var curNode = uiFormInfoLinked.First;
 				var index = 0;
 				while (curNode != null) {
-					result[index] = curNode.Value.FormBase;
+					result[index] = curNode.Value.UIFormBase;
 					curNode = curNode.Next;
 					index++;
 				}
@@ -166,7 +166,7 @@ namespace AureFramework.UI {
 			public void DiscardUITask(string uiName) {
 				foreach (var uiTask in waitingUITaskQue) {
 					if (uiTask.UIName.Equals(uiName)) {
-						uiTask.Discard();
+						uiTask.UITaskType = UITaskType.Complete;
 					}
 				}
 			}
@@ -182,67 +182,80 @@ namespace AureFramework.UI {
 				}
 
 				var processTaskNum = 0;
-				while (waitingUITaskQue.Count > 0) {
+				while (waitingUITaskQue.Count > 0 ) {
 					var uiTask = waitingUITaskQue.Peek();
 					switch (uiTask.UITaskType) {
-						case UITaskType.Discard:
-							waitingUITaskQue.Dequeue();
-							processTaskNum++;
-							break;
 						case UITaskType.OpenUI:
-							processTaskNum += InternalTryOpenUI(uiTask.UIName, uiTask.UserData) ? 1 : 0;
+							InternalTryOpenUI(uiTask);
 							break;
 						case UITaskType.CloseUI:
-							InternalTryCloseUI(uiTask.UIName);
-							processTaskNum++;
+							InternalTryCloseUI(uiTask);
 							break;
-						
+						case UITaskType.None:
+							break;
+						case UITaskType.Complete:
+							break;
 					}
+
+					if (uiTask.UITaskType == UITaskType.Complete || uiTask.UITaskType == UITaskType.None) {
+						referencePoolModule.Release(waitingUITaskQue.Dequeue());
+						processTaskNum++;
+					} else {
+						break;
+					}
+					
+					Refresh();
 				}
 				
-				Refresh();
 				return processTaskNum > 0;
 			}
 
-			private bool InternalTryOpenUI(string uiName, object userData) {
-				var uiNode = GetUINode(uiName);
+			private void InternalTryOpenUI(UITask uiTask) {
+				var uiNode = GetUINode(uiTask.UIName);
 				if (uiNode != null) {
-					uiNode.Value.FormBase.OnOpen(userData);
+					uiNode.Value.UIFormBase.OnOpen(uiTask.UserData);
 					uiFormInfoLinked.Remove(uiNode);
 					uiFormInfoLinked.AddLast(uiNode);
-					referencePoolModule.Release(waitingUITaskQue.Dequeue());
-					return true;
+					uiTask.UITaskType = UITaskType.Complete;
+					return;
 				}
 
-				var uiObject = uiObjectPool.Spawn(uiName);
+				var uiObject = uiObjectPool.Spawn(uiTask.UIName);
 				if (uiObject == null) {
-					return false;
+					return;
 				}
 
 				try {
 					var uiForm = uiObject.Target.GetComponent<UIFormBase>();
 					uiObject.Target.transform.SetParent(groupRoot);
-					uiForm.OnOpen(userData);
-					usingUIObject.Add(uiName, uiObject);
-					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiName));
+					uiObject.Target.SetActive(true);
+
+					if (!uiForm.IsAlreadyInit) {
+						uiForm.OnInit();
+					}
+					
+					uiForm.OnOpen(uiTask.UserData);
+					usingUIObject.Add(uiTask.UIName, uiObject);
+					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiTask.UIName));
+					uiTask.UITaskType = UITaskType.Complete;
 				}
 				catch (Exception e) {
 					Debug.LogError(e.Message);
 				}
-				
-				return true;
 			}
 
-			private void InternalTryCloseUI(string uiName) {
-				var uiNode = GetUINode(uiName);
+			private void InternalTryCloseUI(UITask uiTask) {
+				var uiNode = GetUINode(uiTask.UIName);
 				if (uiNode != null) {
-					var uiObject = usingUIObject[uiName];
+					var uiObject = usingUIObject[uiTask.UIName];
+					uiObject.Target.SetActive(false);
 					uiObjectPool.Recycle(uiObject);
-					uiNode.Value.FormBase.OnClose();
+					uiNode.Value.UIFormBase.OnClose();
 					uiFormInfoLinked.Remove(uiNode);
-					usingUIObject.Remove(uiName);
-					referencePoolModule.Release(waitingUITaskQue.Dequeue());
+					usingUIObject.Remove(uiTask.UIName);
 				}
+				
+				uiTask.UITaskType = UITaskType.Complete;
 			}
 			
 			private void Refresh() {
@@ -252,19 +265,19 @@ namespace AureFramework.UI {
 				while (curNode != null) {
 					if (isTop) {
 						if (curNode.Value.IsPause) {
-							curNode.Value.FormBase.OnResume();
+							curNode.Value.UIFormBase.OnResume();
 						}
 						
 						curNode.Value.IsPause = false;
 						isTop = false;
 					} else {
 						if (!curNode.Value.IsPause) {
-							curNode.Value.FormBase.OnPause();
+							curNode.Value.UIFormBase.OnPause();
 							curNode.Value.IsPause = true;
 						}
 						
 						if (curNode.Value.Depth != curDepth) {
-							curNode.Value.FormBase.OnDepthChange();
+							curNode.Value.UIFormBase.OnDepthChange();
 						}
 						
 						curNode.Value.Depth = curDepth;

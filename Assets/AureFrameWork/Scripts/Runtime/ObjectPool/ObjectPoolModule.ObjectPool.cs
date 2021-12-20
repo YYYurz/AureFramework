@@ -297,15 +297,11 @@ namespace AureFramework.ObjectPool {
 				}
 				
 				var internalObj = Object<T>.Create(obj, objName ?? string.Empty);
+				internalObj.LastUseTime = DateTime.UtcNow;
 				internalObj.IsInUse = isNeed;
 				objectList.Add(internalObj);
 
-				if (isNeed) {
-					internalObj.LastUseTime = DateTime.UtcNow;
-					return internalObj;
-				}
-
-				return null;
+				return isNeed ? internalObj : null;
 			}
 			
 			private ObjectBase InternalSpawn(string objName = null) {

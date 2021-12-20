@@ -7,9 +7,11 @@
 //------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using AureFramework.ObjectPool;
 using AureFramework.Resource;
+using AureFramework.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -77,7 +79,9 @@ namespace AureFramework.UI
 		}
 
 		public override void Tick(float elapseTime, float realElapseTime) {
-			
+			foreach (var uiGroup in uiGroupDic) {
+				uiGroup.Value.Update(realElapseTime);
+			}
 		}
 
 		public override void Clear() {
@@ -249,11 +253,7 @@ namespace AureFramework.UI
 			}
 			
 			var groupGameObject = new GameObject(groupName);
-			var canvas = groupGameObject.AddComponent<Canvas>();
-			canvas.sortingOrder = groupDepth;
-			groupGameObject.AddComponent<GraphicRaycaster>();
-			groupGameObject.transform.SetParent(uiRoot);
-			groupGameObject.layer = LayerMask.NameToLayer("UI");
+			StartCoroutine(InitUIGroup(groupGameObject, groupDepth));
 
 			var uiGroup = new UIGroup(uiObjectPool, groupName, groupDepth, groupGameObject.transform);
 			uiGroupDic.Add(groupName, uiGroup);
@@ -266,6 +266,25 @@ namespace AureFramework.UI
 		/// <returns></returns>
 		public IUIGroup GetUIGroup(string groupName) {
 			return InternalGetUIGroup(groupName);
+		}
+
+		private IEnumerator InitUIGroup(GameObject uiGroupGameObject, int groupDepth) {
+			var canvas = uiGroupGameObject.GetOrAddComponent<Canvas>();
+			var rectTransform = uiGroupGameObject.GetComponent<RectTransform>();
+			uiGroupGameObject.GetOrAddComponent<GraphicRaycaster>();
+			uiGroupGameObject.transform.SetParent(uiRoot.transform);
+			uiGroupGameObject.layer = LayerMask.NameToLayer("UI");
+
+			yield return null;
+			
+			canvas.overrideSorting = true;
+			canvas.sortingOrder = groupDepth;
+
+			rectTransform.anchorMin = Vector2.zero;
+			rectTransform.anchorMax = Vector2.one;
+			rectTransform.sizeDelta = Vector2.zero;
+			rectTransform.localScale = Vector2.one;
+			rectTransform.anchoredPosition3D = Vector3.zero;
 		}
 
 		private UIGroup InternalGetUIGroup(string groupName) {
@@ -296,7 +315,6 @@ namespace AureFramework.UI
 				Debug.LogError("AureFramework UIModule : Can not find UIForm.");
 			}
 			
-			uiForm.OnInit();
 			uiObjectPool.Register(uiGameObject, false, uiName);
 			loadingUIDic.Remove(taskId);
 		}

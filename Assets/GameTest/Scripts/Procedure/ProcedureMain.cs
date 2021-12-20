@@ -16,7 +16,7 @@ namespace GameTest {
 		private LoadAssetCallbacks loadAssetCallbacks;
 		private InstantiateGameObjectCallbacks instantiateGameObjectCallbacks;
 		private IResourceModule resourceModule;
-		
+
 		public override void OnEnter(params object[] args) {
 			base.OnEnter(args);
 			resourceModule = Aure.GetModule<IResourceModule>();
@@ -27,9 +27,14 @@ namespace GameTest {
 			// resourceModule.LoadAssetAsync<GameObject>("Boom", loadAssetCallbacks);
 			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
 			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
-			// resourceModule.InstantiateAsync("Ball", instantiateGameObjectCallbacks);
+			// resourceModule.InstantiateAsync("TestWindow", instantiateGameObjectCallbacks);
 			// resourceModule.LoadSceneAsync("TestScene");
 			GameMain.UI.OpenUI("TestWindow", "Normal", null);
+			GameMain.UI.CloseUI("TestWindow");
+			GameMain.UI.OpenUI("TestWindow", "Normal", null);
+			GameMain.UI.CloseUI("TestWindow");
+			GameMain.UI.OpenUI("TestWindow", "Normal", null);
+			GameMain.UI.CloseUI("TestWindow");
 		}
 
 		public override void OnUpdate() {
@@ -43,7 +48,6 @@ namespace GameTest {
 
 		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset) {
 			Debug.Log($"OnLoadAssetSuccess  assetName:{assetName}  taskId:{taskId}");
-			resourceModule.ReleaseAsset(asset);
 		}
 
 		private void OnLoadAssetUpdate(int taskId, float progress) {

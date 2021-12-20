@@ -13,10 +13,7 @@ namespace AureFramework.UI {
 			/// UI处理任务类型
 			/// </summary>
 			private enum UITaskType {
-				/// <summary>
-				/// 丢弃
-				/// </summary>
-				Discard,
+				None,
 				
 				/// <summary>
 				/// 打开UI
@@ -27,6 +24,11 @@ namespace AureFramework.UI {
 				/// 关闭UI
 				/// </summary>
 				CloseUI,
+				
+				/// <summary>
+				/// 完成
+				/// </summary>
+				Complete,
 			}
 		}
 	}
