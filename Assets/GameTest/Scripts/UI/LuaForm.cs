@@ -41,17 +41,6 @@ namespace GameTest {
 
 		public override void OnOpen(object userData) {
 			base.OnOpen(userData);
-
-			formDataInfo = userData as UIFormOpenDataInfo;
-			if (formDataInfo == null) {
-				Debug.LogError("LuaForm Open Error! invalid userData!");
-				return;
-			}
-
-			if (formDataInfo.UserData as string == "Preload") {
-				return;
-			}
-
 			if (luaScriptTable != null) {
 				GameMain.Lua.CallLuaFunction(luaScriptTable, "OnOpen", luaScriptTable);
 			}

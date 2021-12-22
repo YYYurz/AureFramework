@@ -8,62 +8,48 @@
 
 using System;
 using AureFramework.ReferencePool;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace AureFramework.ObjectPool {
 	public sealed partial class ObjectPoolModule : AureFrameworkModule, IObjectPoolModule {
 		/// <summary>
 		/// 内部对象
 		/// </summary>
-		private sealed class Object<T> : ObjectBase, IObject<T> where T : Object {
-			private T target;
+		private sealed class Object<T> : IReference where T : ObjectBase {
+			private T externalObject;
 			private DateTime lastUseTime;
 			private string name;
-			private bool isLock;
 			private bool isInUse;
-
-			/// <summary>
-			/// 获取对象唯一Id
-			/// </summary>
-			public override int TargetId
-			{
-				get
-				{
-					return target.GetHashCode();
-				}
-			}
 
 			/// <summary>
 			/// 获取对象
 			/// </summary>
-			public T Target
+			public T ExternalObject
 			{
 				get
 				{
-					return target;
+					return externalObject;
 				}
 			}
 
 			/// <summary>
 			/// 获取或设置对象上次使用时间。
 			/// </summary>
-			public override DateTime LastUseTime
-			{
-				get
-				{
-					return lastUseTime;
-				}
-				set
-				{
-					lastUseTime = value;
-				}
-			}
+			// public DateTime LastUseTime
+			// {
+			// 	get
+			// 	{
+			// 		return lastUseTime;
+			// 	}
+			// 	set
+			// 	{
+			// 		lastUseTime = value;
+			// 	}
+			// }
 
 			/// <summary>
 			/// 获取对象名称
 			/// </summary>
-			public override string Name
+			public string Name
 			{
 				get
 				{
@@ -74,30 +60,26 @@ namespace AureFramework.ObjectPool {
 			/// <summary>
 			/// 获取或设置对象是否加锁
 			/// </summary>
-			public override bool IsLock
+			public bool IsLock
 			{
 				get
 				{
-					return isLock;
+					return ExternalObject.IsLock;
 				}
 				set
 				{
-					isLock = value;
+					ExternalObject.IsLock = value;
 				}
 			}
 
 			/// <summary>
 			/// 设置或获取对象是否正在被使用
 			/// </summary>
-			public override bool IsInUse
+			public bool IsInUse
 			{
 				get
 				{
 					return isInUse;
-				}
-				set
-				{
-					isInUse = value;
 				}
 			}
 
@@ -105,30 +87,81 @@ namespace AureFramework.ObjectPool {
 			/// 获取对象信息
 			/// </summary>
 			/// <returns></returns>
-			public override ObjectInfo GetObjectInfo() {
-				return new ObjectInfo(name, lastUseTime, isLock, isInUse);
+			public ObjectInfo GetObjectInfo() {
+				return new ObjectInfo(name, lastUseTime, IsLock, isInUse);
+			}
+
+			/// <summary>
+			/// 获取对象
+			/// </summary>
+			/// <returns></returns>
+			public T Spawn() {
+				isInUse = true;
+				lastUseTime = DateTime.UtcNow;
+				externalObject.OnSpawn();
+				return externalObject;
+			}
+
+			/// <summary>
+			/// 回收对象
+			/// </summary>
+			public void Recycle() {
+				isInUse = false;
+				lastUseTime = DateTime.UtcNow;
+				externalObject.OnRecycle();
+			}
+
+			/// <summary>
+			/// 释放对象
+			/// </summary>
+			/// <param name="dateNow"> 当前世界协调时间 </param>
+			/// <param name="expireTime"> 过期秒数 </param>
+			public bool Release(DateTime dateNow, float expireTime) {
+				var tempTime = dateNow.AddSeconds(-expireTime);
+				if (DateTime.Compare(tempTime, lastUseTime) > 0 && !ExternalObject.IsLock && !isInUse) {
+					externalObject.OnRelease();
+					return true;
+				}
+
+				return false;
+			}
+
+			/// <summary>
+			/// 忽略时间释放对象
+			/// </summary>
+			/// <returns></returns>
+			public bool ReleaseIgnoreTime() {
+				if (!ExternalObject.IsLock && !isInUse) {
+					externalObject.OnRelease();
+					return true;
+				}
+
+				return false;
 			}
 
 			/// <summary>
 			/// 引用池创建对象
 			/// </summary>
-			/// <param name="target"> 对象 </param>
+			/// <param name="obj"> 对象 </param>
 			/// <param name="name"> 对象名称 </param>
+			/// <param name="isNeed"> 是否需要使用刚生成的对象 </param>
 			/// <returns></returns>
-			public static Object<T> Create( T target, string name) {
+			public static Object<T> Create(T obj, string name, bool isNeed) {
 				var internalObject = Aure.GetModule<IReferencePoolModule>().Acquire<Object<T>>();
-				internalObject.target = target;
+				internalObject.externalObject = obj;
+				internalObject.lastUseTime = DateTime.UtcNow;
 				internalObject.name = name;
+				internalObject.isInUse = isNeed;
 
 				return internalObject;
 			}
 
-			/// <summary>
-			/// 清理
-			/// </summary>
-			public override void Clear() {
+			public void Clear() {
+				Aure.GetModule<IReferencePoolModule>().Release(externalObject);
+				externalObject = null;
+				lastUseTime = default;
 				name = null;
-				Destroy(target);
+				isInUse = false;
 			}
 		}
 	}

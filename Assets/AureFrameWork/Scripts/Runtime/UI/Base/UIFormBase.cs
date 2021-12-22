@@ -18,6 +18,9 @@ namespace AureFramework.UI {
 		private Canvas cachedCanvas;
 		private bool isAlreadyInit;
 
+		/// <summary>
+		/// 获取UI是否已经初始化过了
+		/// </summary>
 		public bool IsAlreadyInit
 		{
 			get

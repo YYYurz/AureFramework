@@ -7,14 +7,13 @@
 //------------------------------------------------------------
 
 using System;
-using Object = UnityEngine.Object;
 
 namespace AureFramework.ObjectPool {
 	/// <summary>
 	/// 对象池接口
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public interface IObjectPool<T> where T : Object {
+	public interface IObjectPool<T> where T : ObjectBase {
 		/// <summary>
 		/// 获取对象池名称
 		/// </summary>
@@ -22,15 +21,7 @@ namespace AureFramework.ObjectPool {
 		{
 			get;
 		}
-		
-		/// <summary>
-		/// 获取对象类型
-		/// </summary>
-		Type ObjectType
-		{
-			get;
-		}
-		
+
 		/// <summary>
 		/// 获取使用中对象的数量
 		/// </summary>
@@ -69,30 +60,35 @@ namespace AureFramework.ObjectPool {
 		/// 注册一个新创建的对象
 		/// </summary>
 		/// <param name="obj"> 对象 </param>
-		/// <param name="isNeed"> 是否需要返回IObject对象 </param>
+		/// <param name="isNeed"> 是否需要使用注册后的对象 </param>
+		/// <param name="objName"> 对象名称 </param>
+		void Register(T obj, bool isNeed, string objName = null);
+		
+		/// <summary>
+		/// 是否能获取对象
+		/// </summary>
 		/// <param name="objName"> 对象名称 </param>
 		/// <returns></returns>
-		IObject<T> Register(T obj, bool isNeed, string objName = null);
-
-
+		bool CanSpawn(string objName);
+		
 		/// <summary>
 		/// 获取对象池中任意一个对象
 		/// </summary>
 		/// <returns></returns>
-		IObject<T> Spawn();
+		T Spawn();
 
 		/// <summary>
 		/// 获取对象
 		/// </summary>
 		/// <param name="objName"> 对象名称 </param>
 		/// <returns></returns>
-		IObject<T> Spawn(string objName);
+		T Spawn(string objName);
 		
 		/// <summary>
 		/// 回收对象
 		/// </summary>
 		/// <param name="obj"> 对象 </param>
-		void Recycle(IObject<T> obj);
+		void Recycle(T obj);
 		
 		/// <summary>
 		/// 所有对象加锁

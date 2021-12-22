@@ -6,22 +6,24 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
+using System;
 using AureFramework;
 using AureFramework.Procedure;
 using AureFramework.Resource;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace GameTest {
 	public class ProcedureMain : ProcedureBase {
 		private LoadAssetCallbacks loadAssetCallbacks;
 		private InstantiateGameObjectCallbacks instantiateGameObjectCallbacks;
-		private IResourceModule resourceModule;
 
 		public override void OnEnter(params object[] args) {
 			base.OnEnter(args);
-			resourceModule = Aure.GetModule<IResourceModule>();
 			loadAssetCallbacks = new LoadAssetCallbacks(OnLoadAssetBegin, OnLoadAssetSuccess, OnLoadAssetUpdate, OnLoadAssetFailed);
 			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnLoadAssetBegin, OnLoadAssetSuccess, OnLoadAssetUpdate, OnLoadAssetFailed);
+
+			GameMain.UI.ObjectPoolExpireTime = 5;
 			
 			// resourceModule.LoadAssetAsync<GameObject>("Boom", loadAssetCallbacks);
 			// resourceModule.LoadAssetAsync<GameObject>("Boom", loadAssetCallbacks);
@@ -30,11 +32,15 @@ namespace GameTest {
 			// resourceModule.InstantiateAsync("TestWindow", instantiateGameObjectCallbacks);
 			// resourceModule.LoadSceneAsync("TestScene");
 			GameMain.UI.OpenUI("TestWindow", "Normal", null);
-			// GameMain.UI.CloseUI("TestWindow");
+			GameMain.UI.CloseUI("TestWindow");
 			// GameMain.UI.OpenUI("TestWindow", "Normal", null);
 			// GameMain.UI.CloseUI("TestWindow");
 			// GameMain.UI.OpenUI("TestWindow", "Normal", null);
 			// GameMain.UI.CloseUI("TestWindow");
+
+			var utcDate = DateTime.UtcNow;
+			var tempData = utcDate.AddSeconds(1);
+			var b = DateTime.Compare(utcDate, tempData);
 		}
 
 		public override void OnUpdate() {

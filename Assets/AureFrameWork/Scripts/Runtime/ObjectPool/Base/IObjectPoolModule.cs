@@ -27,7 +27,7 @@ namespace AureFramework.ObjectPool {
 		/// <param name="poolName"> 对象池名称 </param>
 		/// <typeparam name="T"> 对象类型 </typeparam>
 		/// <returns></returns>
-		IObjectPool<T> GetObjectPool<T>(string poolName) where T : Object;
+		IObjectPool<T> GetObjectPool<T>(string poolName) where T : ObjectBase;
 
 		/// <summary>
 		/// 创建对象池
@@ -37,13 +37,13 @@ namespace AureFramework.ObjectPool {
 		/// <param name="expireTime"> 自动释放时间 </param>
 		/// <typeparam name="T"> 对象类型 </typeparam>
 		/// <returns></returns>
-		IObjectPool<T> CreateObjectPool<T>(string poolName, int capacity, float expireTime) where T : Object;
+		IObjectPool<T> CreateObjectPool<T>(string poolName, int capacity, float expireTime) where T : ObjectBase;
 		
 		/// <summary>
 		/// 销毁对象池
 		/// <param name="poolName"> 对象池名称 </param>
 		/// </summary>
-		void DestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : Object;
+		void DestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : ObjectBase;
 		
 		/// <summary>
 		/// 释放所有对象池中未使用的对象

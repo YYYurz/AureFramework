@@ -17,12 +17,9 @@ namespace AureFramework.UI {
 		/// UI组
 		/// </summary>
 		private sealed partial class UIGroup : IUIGroup {
-			private readonly IObjectPool<GameObject> uiObjectPool;
+			private readonly IObjectPool<UIObject> uiObjectPool;
 			private readonly IReferencePoolModule referencePoolModule;
-
-			private readonly Dictionary<string, IObject<GameObject>> usingUIObject =
-				new Dictionary<string, IObject<GameObject>>();
-
+			private readonly Dictionary<string, UIObject> usingUIObject = new Dictionary<string, UIObject>();
 			private readonly LinkedList<UIFormInfo> uiFormInfoLinked = new LinkedList<UIFormInfo>();
 			private readonly Queue<UITask> waitingUITaskQue = new Queue<UITask>();
 			private readonly Transform groupRoot;
@@ -33,7 +30,7 @@ namespace AureFramework.UI {
 			private float waitTime;
 			private const float taskExpireTime = 5f;
 
-			public UIGroup(IObjectPool<GameObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot,
+			public UIGroup(IObjectPool<UIObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot,
 				UIGroupAdapter uiGroupAdapter) {
 				this.uiObjectPool = uiObjectPool;
 				this.groupName = groupName;
@@ -237,11 +234,11 @@ namespace AureFramework.UI {
 				}
 
 				if (InternalTrySpawnUIObject(uiTask.UIName, out var uiObject)) {
-					var uiForm = uiObject.Target.GetComponent<UIFormBase>();
+					var uiForm = uiObject.UIGameObject.GetComponent<UIFormBase>();
 					uiForm.OnOpen(uiTask.UserData);
 					
-					uiObject.Target.transform.SetParent(groupRoot);
-					uiObject.Target.SetActive(true);
+					uiObject.UIGameObject.transform.SetParent(groupRoot);
+					uiObject.UIGameObject.SetActive(true);
 					
 					if (!uiForm.IsAlreadyInit) {
 						uiForm.OnInit(uiTask.UserData);
@@ -258,7 +255,7 @@ namespace AureFramework.UI {
 					var uiObject = usingUIObject[uiTask.UIName];
 					uiNode.Value.UIFormBase.OnClose();
 					
-					uiObject.Target.SetActive(false);
+					uiObject.UIGameObject.SetActive(false);
 					uiObjectPool.Recycle(uiObject);
 					
 					uiFormInfoLinked.Remove(uiNode);
@@ -270,10 +267,10 @@ namespace AureFramework.UI {
 				uiTask.UITaskType = UITaskType.Complete;
 			}
 
-			private bool InternalTrySpawnUIObject(string uiName, out IObject<GameObject> uiObject) {
+			private bool InternalTrySpawnUIObject(string uiName, out UIObject uiObject) {
 				uiObject = uiObjectPool.Spawn(uiName);
 
-				var uiForm = uiObject?.Target.GetComponent<UIFormBase>();
+				var uiForm = uiObject?.UIGameObject.GetComponent<UIFormBase>();
 				if (uiForm != null) {
 					usingUIObject.Add(uiName, uiObject);
 					return true;

@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using AureFramework.ReferencePool;
 using UnityEngine;
-using UnityObject = UnityEngine.Object;
+using Object = System.Object;
 
 namespace AureFramework.ObjectPool {
 	public sealed partial class ObjectPoolModule : AureFrameworkModule, IObjectPoolModule {
@@ -18,8 +18,8 @@ namespace AureFramework.ObjectPool {
 		/// 内部对象池
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		private class ObjectPool<T> : ObjectPoolBase, IObjectPool<T> where T : UnityObject {
-			private readonly List<ObjectBase> objectList = new List<ObjectBase>();
+		private class ObjectPool<T> : ObjectPoolBase, IObjectPool<T> where T : ObjectBase {
+			private readonly List<Object<T>> objectList = new List<Object<T>>();
 			private readonly IReferencePoolModule referencePoolModule;
 			private string name;
 			private int capacity;
@@ -113,7 +113,7 @@ namespace AureFramework.ObjectPool {
 					}
 					
 					capacity = value;
-					InternalReleaseUnusedObject(false);
+					InternalTryReleaseUnusedObject(false);
 				}
 			}
 
@@ -165,7 +165,7 @@ namespace AureFramework.ObjectPool {
 					return;
 				}
 
-				InternalReleaseUnusedObject(true);
+				InternalTryReleaseUnusedObject(true);
 			}
 
 			/// <summary>
@@ -180,30 +180,44 @@ namespace AureFramework.ObjectPool {
 			/// 注册一个新创建的对象
 			/// </summary>
 			/// <param name="obj"> 对象 </param>
-			/// <param name="isNeed"> 是否需要注册后的对象 </param>
+			/// <param name="isNeed"> 是否需要使用注册后的对象 </param>
 			/// <param name="objName"> 对象名称 </param>
 			/// <returns></returns>
-			public IObject<T> Register(T obj, bool isNeed, string objName = null) {
+			public void Register(T obj, bool isNeed, string objName = null) {
 				if (obj == null) {
 					Debug.LogError("AureFramework ObjectPoolModule : Object is null.");
-					return null;
+					return;
 				}
 
 				if (objectList.Count >= capacity) {
 					Debug.Log($"AureFramework ObjectPoolModule : Register failed because capacity exceeded, Object Name :{objName}");
-					return null;
+					return;
 				}
 				
-				var newObject = InternalCreateObject(obj, isNeed, objName);
-				return (IObject<T>)newObject;
+				InternalTryCreateObject(obj, isNeed, objName);
+			}
+
+			/// <summary>
+			/// 是否能获取对象
+			/// </summary>
+			/// <param name="objName"> 对象名称 </param>
+			/// <returns></returns>
+			public bool CanSpawn(string objName) {
+				foreach (var internalObject in objectList) {
+					if (internalObject.Name.Equals(objName) && !internalObject.IsInUse) {
+						return true;
+					}
+				}
+				
+				return false;
 			}
 
 			/// <summary>
 			/// 获取对象池中任意一个对象
 			/// </summary>
 			/// <returns></returns>
-			public IObject<T> Spawn() {
-				return (IObject<T>)InternalSpawn();
+			public T Spawn() {
+				return (T) InternalTrySpawn();
 			}
 
 			/// <summary>
@@ -211,35 +225,39 @@ namespace AureFramework.ObjectPool {
 			/// </summary>
 			/// <param name="objName"> 对象名称 </param>
 			/// <returns></returns>
-			public IObject<T> Spawn(string objName) {
-				return (IObject<T>)InternalSpawn(objName);
+			public T Spawn(string objName) {
+				return (T) InternalTrySpawn(objName);
 			}
 
 			/// <summary>
 			/// 回收对象
 			/// </summary>
 			/// <param name="obj"> 对象 </param>
-			public void Recycle(IObject<T> obj) {
+			public void Recycle(T obj) {
 				if (obj == null) {
 					Debug.LogError("AureFramework ObjectPoolModule : Object is null.");
 					return;
 				}
 				
-				InternalRecycle((ObjectBase)obj);
+				InternalTryRecycle(obj);
 			}
 
 			/// <summary>
 			/// 所有对象加锁
 			/// </summary>
 			public void LockAll() {
-				InternalSetLockAll(true);
+				foreach (var internalObject in objectList) {
+					internalObject.IsLock = true;
+				}
 			}
 
 			/// <summary>
 			/// 所有对象解锁
 			/// </summary>
 			public void UnlockAll() {
-				InternalSetLockAll(false);
+				foreach (var internalObject in objectList) {
+					internalObject.IsLock = false;
+				}
 			}
 
 			/// <summary>
@@ -270,7 +288,7 @@ namespace AureFramework.ObjectPool {
 			/// 释放所有没有使用中的对象
 			/// </summary>
 			public override void ReleaseAllUnused() {
-				InternalReleaseUnusedObject(false);
+				InternalTryReleaseUnusedObject(false);
 			}
 
 			/// <summary>
@@ -279,8 +297,8 @@ namespace AureFramework.ObjectPool {
 			/// <param name="objName"> 对象名称 </param>
 			/// <returns></returns>
 			public bool IsHasObject(string objName) {
-				foreach (var internalObj in objectList) {
-					if (internalObj.Name.Equals(objName)) {
+				foreach (var internalObject in objectList) {
+					if (internalObject.Name.Equals(objName)) {
 						return true;
 					}
 				}
@@ -288,88 +306,66 @@ namespace AureFramework.ObjectPool {
 				return false;
 			}
 
-			private ObjectBase InternalCreateObject(T obj, bool isNeed, string objName = null) {
-				for (var i = 0; i < objectList.Count; i++) {
-					if (objectList[i].TargetId.Equals(obj.GetHashCode())) {
+			private void InternalTryCreateObject(T obj, bool isNeed, string objName = null) {
+				foreach (var internalObject in objectList) {
+					if (internalObject.ExternalObject.Equals(obj)) {
 						Debug.LogError("AureFramework ObjectPoolModule : Register failed because the object is already exists.");
-						return InternalSpawn(objectList[i].Name);
+						return;
 					}
 				}
 				
-				var internalObj = Object<T>.Create(obj, objName ?? string.Empty);
-				internalObj.LastUseTime = DateTime.UtcNow;
-				internalObj.IsInUse = isNeed;
+				var internalObj = Object<T>.Create(obj, objName ?? string.Empty, isNeed);
 				objectList.Add(internalObj);
-
-				return isNeed ? internalObj : null;
 			}
 			
-			private ObjectBase InternalSpawn(string objName = null) {
+			private ObjectBase InternalTrySpawn(string objName = null) {
 				if (UnusedCount == 0) {
 					return null;
 				}
 				
 				var internalObjectName = objName ?? string.Empty;
-				ObjectBase obj = null;
-				
-				foreach (var internalObj in objectList) {
-					if (internalObj.Name.Equals(internalObjectName) && !internalObj.IsInUse) {
-						obj = internalObj;
-						break;
+				foreach (var internalObject in objectList) {
+					if (internalObject.Name.Equals(internalObjectName) && !internalObject.IsInUse) {
+						return internalObject.Spawn();
 					}
 				}
 
-				if (obj != null) {
-					obj.LastUseTime = DateTime.UtcNow;
-					obj.IsInUse = true;
-				}
-
-				return obj;
+				return null;
 			}
 
-			private void InternalRecycle(ObjectBase internalObject) {
-				if (!objectList.Contains(internalObject)) {
-					return;
-				}
-
-				if (UsingCount + UnusedCount >= capacity) {
-					InternalReleaseObject(internalObject);
-					return;
+			private void InternalTryRecycle(ObjectBase objectBase) {
+				foreach (var internalObject in objectList) {
+					if (internalObject.ExternalObject.Equals(objectBase)) {
+						internalObject.Recycle();
+						return;
+					}
 				}
 				
-				internalObject.LastUseTime = DateTime.UtcNow;
-				internalObject.IsInUse = false;
+				Debug.LogError("AureFramework ObjectPoolModule : Can not Recycle because it was not generated from the object pool.");
 			}
 
-			private void InternalSetLockAll(bool isLock) {
-				foreach (var internalObject in objectList) {
-					internalObject.IsLock = isLock;
-				}
-			}
 			
-			private void InternalReleaseUnusedObject(bool isCheckTime) {
+			private void InternalTryReleaseUnusedObject(bool isCheckTime) {
 				autoReleaseTime = 0f;
 				if (UnusedCount <= 0) {
 					return;
 				}
 
 				var dateNow = DateTime.UtcNow;
-				for (var i = 0; i < UnusedCount; i++) {
-					var obj = objectList[i];
-					var lastUseTime = obj.LastUseTime.AddSeconds(-ExpireTime);
-					if (!isCheckTime || DateTime.Compare(dateNow, lastUseTime) <= 0) {
-						InternalReleaseObject(obj);
+				for (var i = 0; i < objectList.Count; i++) {
+					var internalObject = objectList[i];
+					if (isCheckTime) {
+						if (internalObject.Release(dateNow, expireTime)) {
+							referencePoolModule.Release(internalObject);
+							objectList.Remove(internalObject);
+						}
+					} else {
+						if (internalObject.ReleaseIgnoreTime()) {
+							referencePoolModule.Release(internalObject);
+							objectList.Remove(internalObject);
+						}
 					}
 				}
-			}
-
-			private void InternalReleaseObject(ObjectBase internalObject) {
-				if (internalObject == null || internalObject.IsLock) {
-					return;
-				}
-				
-				referencePoolModule.Release(internalObject);
-				objectList.Remove(internalObject);
 			}
 		}
 	}

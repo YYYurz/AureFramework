@@ -20,7 +20,7 @@ namespace AureFramework.UI {
 		private readonly Dictionary<string, UIGroup> uiGroupDic = new Dictionary<string, UIGroup>();
 		private readonly Dictionary<int, string> loadingUIDic = new Dictionary<int, string>();
 		private InstantiateGameObjectCallbacks instantiateGameObjectCallbacks;
-		private IObjectPool<GameObject> uiObjectPool;
+		private IObjectPool<UIObject> uiObjectPool;
 		private IResourceModule resourceModule;
 
 		[SerializeField] private Transform uiRoot;
@@ -62,7 +62,7 @@ namespace AureFramework.UI {
 
 		public override void Init() {
 			uiRoot.gameObject.layer = LayerMask.NameToLayer("UI");
-			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<GameObject>("UI Pool", 100, 240);
+			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<UIObject>("UI Pool", 100, 240);
 			resourceModule = Aure.GetModule<IResourceModule>();
 			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin,
 				OnInstantiateUISuccess, null, OnInstantiateUIFailed);
@@ -294,7 +294,8 @@ namespace AureFramework.UI {
 				Debug.LogError("AureFramework UIModule : Can not find UIForm.");
 			}
 
-			uiObjectPool.Register(uiGameObject, false, uiName);
+			var uiObject = UIObject.Create(uiName, uiGameObject);
+			uiObjectPool.Register(uiObject, false, uiName);
 			loadingUIDic.Remove(taskId);
 		}
 
