@@ -64,8 +64,7 @@ namespace AureFramework.UI {
 			uiRoot.gameObject.layer = LayerMask.NameToLayer("UI");
 			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<UIObject>("UI Pool", 100, 240);
 			resourceModule = Aure.GetModule<IResourceModule>();
-			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin,
-				OnInstantiateUISuccess, null, OnInstantiateUIFailed);
+			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin, OnInstantiateUISuccess, null, OnInstantiateUIFailed);
 
 			var tempGroupDepth = 0;
 			foreach (var groupName in uiGroupList) {
@@ -81,6 +80,9 @@ namespace AureFramework.UI {
 		}
 
 		public override void Clear() {
+			CancelAllProcessingUI();
+			uiGroupDic.Clear();
+			loadingUIDic.Clear();
 		}
 
 		/// <summary>

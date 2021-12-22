@@ -6,8 +6,6 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
-
 namespace AureFramework.ObjectPool {
 	/// <summary>
 	/// 对象池接口

@@ -6,9 +6,7 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System;
 using AureFramework.UI;
-using UnityEngine;
 using XLua;
 
 namespace GameTest {

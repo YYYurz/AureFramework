@@ -7,7 +7,6 @@
 //------------------------------------------------------------
 
 using AureFramework.ReferencePool;
-using UnityEngine;
 
 namespace AureFramework.ObjectPool {
 	public abstract class ObjectBase : IReference {

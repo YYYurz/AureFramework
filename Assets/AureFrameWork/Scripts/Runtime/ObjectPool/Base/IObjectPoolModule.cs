@@ -6,8 +6,6 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using Object = UnityEngine.Object;
-
 namespace AureFramework.ObjectPool {
 	/// <summary>
 	/// 对象池模块接口

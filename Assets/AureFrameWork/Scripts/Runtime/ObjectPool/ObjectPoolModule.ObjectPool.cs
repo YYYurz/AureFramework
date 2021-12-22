@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using AureFramework.ReferencePool;
 using UnityEngine;
-using Object = System.Object;
 
 namespace AureFramework.ObjectPool {
 	public sealed partial class ObjectPoolModule : AureFrameworkModule, IObjectPoolModule {
