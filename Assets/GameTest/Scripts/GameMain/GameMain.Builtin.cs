@@ -14,6 +14,7 @@ using AureFramework.Event;
 using AureFramework.ObjectPool;
 using AureFramework.Procedure;
 using AureFramework.ReferencePool;
+using AureFramework.Scene;
 using AureFramework.UI;
 
 namespace GameTest
@@ -61,6 +62,12 @@ namespace GameTest
 			private set;
 		}
 
+		public static ISceneModule Scene
+		{
+			get;
+			private set;
+		}
+
 		private static void InitBuiltinManagers() {
 			Fsm = Aure.GetModule<IFsmModule>();
 			Resource = Aure.GetModule<IResourceModule>();
@@ -69,6 +76,7 @@ namespace GameTest
 			UI = Aure.GetModule<IUIModule>();
 			ReferencePool = Aure.GetModule<IReferencePoolModule>();
 			ObjectPool = Aure.GetModule<IObjectPoolModule>();
+			Scene = Aure.GetModule<ISceneModule>();
 		}
 	}
 }

@@ -32,21 +32,6 @@ namespace AureFramework.ObjectPool {
 			}
 
 			/// <summary>
-			/// 获取或设置对象上次使用时间。
-			/// </summary>
-			// public DateTime LastUseTime
-			// {
-			// 	get
-			// 	{
-			// 		return lastUseTime;
-			// 	}
-			// 	set
-			// 	{
-			// 		lastUseTime = value;
-			// 	}
-			// }
-
-			/// <summary>
 			/// 获取对象名称
 			/// </summary>
 			public string Name

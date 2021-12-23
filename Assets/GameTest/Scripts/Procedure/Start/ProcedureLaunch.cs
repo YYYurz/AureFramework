@@ -22,7 +22,7 @@ namespace GameTest {
 		public override void OnUpdate() {
 			base.OnUpdate();
 
-			ChangeState<ProcedureMain>();
+			ChangeState<ProcedureChangeScene>("TestScene");
 		}
 
 		public override void OnExit() {

@@ -31,8 +31,11 @@ namespace GameTest {
 			// resourceModule.InstantiateAsync("Boom", instantiateGameObjectCallbacks);
 			// resourceModule.InstantiateAsync("TestWindow", instantiateGameObjectCallbacks);
 			// resourceModule.LoadSceneAsync("TestScene");
-			GameMain.UI.OpenUI("TestWindow", "Normal", null);
-			GameMain.UI.CloseUI("TestWindow");
+			// GameMain.UI.OpenUI("TestWindow", "Top", null);
+			// GameMain.UI.OpenUI("TestWindow2", "Top", null);
+			// GameMain.UI.OpenUI("TestWindow3", "Top", null);
+			// GameMain.UI.OpenUI("TestWindow", "Top", null);
+			// GameMain.UI.CloseUI("TestWindow");
 			// GameMain.UI.OpenUI("TestWindow", "Normal", null);
 			// GameMain.UI.CloseUI("TestWindow");
 			// GameMain.UI.OpenUI("TestWindow", "Normal", null);

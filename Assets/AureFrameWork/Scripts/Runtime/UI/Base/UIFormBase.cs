@@ -78,8 +78,9 @@ namespace AureFramework.UI {
 		/// <summary>
 		/// 深度改变
 		/// </summary>
-		public virtual void OnDepthChange() {
-			
+		/// <param name="depth"> 界面深度 </param>
+		public virtual void OnDepthChange(int depth) {
+			cachedCanvas.sortingOrder = depth;
 		}
 
 		/// <summary>

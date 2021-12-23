@@ -24,6 +24,7 @@ namespace AureFramework.Resource {
 		private readonly Dictionary<int, LoadAssetCallbacks> assetCallbackDic = new Dictionary<int, LoadAssetCallbacks>();
 		private readonly Dictionary<int, InstantiateGameObjectCallbacks> instantiateCallbackDic = new Dictionary<int, InstantiateGameObjectCallbacks>();
 		private readonly Dictionary<int, LoadSceneCallbacks> sceneCallbackDic = new Dictionary<int, LoadSceneCallbacks>();
+		private readonly Dictionary<SceneInstance, string> loadedSceneDic = new Dictionary<SceneInstance, string>();
 		private int taskIdAccumulator;
 
 		/// <summary>
@@ -173,6 +174,7 @@ namespace AureFramework.Resource {
 			
 			if (loadingAssetDic.ContainsKey(taskId)) {
 				if (handle.Status == AsyncOperationStatus.Succeeded) {
+					loadedSceneDic.Add(handle.Result, sceneAssetName);
 					loadSceneCallbacks?.LoadSceneSuccessCallback?.Invoke(sceneAssetName, taskId, handle.Result);
 				} else {
 					loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, taskId, handle.OperationException.Message);
@@ -213,12 +215,17 @@ namespace AureFramework.Resource {
 		/// </summary>
 		/// <param name="scene"> 场景Instance引用 </param>
 		/// <param name="callBack"> 卸载完成回调 </param>
-		public async void UnloadSceneAsync(SceneInstance scene, Action callBack = null) {
+		public async void UnloadSceneAsync(SceneInstance scene, Action<string> callBack = null) {
 			var handle = Addressables.UnloadSceneAsync(scene);
 				
 			await handle.Task;
-			
-			callBack?.Invoke();
+
+			if (handle.Status == AsyncOperationStatus.Succeeded) {
+				callBack?.Invoke(loadedSceneDic[scene]);
+				loadedSceneDic.Remove(scene);
+			} else {
+				Debug.LogError($"AureFramework ResourceModule : Unload scene failed, error message :{handle.OperationException.Message}");
+			}
 		}
 		
 		private static bool InternalCreateLoadAsyncHandle<T>(string assetName, out AsyncOperationHandle<T> handle) where T : Object {

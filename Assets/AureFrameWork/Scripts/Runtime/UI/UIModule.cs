@@ -307,7 +307,7 @@ namespace AureFramework.UI {
 			}
 
 			loadingUIDic.Remove(taskId);
-			Debug.LogError(errorMessage);
+			Debug.LogError($"AureFramework UIModule : Load ui Failed, error message :{errorMessage}.");
 		}
 	}
 }

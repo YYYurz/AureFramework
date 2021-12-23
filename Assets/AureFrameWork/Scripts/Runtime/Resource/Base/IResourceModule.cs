@@ -66,6 +66,6 @@ namespace AureFramework.Resource {
 		/// </summary>
 		/// <param name="scene"> 场景Instance引用 </param>
 		/// <param name="callBack"> 卸载完成回调 </param>
-		void UnloadSceneAsync(SceneInstance scene, Action callBack = null);
+		void UnloadSceneAsync(SceneInstance scene, Action<string> callBack = null);
 	}
 }

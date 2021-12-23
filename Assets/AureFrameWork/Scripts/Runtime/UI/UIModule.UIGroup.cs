@@ -30,8 +30,7 @@ namespace AureFramework.UI {
 			private float waitTime;
 			private const float taskExpireTime = 5f;
 
-			public UIGroup(IObjectPool<UIObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot,
-				UIGroupAdapter uiGroupAdapter) {
+			public UIGroup(IObjectPool<UIObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot, UIGroupAdapter uiGroupAdapter) {
 				this.uiObjectPool = uiObjectPool;
 				this.groupName = groupName;
 				this.groupDepth = groupDepth;
@@ -234,15 +233,15 @@ namespace AureFramework.UI {
 				}
 
 				if (InternalTrySpawnUIObject(uiTask.UIName, out var uiObject)) {
-					var uiForm = uiObject.UIGameObject.GetComponent<UIFormBase>();
-					uiForm.OnOpen(uiTask.UserData);
-					
 					uiObject.UIGameObject.transform.SetParent(groupRoot);
 					uiObject.UIGameObject.SetActive(true);
 					
+					var uiForm = uiObject.UIGameObject.GetComponent<UIFormBase>();
 					if (!uiForm.IsAlreadyInit) {
 						uiForm.OnInit(uiTask.UserData);
 					}
+					
+					uiForm.OnOpen(uiTask.UserData);
 
 					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiTask.UIName));
 					uiTask.UITaskType = UITaskType.Complete;
@@ -296,13 +295,13 @@ namespace AureFramework.UI {
 							curNode.Value.UIFormBase.OnPause();
 							curNode.Value.IsPause = true;
 						}
-
-						if (curNode.Value.Depth != curDepth) {
-							curNode.Value.UIFormBase.OnDepthChange();
-						}
-
-						curNode.Value.Depth = curDepth;
 					}
+					
+					if (curNode.Value.Depth != curDepth) {
+						curNode.Value.UIFormBase.OnDepthChange(curDepth);
+					}
+					curNode.Value.Depth = curDepth;
+					curDepth -= 100;
 
 					curNode = curNode.Previous;
 				}
