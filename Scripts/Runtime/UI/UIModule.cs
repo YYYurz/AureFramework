@@ -6,6 +6,7 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using AureFramework.ObjectPool;
 using AureFramework.Resource;
@@ -86,6 +87,21 @@ namespace AureFramework.UI {
 			CancelAllProcessingUI();
 			uiGroupDic.Clear();
 			loadingUIDic.Clear();
+		}
+
+		/// <summary>
+		/// UI是否已经打开
+		/// </summary>
+		/// <param name="uiName"> UI名称 </param>
+		/// <returns></returns>
+		public bool IsUIOpen(string uiName) {
+			foreach (var uiGroup in uiGroupDic) {
+				if (uiGroup.Value.IsHasUI(uiName)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		/// <summary>

@@ -25,6 +25,13 @@ namespace AureFramework.UI {
 			get;
 			set;
 		}
+
+		/// <summary>
+		/// UI是否已经打开
+		/// </summary>
+		/// <param name="uiName"> UI名称 </param>
+		/// <returns></returns>
+		bool IsUIOpen(string uiName);
 		
 		/// <summary>
 		/// 打开UI
