@@ -8,7 +8,7 @@
 
 using UnityEngine;
 
-namespace AureFramework {
+namespace AureFramework{
 	public abstract class AureFrameworkModule : MonoBehaviour {
 		/// <summary>
 		/// 模块优先级，最小的优先轮询

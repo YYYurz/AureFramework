@@ -112,7 +112,7 @@ namespace AureFramework.ObjectPool {
 
 		private ObjectPoolBase InternalCreateObjectPool<T>(string poolName, int capacity, float expireTime) where T : ObjectBase {
 			if (TryGetObjectPool<T>(poolName, out var objectPool)) {
-				Debug.LogError($"AureFramework ObjectPoolModule : Object Pool is already exists, object type : {objectPool.ObjectType.FullName}.");
+				Debug.LogError($"ObjectPoolModule : Object Pool is already exists, object type : {objectPool.ObjectType.FullName}.");
 				return null;
 			}
 			
@@ -123,7 +123,7 @@ namespace AureFramework.ObjectPool {
 
 		private static void InternalDestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : ObjectBase {
 			if (objPool == null || !TryGetObjectPool<T>(poolName, out var objectPool)) {
-				Debug.LogError($"AureFramework ObjectPoolModule : Object Pool is invalid.");
+				Debug.LogError($"ObjectPoolModule : Object Pool is invalid.");
 				return;
 			}
 			

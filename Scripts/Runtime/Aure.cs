@@ -10,8 +10,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AureFramework
-{
+namespace AureFramework{
 	/// <summary>
 	/// 框架主模块
 	/// </summary>
@@ -54,7 +53,7 @@ namespace AureFramework
 		/// <param name="module"></param>
 		public static void RegisterModule(AureFrameworkModule module) {
 			if (RegisteredModuleList.Contains(module)) {
-				Debug.LogError($"AureFramework GameMain : Module is exists, can not register it again. module : {module.GetType().FullName}");
+				Debug.LogError($"GameMain : Module is exists, can not register it again. module : {module.GetType().FullName}");
 				return;
 			}
 			
@@ -70,7 +69,7 @@ namespace AureFramework
 			var interfaceType = typeof(T);
 			if (!interfaceType.IsInterface)
 			{
-				Debug.LogError($"AureFramework GameMain : Module must be interface {interfaceType.FullName}.");
+				Debug.LogError($"GameMain : Module must be interface {interfaceType.FullName}.");
 				return null;
 			}
 
@@ -115,7 +114,7 @@ namespace AureFramework
 				tempModule.Init();
 				RegisteredModuleList.Remove(tempModule);
 			} else {
-				Debug.LogError($"AureFramework GameMain : This module has not been registered {moduleType.FullName}.");
+				Debug.LogError($"GameMain : This module has not been registered {moduleType.FullName}.");
 			}
 
 			return tempModule;

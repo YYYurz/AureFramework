@@ -11,6 +11,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AureFramework.Fsm {
+	/// <summary>
+	/// 有限状态机模块
+	/// </summary>
 	public sealed class FsmModule : AureFrameworkModule, IFsmModule {
 		private readonly Dictionary<object, IFsm> fsmStateDic = new Dictionary<object, IFsm>();
 
@@ -33,6 +36,13 @@ namespace AureFramework.Fsm {
 			fsmStateDic.Clear();
 		}
 		
+		/// <summary>
+		/// 创建有限状态机
+		/// </summary>
+		/// <param name="owner"> 持有类 </param>
+		/// <param name="fsmStateList"> 状态列表 </param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public IFsm CreateFsm<T>(T owner, List<Type> fsmStateList) where T : class {
 			if (fsmStateDic.ContainsKey(owner)) {
 				Debug.LogError("FsmModule : The Fsm for this owner already exists.");
@@ -45,6 +55,11 @@ namespace AureFramework.Fsm {
 			return fsm;
 		}
 
+		/// <summary>
+		/// 销毁有限状态机
+		/// </summary>
+		/// <param name="owner"> 持有类 </param>
+		/// <typeparam name="T"></typeparam>
 		public void DestroyFsm<T>(T owner) where T : class {
 			var type = typeof(T);
 			if (!fsmStateDic.ContainsKey(type)) {

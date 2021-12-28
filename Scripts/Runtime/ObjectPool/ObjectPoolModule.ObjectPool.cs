@@ -103,7 +103,7 @@ namespace AureFramework.ObjectPool {
 				set
 				{
 					if (value < 0) {
-						Debug.LogError("AureFramework ObjectPoolModule : The capacity of the object pool cannot be less than zero.");
+						Debug.LogError("ObjectPoolModule : The capacity of the object pool cannot be less than zero.");
 						return;
 					}
 
@@ -128,7 +128,7 @@ namespace AureFramework.ObjectPool {
 				set
 				{
 					if (value < 0) {
-						Debug.LogError("AureFramework ObjectPoolModule : The expire time of the object pool cannot be less than zero.");
+						Debug.LogError("ObjectPoolModule : The expire time of the object pool cannot be less than zero.");
 						return;
 					}
 
@@ -184,12 +184,12 @@ namespace AureFramework.ObjectPool {
 			/// <returns></returns>
 			public void Register(T obj, bool isNeed, string objName = null) {
 				if (obj == null) {
-					Debug.LogError("AureFramework ObjectPoolModule : Object is null.");
+					Debug.LogError("ObjectPoolModule : Object is null.");
 					return;
 				}
 
 				if (objectList.Count >= capacity) {
-					Debug.Log($"AureFramework ObjectPoolModule : Register failed because capacity exceeded, Object Name :{objName}");
+					Debug.Log($"ObjectPoolModule : Register failed because capacity exceeded, Object Name :{objName}");
 					return;
 				}
 				
@@ -234,7 +234,7 @@ namespace AureFramework.ObjectPool {
 			/// <param name="obj"> 对象 </param>
 			public void Recycle(T obj) {
 				if (obj == null) {
-					Debug.LogError("AureFramework ObjectPoolModule : Object is null.");
+					Debug.LogError("ObjectPoolModule : Object is null.");
 					return;
 				}
 				
@@ -308,7 +308,7 @@ namespace AureFramework.ObjectPool {
 			private void InternalTryCreateObject(T obj, bool isNeed, string objName = null) {
 				foreach (var internalObject in objectList) {
 					if (internalObject.ExternalObject.Equals(obj)) {
-						Debug.LogError("AureFramework ObjectPoolModule : Register failed because the object is already exists.");
+						Debug.LogError("ObjectPoolModule : Register failed because the object is already exists.");
 						return;
 					}
 				}
@@ -340,7 +340,7 @@ namespace AureFramework.ObjectPool {
 					}
 				}
 				
-				Debug.LogError("AureFramework ObjectPoolModule : Can not Recycle because it was not generated from the object pool.");
+				Debug.LogError("ObjectPoolModule : Can not Recycle because it was not generated from the object pool.");
 			}
 
 			

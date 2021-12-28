@@ -58,7 +58,7 @@ namespace AureFramework.Scene {
 		public bool SceneIsLoading(string sceneName) {
 			if (string.IsNullOrEmpty(sceneName))
 			{
-				Debug.LogError("AureFramework SceneModule : Scene name is invalid.");
+				Debug.LogError("SceneModule : Scene name is invalid.");
 				return false;
 			}
 
@@ -74,7 +74,7 @@ namespace AureFramework.Scene {
 		{
 			if (string.IsNullOrEmpty(sceneName))
 			{
-				Debug.LogError("AureFramework SceneModule : Scene name is invalid.");
+				Debug.LogError("SceneModule : Scene name is invalid.");
 				return false;
 			}
 
@@ -89,7 +89,7 @@ namespace AureFramework.Scene {
 		public bool SceneIsLoaded(string sceneName) {
 			if (string.IsNullOrEmpty(sceneName))
 			{
-				Debug.LogError("AureFramework SceneModule : Scene name is invalid.");
+				Debug.LogError("SceneModule : Scene name is invalid.");
 				return false;
 			}
 
@@ -103,25 +103,25 @@ namespace AureFramework.Scene {
 		public void LoadScene(string sceneName) {
 			if (string.IsNullOrEmpty(sceneName))
 			{
-				Debug.LogError("AureFramework SceneModule : Scene name is invalid.");
+				Debug.LogError("SceneModule : Scene name is invalid.");
 				return;
 			}
 
 			if (SceneIsUnloading(sceneName))
 			{
-				Debug.LogError($"AureFramework SceneModule : Scene is unloading, Name :{sceneName}");
+				Debug.LogError($"SceneModule : Scene is unloading, Name :{sceneName}");
 				return;
 			}
 
 			if (SceneIsLoading(sceneName))
 			{
-				Debug.LogError($"AureFramework SceneModule : Scene is loading, Name :{sceneName}");
+				Debug.LogError($"SceneModule : Scene is loading, Name :{sceneName}");
 				return;
 			}
 
 			if (SceneIsLoaded(sceneName))
 			{
-				Debug.LogError($"AureFramework SceneModule : Scene is already loaded, Name :{sceneName}");
+				Debug.LogError($"SceneModule : Scene is already loaded, Name :{sceneName}");
 				return;
 			}
 
@@ -135,25 +135,25 @@ namespace AureFramework.Scene {
 		public void UnloadScene(string sceneName) {
 			if (string.IsNullOrEmpty(sceneName))
 			{
-				Debug.LogError("AureFramework SceneModule : Scene name is invalid.");
+				Debug.LogError("SceneModule : Scene name is invalid.");
 				return;
 			}
 
 			if (SceneIsUnloading(sceneName))
 			{
-				Debug.LogError($"AureFramework SceneModule : Scene is unloading, Name :{sceneName}");
+				Debug.LogError($"SceneModule : Scene is unloading, Name :{sceneName}");
 				return;
 			}
 
 			if (SceneIsLoading(sceneName))
 			{
-				Debug.LogError($"AureFramework SceneModule : Scene is loading, Name :{sceneName}");
+				Debug.LogError($"SceneModule : Scene is loading, Name :{sceneName}");
 				return;
 			}
 
 			if (!SceneIsLoaded(sceneName))
 			{
-				Debug.LogError($"AureFramework SceneModule : Scene is not loaded, Name :{sceneName}");
+				Debug.LogError($"SceneModule : Scene is not loaded, Name :{sceneName}");
 				return;
 			}
 
@@ -180,7 +180,7 @@ namespace AureFramework.Scene {
 			loadingSceneDic.Remove(taskId);
 			
 			eventModule.Fire(this, LoadSceneFailedEventArgs.Create(loadingSceneDic[taskId], errorMessage));
-			Debug.LogError($"AureFramework UIModule : Load scene Failed, error message :{errorMessage}.");
+			Debug.LogError($"UIModule : Load scene Failed, error message :{errorMessage}.");
 		}
 
 		private void OnUnloadSceneOver(string sceneName) {

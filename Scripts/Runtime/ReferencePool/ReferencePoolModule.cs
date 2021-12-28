@@ -167,7 +167,7 @@ namespace AureFramework.ReferencePool {
 		/// <param name="reference"></param>
 		public void Release(IReference reference) {
 			if (reference == null) {
-				Debug.LogError("AureFramework ReferencePoolModule : Reference is null");
+				Debug.LogError("ReferencePoolModule : Reference is null");
 				return;
 			}
 
@@ -181,17 +181,17 @@ namespace AureFramework.ReferencePool {
 
 		private static bool CheckReferenceType(Type referenceType) {
 			if (referenceType == null) {
-				Debug.LogError("AureFramework ReferencePoolModule : Reference type is null.");
+				Debug.LogError("ReferencePoolModule : Reference type is null.");
 				return false;
 			}
 
 			if (!referenceType.IsClass || referenceType.IsAbstract) {
-				Debug.LogError("AureFramework ReferencePoolModule : Reference type is not a non-abstract class.");
+				Debug.LogError("ReferencePoolModule : Reference type is not a non-abstract class.");
 				return false;
 			}
 
 			if (!typeof(IReference).IsAssignableFrom(referenceType)) {
-				Debug.LogError("AureFramework ReferencePoolModule : Reference type is not a subclass of IReference.");
+				Debug.LogError("ReferencePoolModule : Reference type is not a subclass of IReference.");
 				return false;
 			}
 

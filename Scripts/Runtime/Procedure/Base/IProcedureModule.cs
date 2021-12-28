@@ -16,5 +16,19 @@ namespace AureFramework.Procedure {
 		{
 			get;
 		}
+		
+		/// <summary>
+		/// 切换流程
+		/// </summary>
+		/// <param name="args"> 传给下一个流程的参数 </param>
+		/// <typeparam name="T"></typeparam>
+		void ChangeProcedure<T>(params object[] args) where T : ProcedureBase;
+		
+		/// <summary>
+		/// 切换流程
+		/// </summary>
+		/// <param name="procedureType"> 流程类型 </param>
+		/// <param name="args"> 传给下一个流程的参数 </param>
+		void ChangeProcedure(Type procedureType, params object[] args);
 	}
 }

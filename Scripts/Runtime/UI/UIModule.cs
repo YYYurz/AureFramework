@@ -112,17 +112,17 @@ namespace AureFramework.UI {
 		/// <param name="userData"> 用户数据 </param>
 		public void OpenUI(string uiName, string uiGroupName, object userData) {
 			if (string.IsNullOrEmpty(uiName)) {
-				Debug.LogError("AureFramework UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is null.");
 				return;
 			}
 
 			if (string.IsNullOrEmpty(uiGroupName)) {
-				Debug.LogError("AureFramework UIModule : UI group name is null.");
+				Debug.LogError("UIModule : UI group name is null.");
 				return;
 			}
 
 			if (!uiGroupDic.ContainsKey(uiGroupName)) {
-				Debug.LogError("AureFramework UIModule : UI group is not exist.");
+				Debug.LogError("UIModule : UI group is not exist.");
 			}
 
 			if (!uiObjectPool.IsHasObject(uiName) && !loadingUIDic.ContainsValue(uiName)) {
@@ -138,7 +138,7 @@ namespace AureFramework.UI {
 		/// <param name="uiName"> UI名称 </param>
 		public void CloseUI(string uiName) {
 			if (string.IsNullOrEmpty(uiName)) {
-				Debug.LogError("AureFramework UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is null.");
 				return;
 			}
 
@@ -162,7 +162,7 @@ namespace AureFramework.UI {
 		/// <param name="uiName"> UI名称 </param>
 		public void CloseAllUIExcept(string uiName) {
 			if (string.IsNullOrEmpty(uiName)) {
-				Debug.LogError("AureFramework UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is null.");
 				return;
 			}
 
@@ -177,7 +177,7 @@ namespace AureFramework.UI {
 		/// <param name="groupName"> UI组名称 </param>
 		public void CloseAllUIExceptGroup(string groupName) {
 			if (string.IsNullOrEmpty(groupName)) {
-				Debug.LogError("AureFramework UIModule : UI group name is null.");
+				Debug.LogError("UIModule : UI group name is null.");
 				return;
 			}
 
@@ -194,7 +194,7 @@ namespace AureFramework.UI {
 		/// <param name="groupName"> UI组名称 </param>
 		public void CloseGroupUI(string groupName) {
 			if (string.IsNullOrEmpty(groupName)) {
-				Debug.LogError("AureFramework UIModule : UI group name is null.");
+				Debug.LogError("UIModule : UI group name is null.");
 				return;
 			}
 
@@ -223,7 +223,7 @@ namespace AureFramework.UI {
 		/// <param name="uiName"> UI名称 </param>
 		public void LockUIObject(string uiName) {
 			if (string.IsNullOrEmpty(uiName)) {
-				Debug.LogError("AureFramework UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is null.");
 				return;
 			}
 
@@ -236,7 +236,7 @@ namespace AureFramework.UI {
 		/// <param name="uiName"> UI名称 </param>
 		public void UnlockUIObject(string uiName) {
 			if (string.IsNullOrEmpty(uiName)) {
-				Debug.LogError("AureFramework UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is null.");
 				return;
 			}
 
@@ -264,7 +264,7 @@ namespace AureFramework.UI {
 		/// <param name="groupDepth"></param>
 		public void AddUIGroup(string groupName, int groupDepth) {
 			if (uiGroupDic.ContainsKey(groupName)) {
-				Debug.LogError("AureFramework UIModule : UI group is already exist.");
+				Debug.LogError("UIModule : UI group is already exist.");
 				return;
 			}
 
@@ -312,7 +312,7 @@ namespace AureFramework.UI {
 
 				loadingUIDic.Remove(taskId);
 				resourceModule.ReleaseAsset(uiGameObject);
-				Debug.LogError("AureFramework UIModule : Can not find UIForm.");
+				Debug.LogError("UIModule : Can not find UIForm.");
 			}
 
 			var uiObject = UIObject.Create(uiName, uiGameObject);
@@ -326,7 +326,7 @@ namespace AureFramework.UI {
 			}
 
 			loadingUIDic.Remove(taskId);
-			Debug.LogError($"AureFramework UIModule : Load ui Failed, error message :{errorMessage}.");
+			Debug.LogError($"UIModule : Load ui Failed, error message :{errorMessage}.");
 		}
 	}
 }

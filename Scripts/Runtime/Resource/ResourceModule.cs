@@ -224,13 +224,13 @@ namespace AureFramework.Resource {
 				callBack?.Invoke(loadedSceneDic[scene]);
 				loadedSceneDic.Remove(scene);
 			} else {
-				Debug.LogError($"AureFramework ResourceModule : Unload scene failed, error message :{handle.OperationException.Message}");
+				Debug.LogError($"ResourceModule : Unload scene failed, error message :{handle.OperationException.Message}");
 			}
 		}
 		
 		private static bool InternalCreateLoadAsyncHandle<T>(string assetName, out AsyncOperationHandle<T> handle) where T : Object {
 			if (string.IsNullOrEmpty(assetName)) {
-				Debug.LogError("AureFramework ResourceModule : Load asset name is null.");
+				Debug.LogError("ResourceModule : Load asset name is null.");
 				handle = default;
 				return false;
 			}
@@ -241,7 +241,7 @@ namespace AureFramework.Resource {
 
 		private static bool InternalCreateInstantiateAsyncHandle(string assetName, out AsyncOperationHandle<GameObject> handle) {
 			if (string.IsNullOrEmpty(assetName)) {
-				Debug.LogError("AureFramework ResourceModule : Load asset name is null.");
+				Debug.LogError("ResourceModule : Load asset name is null.");
 				handle = default;
 				return false;
 			}
@@ -252,7 +252,7 @@ namespace AureFramework.Resource {
 
 		private static bool InternalCreateSceneAsyncHandle(string sceneName, out AsyncOperationHandle<SceneInstance> handle) {
 			if (string.IsNullOrEmpty(sceneName)) {
-				Debug.LogError("AureFramework ResourceModule : Load asset name is null.");
+				Debug.LogError("ResourceModule : Load asset name is null.");
 				handle = default;
 				return false;
 			}

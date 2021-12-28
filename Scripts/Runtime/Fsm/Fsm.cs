@@ -17,6 +17,9 @@ namespace AureFramework.Fsm
 		Pause,
 	}
 
+	/// <summary>
+	/// 有限状态机
+	/// </summary>
 	public class Fsm : IFsm{
 		private readonly Dictionary<Type, IFsmState> fsmStateDic = new Dictionary<Type, IFsmState>();
 		private float durationTime;
@@ -97,11 +100,21 @@ namespace AureFramework.Fsm
 			isPause = false;
 		}
 
+		/// <summary>
+		/// 切换状态
+		/// </summary>
+		/// <param name="args"> 传给下一个状态的参数 </param>
+		/// <typeparam name="T"></typeparam>
 		public void ChangeState<T>(params object[] args) where T : IFsmState {
 			var type = typeof(T);
 			ChangeState(type, args);
 		}
 
+		/// <summary>
+		/// 切换状态
+		/// </summary>
+		/// <param name="fsmType"> 状态类型 </param>
+		/// <param name="args"> 传给下一个状态的参数 </param>
 		public void ChangeState(Type fsmType, params object[] args) {
 			if (!fsmStateDic.ContainsKey(fsmType)) {
 				Debug.LogError($"Fsm : FsmState is not exist in current Fsm {fsmType.FullName}.");

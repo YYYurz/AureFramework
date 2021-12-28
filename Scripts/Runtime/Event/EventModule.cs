@@ -50,7 +50,7 @@ namespace AureFramework.Event {
 		/// <param name="eventHandler"> 委托函数 </param>
 		public void Subscribe<T>(EventHandler<AureEventArgs> eventHandler) where T : AureEventArgs{
 			if (eventHandler == null) {
-				Debug.LogError("AureFramework EventModule : EventHandler is null.");
+				Debug.LogError("EventModule : EventHandler is null.");
 				return;
 			}
 			
@@ -63,7 +63,7 @@ namespace AureFramework.Event {
 		/// <param name="eventHandler"> 委托函数 </param>
 		public void Unsubscribe<T>(EventHandler<AureEventArgs> eventHandler) where T : AureEventArgs{
 			if (eventHandler == null) {
-				Debug.LogError("AureFramework EventModule : EventHandler is null.");
+				Debug.LogError("EventModule : EventHandler is null.");
 				return;
 			}
 			
@@ -77,7 +77,7 @@ namespace AureFramework.Event {
 		/// <param name="eventArgs"> 事件信息类 </param>
 		public void Fire(object sender, AureEventArgs eventArgs) {
 			if (eventArgs == null) {
-				Debug.LogError("AureFramework EventModule : EventArgs is null.");
+				Debug.LogError("EventModule : EventArgs is null.");
 				return;
 			}
 			
