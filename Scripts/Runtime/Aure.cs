@@ -50,7 +50,7 @@ namespace AureFramework{
 		/// <summary>
 		/// 注册框架模块
 		/// </summary>
-		/// <param name="module"></param>
+		/// <param name="module"> 框架模块 </param>
 		public static void RegisterModule(AureFrameworkModule module) {
 			if (RegisteredModuleList.Contains(module)) {
 				Debug.LogError($"GameMain : Module is exists, can not register it again. module : {module.GetType().FullName}");
