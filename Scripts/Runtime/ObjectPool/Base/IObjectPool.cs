@@ -6,12 +6,14 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.ObjectPool {
+namespace AureFramework.ObjectPool
+{
 	/// <summary>
 	/// 对象池接口
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public interface IObjectPool<T> where T : ObjectBase {
+	public interface IObjectPool<T> where T : ObjectBase
+	{
 		/// <summary>
 		/// 获取对象池名称
 		/// </summary>
@@ -53,7 +55,7 @@ namespace AureFramework.ObjectPool {
 			get;
 			set;
 		}
-		
+
 		/// <summary>
 		/// 注册一个新创建的对象
 		/// </summary>
@@ -61,14 +63,14 @@ namespace AureFramework.ObjectPool {
 		/// <param name="isNeed"> 是否需要使用注册后的对象 </param>
 		/// <param name="objName"> 对象名称 </param>
 		void Register(T obj, bool isNeed, string objName = null);
-		
+
 		/// <summary>
 		/// 是否能获取对象
 		/// </summary>
 		/// <param name="objName"> 对象名称 </param>
 		/// <returns></returns>
 		bool CanSpawn(string objName);
-		
+
 		/// <summary>
 		/// 获取对象池中任意一个对象
 		/// </summary>
@@ -81,13 +83,13 @@ namespace AureFramework.ObjectPool {
 		/// <param name="objName"> 对象名称 </param>
 		/// <returns></returns>
 		T Spawn(string objName);
-		
+
 		/// <summary>
 		/// 回收对象
 		/// </summary>
 		/// <param name="obj"> 对象 </param>
 		void Recycle(T obj);
-		
+
 		/// <summary>
 		/// 所有对象加锁
 		/// </summary>
@@ -103,7 +105,7 @@ namespace AureFramework.ObjectPool {
 		/// </summary>
 		/// <param name="objName"> 对象名称 </param>
 		void Lock(string objName);
-		
+
 		/// <summary>
 		/// 对象解锁（同名所有对象）
 		/// </summary>
@@ -114,7 +116,7 @@ namespace AureFramework.ObjectPool {
 		/// 释放所有没有使用中的对象
 		/// </summary>
 		void ReleaseAllUnused();
-		
+
 		/// <summary>
 		/// 对象是否存在
 		/// </summary>

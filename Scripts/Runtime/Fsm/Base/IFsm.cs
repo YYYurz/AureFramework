@@ -9,6 +9,9 @@
 using System;
 
 namespace AureFramework.Fsm {
+	/// <summary>
+	/// 有限状态机接口
+	/// </summary>
 	public interface IFsm {
 		/// <summary>
 		/// 上一个状态

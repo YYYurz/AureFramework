@@ -8,8 +8,12 @@
 
 using AureFramework.Fsm;
 
-namespace AureFramework.Procedure {
-	public abstract class ProcedureBase : FsmState {
-		
+namespace AureFramework.Procedure
+{
+	/// <summary>
+	/// 流程基类
+	/// </summary>
+	public abstract class ProcedureBase : FsmState
+	{
 	}
 }

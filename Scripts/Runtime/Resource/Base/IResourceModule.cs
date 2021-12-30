@@ -10,8 +10,13 @@ using System;
 using UnityEngine;
 using UnityEngine.ResourceManagement.ResourceProviders;
 
-namespace AureFramework.Resource {
-	public interface IResourceModule {
+namespace AureFramework.Resource
+{
+	/// <summary>
+	/// 资源模块接口
+	/// </summary>
+	public interface IResourceModule
+	{
 		/// <summary>
 		/// 同步克隆
 		/// </summary>
@@ -33,7 +38,7 @@ namespace AureFramework.Resource {
 		/// <param name="loadAssetCallbacks"> 加载资源回调 </param>
 		/// <typeparam name="T"></typeparam>
 		void LoadAssetAsync<T>(string assetName, LoadAssetCallbacks loadAssetCallbacks = null) where T : UnityEngine.Object;
-				
+
 		/// <summary>
 		/// 异步克隆
 		/// </summary>

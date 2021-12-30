@@ -8,14 +8,15 @@
 
 using UnityEngine;
 
-namespace AureFramework.Resource {
+namespace AureFramework.Resource
+{
 	/// <summary>
 	/// 克隆游戏物体开始委托
 	/// </summary>
 	/// <param name="assetName"> 游戏物体游戏物体资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	public delegate void InstantiateGameObjectBeginCallback(string assetName, int taskId);
-	
+
 	/// <summary>
 	/// 克隆游戏物体成功委托
 	/// </summary>
@@ -30,7 +31,7 @@ namespace AureFramework.Resource {
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="progress"> 进度 </param>
 	public delegate void InstantiateGameObjectUpdateCallback(int taskId, float progress);
-	
+
 	/// <summary>
 	/// 克隆游戏物体失败委托
 	/// </summary>
@@ -38,17 +39,19 @@ namespace AureFramework.Resource {
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="errorMessage"> 错误信息 </param>
 	public delegate void InstantiateGameObjectFailedCallback(string assetName, int taskId, string errorMessage);
-	
+
 	/// <summary>
 	/// 克隆游戏物体回调
 	/// </summary>
-	public sealed class InstantiateGameObjectCallbacks {
+	public sealed class InstantiateGameObjectCallbacks
+	{
 		private readonly InstantiateGameObjectBeginCallback instantiateGameObjectBeginCallback;
 		private readonly InstantiateGameObjectSuccessCallback instantiateGameObjectSuccessCallback;
 		private readonly InstantiateGameObjectUpdateCallback instantiateGameObjectUpdateCallback;
 		private readonly InstantiateGameObjectFailedCallback instantiateGameObjectFailedCallback;
 
-		public InstantiateGameObjectCallbacks(InstantiateGameObjectBeginCallback instantiateGameObjectBeginCallback, InstantiateGameObjectSuccessCallback instantiateGameObjectSuccessCallback, InstantiateGameObjectUpdateCallback instantiateGameObjectUpdateCallback, InstantiateGameObjectFailedCallback instantiateGameObjectFailedCallback) {
+		public InstantiateGameObjectCallbacks(InstantiateGameObjectBeginCallback instantiateGameObjectBeginCallback, InstantiateGameObjectSuccessCallback instantiateGameObjectSuccessCallback, InstantiateGameObjectUpdateCallback instantiateGameObjectUpdateCallback, InstantiateGameObjectFailedCallback instantiateGameObjectFailedCallback)
+		{
 			this.instantiateGameObjectBeginCallback = instantiateGameObjectBeginCallback;
 			this.instantiateGameObjectSuccessCallback = instantiateGameObjectSuccessCallback;
 			this.instantiateGameObjectUpdateCallback = instantiateGameObjectUpdateCallback;
@@ -63,9 +66,9 @@ namespace AureFramework.Resource {
 			get
 			{
 				return instantiateGameObjectBeginCallback;
-			}	
+			}
 		}
-		
+
 		/// <summary>
 		/// 克隆游戏物体成功函数
 		/// </summary>
@@ -74,9 +77,9 @@ namespace AureFramework.Resource {
 			get
 			{
 				return instantiateGameObjectSuccessCallback;
-			}	
+			}
 		}
-		
+
 		/// <summary>
 		/// 克隆游戏物体更新函数
 		/// </summary>
@@ -85,9 +88,9 @@ namespace AureFramework.Resource {
 			get
 			{
 				return instantiateGameObjectUpdateCallback;
-			}	
+			}
 		}
-		
+
 		/// <summary>
 		/// 克隆游戏物体失败函数
 		/// </summary>
@@ -96,7 +99,7 @@ namespace AureFramework.Resource {
 			get
 			{
 				return instantiateGameObjectFailedCallback;
-			}	
+			}
 		}
 	}
 }

@@ -6,8 +6,13 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.UI {
-	public interface IUIModule {
+namespace AureFramework.UI
+{
+	/// <summary>
+	/// UI模块接口
+	/// </summary>
+	public interface IUIModule
+	{
 		/// <summary>
 		/// 获取或设置UI对象池容量
 		/// </summary>
@@ -32,7 +37,7 @@ namespace AureFramework.UI {
 		/// <param name="uiName"> UI名称 </param>
 		/// <returns></returns>
 		bool IsUIOpen(string uiName);
-		
+
 		/// <summary>
 		/// 打开UI
 		/// </summary>

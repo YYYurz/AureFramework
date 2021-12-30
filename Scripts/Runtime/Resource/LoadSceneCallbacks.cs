@@ -8,14 +8,15 @@
 
 using UnityEngine.ResourceManagement.ResourceProviders;
 
-namespace AureFramework.Resource {
+namespace AureFramework.Resource
+{
 	/// <summary>
 	/// 加载场景资源开始委托
 	/// </summary>
 	/// <param name="sceneAssetName"> 场景资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	public delegate void LoadSceneBeginCallback(string sceneAssetName, int taskId);
-	
+
 	/// <summary>
 	/// 加载场景资源成功委托
 	/// </summary>
@@ -30,7 +31,7 @@ namespace AureFramework.Resource {
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="progress"> 进度 </param>
 	public delegate void LoadSceneUpdateCallback(int taskId, float progress);
-	
+
 	/// <summary>
 	/// 加载场景资源失败委托
 	/// </summary>
@@ -38,17 +39,19 @@ namespace AureFramework.Resource {
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="errorMessage"> 错误信息 </param>
 	public delegate void LoadSceneFailedCallback(string sceneAssetName, int taskId, string errorMessage);
-	
+
 	/// <summary>
 	/// 加载场景资源回调
 	/// </summary>
-	public sealed class LoadSceneCallbacks {
+	public sealed class LoadSceneCallbacks
+	{
 		private readonly LoadSceneBeginCallback loadSceneBeginCallback;
 		private readonly LoadSceneSuccessCallback loadSceneSuccessCallback;
 		private readonly LoadSceneUpdateCallback loadSceneUpdateCallback;
 		private readonly LoadSceneFailedCallback loadSceneFailedCallback;
 
-		public LoadSceneCallbacks(LoadSceneBeginCallback loadSceneBeginCallback, LoadSceneSuccessCallback loadSceneSuccessCallback, LoadSceneUpdateCallback loadSceneUpdateCallback, LoadSceneFailedCallback loadSceneFailedCallback) {
+		public LoadSceneCallbacks(LoadSceneBeginCallback loadSceneBeginCallback, LoadSceneSuccessCallback loadSceneSuccessCallback, LoadSceneUpdateCallback loadSceneUpdateCallback, LoadSceneFailedCallback loadSceneFailedCallback)
+		{
 			this.loadSceneBeginCallback = loadSceneBeginCallback;
 			this.loadSceneSuccessCallback = loadSceneSuccessCallback;
 			this.loadSceneUpdateCallback = loadSceneUpdateCallback;
@@ -63,9 +66,9 @@ namespace AureFramework.Resource {
 			get
 			{
 				return loadSceneBeginCallback;
-			}	
+			}
 		}
-		
+
 		/// <summary>
 		/// 加载场景资源成功函数
 		/// </summary>
@@ -74,9 +77,9 @@ namespace AureFramework.Resource {
 			get
 			{
 				return loadSceneSuccessCallback;
-			}	
+			}
 		}
-		
+
 		/// <summary>
 		/// 加载场景资源更新函数
 		/// </summary>
@@ -85,9 +88,9 @@ namespace AureFramework.Resource {
 			get
 			{
 				return loadSceneUpdateCallback;
-			}	
+			}
 		}
-		
+
 		/// <summary>
 		/// 加载场景资源失败函数
 		/// </summary>
@@ -96,7 +99,7 @@ namespace AureFramework.Resource {
 			get
 			{
 				return loadSceneFailedCallback;
-			}	
+			}
 		}
 	}
 }

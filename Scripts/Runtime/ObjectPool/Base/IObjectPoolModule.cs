@@ -6,11 +6,13 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.ObjectPool {
+namespace AureFramework.ObjectPool
+{
 	/// <summary>
 	/// 对象池模块接口
 	/// </summary>
-	public interface IObjectPoolModule {
+	public interface IObjectPoolModule
+	{
 		/// <summary>
 		/// 获取对象池数量
 		/// </summary>
@@ -36,13 +38,13 @@ namespace AureFramework.ObjectPool {
 		/// <typeparam name="T"> 对象类型 </typeparam>
 		/// <returns></returns>
 		IObjectPool<T> CreateObjectPool<T>(string poolName, int capacity, float expireTime) where T : ObjectBase;
-		
+
 		/// <summary>
 		/// 销毁对象池
 		/// <param name="poolName"> 对象池名称 </param>
 		/// </summary>
 		void DestroyObjectPool<T>(string poolName, IObjectPool<T> objPool) where T : ObjectBase;
-		
+
 		/// <summary>
 		/// 释放所有对象池中未使用的对象
 		/// </summary>

@@ -8,8 +8,13 @@
 
 using System;
 
-namespace AureFramework.ReferencePool {
-	public interface IReferencePoolModule {
+namespace AureFramework.ReferencePool
+{
+	/// <summary>
+	/// 引用模块接口
+	/// </summary>
+	public interface IReferencePoolModule
+	{
 		/// <summary>
 		/// 清除所有的引用
 		/// </summary>

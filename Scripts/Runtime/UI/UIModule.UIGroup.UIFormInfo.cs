@@ -8,18 +8,22 @@
 
 using AureFramework.ReferencePool;
 
-namespace AureFramework.UI {
-	public sealed partial class UIModule : AureFrameworkModule, IUIModule {
-		private sealed partial class UIGroup {
+namespace AureFramework.UI
+{
+	public sealed partial class UIModule : AureFrameworkModule, IUIModule
+	{
+		private sealed partial class UIGroup
+		{
 			/// <summary>
 			/// UI信息
 			/// </summary>
-			private sealed class UIFormInfo : IReference {
+			private sealed class UIFormInfo : IReference
+			{
 				private UIFormBase m_UIFormBase;
 				private string uiName;
 				private bool isPause;
 				private int depth;
-				
+
 				public UIFormBase UIFormBase
 				{
 					get

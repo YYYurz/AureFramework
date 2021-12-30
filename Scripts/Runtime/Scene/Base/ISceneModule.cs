@@ -6,11 +6,13 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.Scene {
+namespace AureFramework.Scene
+{
 	/// <summary>
 	/// 场景模块接口
 	/// </summary>
-	public interface ISceneModule {
+	public interface ISceneModule
+	{
 		/// <summary>
 		/// 场景是否正在加载
 		/// </summary>

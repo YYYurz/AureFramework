@@ -11,9 +11,15 @@ using AureFramework.ReferencePool;
 using AureFramework.Resource;
 using UnityEngine;
 
-namespace AureFramework.UI {
-	public sealed partial class UIModule : AureFrameworkModule, IUIModule {
-		private class UIObject : ObjectBase {
+namespace AureFramework.UI
+{
+	public sealed partial class UIModule : AureFrameworkModule, IUIModule
+	{
+		/// <summary>
+		/// UI对象池对象
+		/// </summary>
+		private class UIObject : ObjectBase
+		{
 			/// <summary>
 			/// UI游戏内物体
 			/// </summary>
@@ -23,7 +29,8 @@ namespace AureFramework.UI {
 				private set;
 			}
 
-			public static UIObject Create(string uiName, GameObject uiGameObject) {
+			public static UIObject Create(string uiName, GameObject uiGameObject)
+			{
 				var uiObject = Aure.GetModule<IReferencePoolModule>().Acquire<UIObject>();
 				uiObject.Name = uiName;
 				uiObject.UIGameObject = uiGameObject;
@@ -31,10 +38,10 @@ namespace AureFramework.UI {
 				return uiObject;
 			}
 
-			public override void OnRelease() {
+			public override void OnRelease()
+			{
 				base.OnRelease();
-				
-				Debug.Log("OnRelease");
+
 				Aure.GetModule<IResourceModule>().ReleaseAsset(UIGameObject);
 			}
 		}

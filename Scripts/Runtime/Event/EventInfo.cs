@@ -6,16 +6,22 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.Event {
-	public sealed class EventInfo {
+namespace AureFramework.Event
+{
+	/// <summary>
+	/// 事件信息
+	/// </summary>
+	public sealed class EventInfo
+	{
 		private readonly string eventName;
 		private readonly string[] subscriberList;
-		
-		public EventInfo(string eventName, string[] subscriberList) {
+
+		public EventInfo(string eventName, string[] subscriberList)
+		{
 			this.eventName = eventName;
 			this.subscriberList = subscriberList;
 		}
-		
+
 		public string EventName
 		{
 			get

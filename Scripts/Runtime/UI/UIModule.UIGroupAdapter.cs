@@ -10,12 +10,15 @@ using AureFramework.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AureFramework.UI {
-	public sealed partial class UIModule : AureFrameworkModule, IUIModule {
+namespace AureFramework.UI
+{
+	public sealed partial class UIModule : AureFrameworkModule, IUIModule
+	{
 		/// <summary>
 		/// UI组适配器
 		/// </summary>
-		private sealed class UIGroupAdapter : MonoBehaviour {
+		private sealed class UIGroupAdapter : MonoBehaviour
+		{
 			private Canvas cachedCanvas;
 			private int groupDepth;
 
@@ -35,7 +38,7 @@ namespace AureFramework.UI {
 			private void Start()
 			{
 				gameObject.layer = LayerMask.NameToLayer("UI");
-				
+
 				cachedCanvas.overrideSorting = true;
 				cachedCanvas.sortingOrder = groupDepth;
 

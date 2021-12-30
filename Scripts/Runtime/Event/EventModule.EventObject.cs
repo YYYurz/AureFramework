@@ -10,9 +10,15 @@ using System;
 using System.Threading;
 using AureFramework.ReferencePool;
 
-namespace AureFramework.Event {
-	public sealed partial class EventModule : AureFrameworkModule, IEventModule {
-		private class EventObject{
+namespace AureFramework.Event
+{
+	public sealed partial class EventModule : AureFrameworkModule, IEventModule
+	{
+		/// <summary>
+		/// 内部事件对象
+		/// </summary>
+		private class EventObject
+		{
 			private event EventHandler<AureEventArgs> EventArgs;
 			private bool isHasSubscriber;
 			private string[] subscriberList;
@@ -21,11 +27,13 @@ namespace AureFramework.Event {
 			{
 				get
 				{
-					if (EventArgs == null) {
+					if (EventArgs == null)
+					{
 						return false;
 					}
 
-					if (EventArgs.GetInvocationList().Length == 0) {
+					if (EventArgs.GetInvocationList().Length == 0)
+					{
 						return false;
 					}
 
@@ -39,18 +47,22 @@ namespace AureFramework.Event {
 				{
 					Volatile.Read(ref EventArgs);
 
-					if (EventArgs != null) {
+					if (EventArgs != null)
+					{
 						var invocationList = EventArgs.GetInvocationList();
 						var length = invocationList.Length;
 						subscriberList = new string[length];
-						
-						for (var i = 0; i < length; i++) {
+
+						for (var i = 0; i < length; i++)
+						{
 							var invocation = invocationList[i];
 							subscriberList[i] = $"{invocation.Target}.{invocation.Method.Name}(";
 							var parameterList = invocation.Method.GetParameters();
-							for (var k = 0; k < parameterList.Length; k ++) {
+							for (var k = 0; k < parameterList.Length; k++)
+							{
 								subscriberList[i] += k == 0 ? parameterList[k].ToString() : ", " + parameterList[k];
 							}
+
 							subscriberList[i] += ")";
 						}
 
@@ -60,18 +72,21 @@ namespace AureFramework.Event {
 					return null;
 				}
 			}
-			
-			public void Fire(object sender, AureEventArgs e) {
+
+			public void Fire(object sender, AureEventArgs e)
+			{
 				Volatile.Read(ref EventArgs);
 				EventArgs?.Invoke(sender, e);
 				Aure.GetModule<IReferencePoolModule>().Release(e);
 			}
-			
-			public void Subscribe(EventHandler<AureEventArgs> e) {
+
+			public void Subscribe(EventHandler<AureEventArgs> e)
+			{
 				EventArgs += e;
 			}
 
-			public void Unsubscribe(EventHandler<AureEventArgs> e) {
+			public void Unsubscribe(EventHandler<AureEventArgs> e)
+			{
 				EventArgs -= e;
 			}
 		}

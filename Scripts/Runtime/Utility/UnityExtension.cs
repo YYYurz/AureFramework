@@ -8,12 +8,18 @@
 
 using UnityEngine;
 
-namespace AureFramework.Utility {
-	public static class UnityExtension {
-		
-		public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component {
+namespace AureFramework.Utility
+{
+	/// <summary>
+	/// Unity拓展函数
+	/// </summary>
+	public static class UnityExtension
+	{
+		public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+		{
 			var component = gameObject.GetComponent<T>();
-			if (component == null) {
+			if (component == null)
+			{
 				component = gameObject.AddComponent<T>();
 			}
 

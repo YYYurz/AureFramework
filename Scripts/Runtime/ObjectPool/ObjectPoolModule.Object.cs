@@ -9,12 +9,15 @@
 using System;
 using AureFramework.ReferencePool;
 
-namespace AureFramework.ObjectPool {
-	public sealed partial class ObjectPoolModule : AureFrameworkModule, IObjectPoolModule {
+namespace AureFramework.ObjectPool
+{
+	public sealed partial class ObjectPoolModule : AureFrameworkModule, IObjectPoolModule
+	{
 		/// <summary>
 		/// 内部对象
 		/// </summary>
-		private sealed class Object<T> : IReference where T : ObjectBase {
+		private sealed class Object<T> : IReference where T : ObjectBase
+		{
 			private T externalObject;
 			private DateTime lastUseTime;
 			private string name;
@@ -72,7 +75,8 @@ namespace AureFramework.ObjectPool {
 			/// 获取对象信息
 			/// </summary>
 			/// <returns></returns>
-			public ObjectInfo GetObjectInfo() {
+			public ObjectInfo GetObjectInfo()
+			{
 				return new ObjectInfo(name, lastUseTime, IsLock, isInUse);
 			}
 
@@ -80,7 +84,8 @@ namespace AureFramework.ObjectPool {
 			/// 获取对象
 			/// </summary>
 			/// <returns></returns>
-			public T Spawn() {
+			public T Spawn()
+			{
 				isInUse = true;
 				lastUseTime = DateTime.UtcNow;
 				externalObject.OnSpawn();
@@ -90,7 +95,8 @@ namespace AureFramework.ObjectPool {
 			/// <summary>
 			/// 回收对象
 			/// </summary>
-			public void Recycle() {
+			public void Recycle()
+			{
 				isInUse = false;
 				lastUseTime = DateTime.UtcNow;
 				externalObject.OnRecycle();
@@ -101,9 +107,11 @@ namespace AureFramework.ObjectPool {
 			/// </summary>
 			/// <param name="dateNow"> 当前世界协调时间 </param>
 			/// <param name="expireTime"> 过期秒数 </param>
-			public bool Release(DateTime dateNow, float expireTime) {
+			public bool Release(DateTime dateNow, float expireTime)
+			{
 				var tempTime = dateNow.AddSeconds(-expireTime);
-				if (DateTime.Compare(tempTime, lastUseTime) > 0 && !ExternalObject.IsLock && !isInUse) {
+				if (DateTime.Compare(tempTime, lastUseTime) > 0 && !ExternalObject.IsLock && !isInUse)
+				{
 					externalObject.OnRelease();
 					return true;
 				}
@@ -115,8 +123,10 @@ namespace AureFramework.ObjectPool {
 			/// 忽略时间释放对象
 			/// </summary>
 			/// <returns></returns>
-			public bool ReleaseIgnoreTime() {
-				if (!ExternalObject.IsLock && !isInUse) {
+			public bool ReleaseIgnoreTime()
+			{
+				if (!ExternalObject.IsLock && !isInUse)
+				{
 					externalObject.OnRelease();
 					return true;
 				}
@@ -131,7 +141,8 @@ namespace AureFramework.ObjectPool {
 			/// <param name="name"> 对象名称 </param>
 			/// <param name="isNeed"> 是否需要使用刚生成的对象 </param>
 			/// <returns></returns>
-			public static Object<T> Create(T obj, string name, bool isNeed) {
+			public static Object<T> Create(T obj, string name, bool isNeed)
+			{
 				var internalObject = Aure.GetModule<IReferencePoolModule>().Acquire<Object<T>>();
 				internalObject.externalObject = obj;
 				internalObject.lastUseTime = DateTime.UtcNow;
@@ -141,7 +152,8 @@ namespace AureFramework.ObjectPool {
 				return internalObject;
 			}
 
-			public void Clear() {
+			public void Clear()
+			{
 				Aure.GetModule<IReferencePoolModule>().Release(externalObject);
 				externalObject = null;
 				lastUseTime = default;

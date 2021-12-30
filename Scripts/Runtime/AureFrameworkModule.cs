@@ -8,8 +8,10 @@
 
 using UnityEngine;
 
-namespace AureFramework{
-	public abstract class AureFrameworkModule : MonoBehaviour {
+namespace AureFramework
+{
+	public abstract class AureFrameworkModule : MonoBehaviour
+	{
 		/// <summary>
 		/// 模块优先级，最小的优先轮询
 		/// </summary>
@@ -18,7 +20,8 @@ namespace AureFramework{
 		/// <summary>
 		/// MonoBehaviour自动注册框架模块
 		/// </summary>
-		private void Awake() {
+		private void Awake()
+		{
 			Aure.RegisterModule(this);
 		}
 
@@ -26,7 +29,7 @@ namespace AureFramework{
 		/// 模块初始化，只在第一次被获取时调用一次
 		/// </summary>
 		public abstract void Init();
-		
+
 		/// <summary>
 		/// 框架轮询
 		/// </summary>

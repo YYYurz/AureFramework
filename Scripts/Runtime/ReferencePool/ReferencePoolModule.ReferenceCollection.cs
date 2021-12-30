@@ -9,16 +9,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace AureFramework.ReferencePool {
-	public sealed partial class ReferencePoolModule : AureFrameworkModule, IReferencePoolModule {
-		private sealed class ReferenceCollection {
+namespace AureFramework.ReferencePool
+{
+	public sealed partial class ReferencePoolModule : AureFrameworkModule, IReferencePoolModule
+	{
+		/// <summary>
+		/// 引用容器
+		/// </summary>
+		private sealed class ReferenceCollection
+		{
 			private readonly Type referenceType;
 			private readonly Queue<IReference> referenceQue;
 			private int usingReferenceCount;
 			private int acquireReferenceCount;
 			private int releaseReferenceCount;
 
-			public ReferenceCollection(Type referenceType) {
+			public ReferenceCollection(Type referenceType)
+			{
 				this.referenceType = referenceType;
 				referenceQue = new Queue<IReference>();
 				usingReferenceCount = 0;
@@ -33,7 +40,7 @@ namespace AureFramework.ReferencePool {
 					return referenceQue.Count;
 				}
 			}
-			
+
 			public int UsingReferenceCount
 			{
 				get
@@ -41,7 +48,7 @@ namespace AureFramework.ReferencePool {
 					return usingReferenceCount;
 				}
 			}
-			
+
 			public int AcquireReferenceCount
 			{
 				get
@@ -49,7 +56,7 @@ namespace AureFramework.ReferencePool {
 					return acquireReferenceCount;
 				}
 			}
-			
+
 			public int ReleaseReferenceCount
 			{
 				get
@@ -57,24 +64,27 @@ namespace AureFramework.ReferencePool {
 					return releaseReferenceCount;
 				}
 			}
-			
+
 			public IReference Acquire()
 			{
 				usingReferenceCount++;
 				acquireReferenceCount++;
-				lock (referenceQue) {
+				lock (referenceQue)
+				{
 					if (referenceQue.Count > 0)
 					{
 						return referenceQue.Dequeue();
 					}
 				}
 
-				return (IReference)Activator.CreateInstance(referenceType);
+				return (IReference) Activator.CreateInstance(referenceType);
 			}
 
-			public void Release(IReference reference) {
+			public void Release(IReference reference)
+			{
 				reference.Clear();
-				lock (referenceQue) {
+				lock (referenceQue)
+				{
 					referenceQue.Enqueue(reference);
 				}
 
@@ -82,17 +92,21 @@ namespace AureFramework.ReferencePool {
 				usingReferenceCount--;
 			}
 
-			public void Add(int num) {
-				lock (referenceQue) {
+			public void Add(int num)
+			{
+				lock (referenceQue)
+				{
 					while (num-- > 0)
 					{
-						referenceQue.Enqueue((IReference)Activator.CreateInstance(referenceType));
+						referenceQue.Enqueue((IReference) Activator.CreateInstance(referenceType));
 					}
 				}
 			}
 
-			public void Remove(int num) {
-				lock (referenceQue) {
+			public void Remove(int num)
+			{
+				lock (referenceQue)
+				{
 					if (num > referenceQue.Count)
 					{
 						num = referenceQue.Count;
@@ -105,8 +119,10 @@ namespace AureFramework.ReferencePool {
 				}
 			}
 
-			public void RemoveAll() {
-				lock (referenceQue) {
+			public void RemoveAll()
+			{
+				lock (referenceQue)
+				{
 					referenceQue.Clear();
 				}
 			}

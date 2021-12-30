@@ -9,15 +9,19 @@
 using AureFramework.ReferencePool;
 using UnityEditor;
 
-namespace AureFramework.Editor {
+namespace AureFramework.Editor
+{
 	[CustomEditor(typeof(ReferencePoolModule))]
-	public class ReferencePoolModuleInspector : AureFrameworkInspector {
-		public override void OnInspectorGUI() {
+	public class ReferencePoolModuleInspector : AureFrameworkInspector
+	{
+		public override void OnInspectorGUI()
+		{
 			base.OnInspectorGUI();
-			
+
 			serializedObject.Update();
 
-			if (!EditorApplication.isPlaying) {
+			if (!EditorApplication.isPlaying)
+			{
 				EditorGUILayout.HelpBox("Show in runtime.", MessageType.Info);
 				return;
 			}
@@ -26,10 +30,12 @@ namespace AureFramework.Editor {
 			EditorGUILayout.BeginVertical("box");
 
 			EditorGUILayout.LabelField("Class", "Unused\tUsing\tAcquire\tRelease");
-			foreach (var referenceInfo in referenceInfoList) {
-				EditorGUILayout.LabelField(referenceInfo.TypeName, $"{referenceInfo.UnusedReferenceCount}\t{referenceInfo.UsingReferenceCount}\t{referenceInfo.AcquireReferenceCount}\t{referenceInfo.ReleaseReferenceCount}");
+			foreach (var referenceInfo in referenceInfoList)
+			{
+				EditorGUILayout.LabelField(referenceInfo.TypeName,
+					$"{referenceInfo.UnusedReferenceCount}\t{referenceInfo.UsingReferenceCount}\t{referenceInfo.AcquireReferenceCount}\t{referenceInfo.ReleaseReferenceCount}");
 			}
-			
+
 			EditorGUILayout.EndVertical();
 		}
 	}

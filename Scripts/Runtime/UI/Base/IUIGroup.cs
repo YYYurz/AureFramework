@@ -6,33 +6,48 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.UI {
-	public interface IUIGroup {
+namespace AureFramework.UI
+{
+	/// <summary>
+	/// UI组接口
+	/// </summary>
+	public interface IUIGroup
+	{
+		/// <summary>
+		/// 获取UI组名称
+		/// </summary>
+		string GroupName
+		{
+			get;
+		}
 		
+		/// <summary>
+		/// 获取或设置UI组深度
+		/// </summary>
+		int GroupDepth
+		{
+			get;
+			set;
+		}
 		
 		/// <summary>
-		/// 界面是否存在
+		/// 是否存在已打开UI
 		/// </summary>
-		/// <param name="uiName"> 界面资源 </param>
+		/// <param name="uiName"> UI名称 </param>
 		/// <returns></returns>
-		// bool HasUIForm(string uiName);
+		bool IsHasUI(string uiName);
 
 		/// <summary>
-		/// 获取界面
+		/// 获取已打开的UIForm
 		/// </summary>
-		/// <param name="uiName"></param>
+		/// <param name="uiName"> UI名称 </param>
 		/// <returns></returns>
-		// IUIForm GetUIForm(string uiName);
+		UIFormBase GetUIForm(string uiName);
 
 		/// <summary>
-		/// 获取所有界面
+		/// 获取所有已打开UIForm
 		/// </summary>
 		/// <returns></returns>
-		// IUIForm GetAllUIForm();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		// void OpenUIForm();
+		UIFormBase[] GetAllUIForm();
 	}
 }

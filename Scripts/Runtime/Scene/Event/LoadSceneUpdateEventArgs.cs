@@ -9,8 +9,13 @@
 using AureFramework.Event;
 using AureFramework.ReferencePool;
 
-namespace AureFramework.Scene {
-	public class LoadSceneUpdateEventArgs : AureEventArgs {
+namespace AureFramework.Scene
+{
+	/// <summary>
+	/// 加载场景进度事件
+	/// </summary>
+	public class LoadSceneUpdateEventArgs : AureEventArgs
+	{
 		/// <summary>
 		/// 场景名称
 		/// </summary>
@@ -29,15 +34,17 @@ namespace AureFramework.Scene {
 			private set;
 		}
 
-		public static LoadSceneUpdateEventArgs Create(string sceneName, float progress) {
+		public static LoadSceneUpdateEventArgs Create(string sceneName, float progress)
+		{
 			var loadSceneUpdateEventArgs = Aure.GetModule<IReferencePoolModule>().Acquire<LoadSceneUpdateEventArgs>();
 			loadSceneUpdateEventArgs.SceneName = sceneName;
 			loadSceneUpdateEventArgs.Progress = progress;
 
 			return loadSceneUpdateEventArgs;
 		}
-		
-		public override void Clear() {
+
+		public override void Clear()
+		{
 			SceneName = null;
 			Progress = 0f;
 		}

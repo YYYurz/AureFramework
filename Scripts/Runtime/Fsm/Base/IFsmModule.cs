@@ -9,8 +9,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace AureFramework.Fsm {
-	public interface IFsmModule {
+namespace AureFramework.Fsm
+{
+	/// <summary>
+	/// 有限状态机模块接口
+	/// </summary>
+	public interface IFsmModule
+	{
 		/// <summary>
 		/// 创建有限状态机
 		/// </summary>

@@ -10,11 +10,13 @@ using AureFramework.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AureFramework.UI {
+namespace AureFramework.UI
+{
 	/// <summary>
 	/// UI实体类
 	/// </summary>
-	public abstract class UIFormBase : MonoBehaviour {
+	public abstract class UIFormBase : MonoBehaviour
+	{
 		private Canvas cachedCanvas;
 		private bool isAlreadyInit;
 
@@ -28,12 +30,13 @@ namespace AureFramework.UI {
 				return isAlreadyInit;
 			}
 		}
-		
+
 		/// <summary>
 		/// 初始化
 		/// </summary>
 		/// <param name="userData"> 用户自定义数据 </param>
-		public virtual void OnInit(object userData) {
+		public virtual void OnInit(object userData)
+		{
 			cachedCanvas = gameObject.GetOrAddComponent<Canvas>();
 			cachedCanvas.overrideSorting = true;
 
@@ -53,33 +56,44 @@ namespace AureFramework.UI {
 		/// 打开
 		/// </summary>
 		/// <param name="userData"> 用户自定义数据 </param>
-		public virtual void OnOpen(object userData) { }
+		public virtual void OnOpen(object userData)
+		{
+		}
 
 		/// <summary>
 		///	暂停 
 		/// </summary>
-		public virtual void OnPause() { }
+		public virtual void OnPause()
+		{
+		}
 
 		/// <summary>
 		/// 暂停恢复
 		/// </summary>
-		public virtual void OnResume() { }
+		public virtual void OnResume()
+		{
+		}
 
 		/// <summary>
 		/// 关闭
 		/// </summary>
-		public virtual void OnClose() { }
+		public virtual void OnClose()
+		{
+		}
 
 		/// <summary>
 		/// 销毁
 		/// </summary>
-		public virtual void OnDestroy() { }
+		public virtual void OnDestroy()
+		{
+		}
 
 		/// <summary>
 		/// 深度改变
 		/// </summary>
 		/// <param name="depth"> 界面深度 </param>
-		public virtual void OnDepthChange(int depth) {
+		public virtual void OnDepthChange(int depth)
+		{
 			cachedCanvas.sortingOrder = depth;
 		}
 
@@ -87,6 +101,8 @@ namespace AureFramework.UI {
 		/// 轮询
 		/// </summary>
 		/// <param name="elapseTime"> 距离上一帧的真实流逝时间，秒单位 </param>
-		public virtual void OnUpdate(float elapseTime) { }
+		public virtual void OnUpdate(float elapseTime)
+		{
+		}
 	}
 }

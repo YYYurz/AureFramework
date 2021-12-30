@@ -8,8 +8,13 @@
 
 using System;
 
-namespace AureFramework.Event {
-	public interface IEventModule {
+namespace AureFramework.Event
+{
+	/// <summary>
+	/// 事件模块接口
+	/// </summary>
+	public interface IEventModule
+	{
 		/// <summary>
 		/// 订阅事件
 		/// </summary>

@@ -8,8 +8,13 @@
 
 using AureFramework.ReferencePool;
 
-namespace AureFramework.ObjectPool {
-	public abstract class ObjectBase : IReference {
+namespace AureFramework.ObjectPool
+{
+	/// <summary>
+	/// 对象基类
+	/// </summary>
+	public abstract class ObjectBase : IReference
+	{
 		/// <summary>
 		/// 获取对象名称
 		/// </summary>
@@ -18,7 +23,7 @@ namespace AureFramework.ObjectPool {
 			get;
 			protected set;
 		}
-		
+
 		/// <summary>
 		/// 获取或设置对象是否加锁
 		/// </summary>
@@ -31,24 +36,31 @@ namespace AureFramework.ObjectPool {
 		/// <summary>
 		/// 清理对象
 		/// </summary>
-		public virtual void Clear() {
+		public virtual void Clear()
+		{
 			Name = null;
 			IsLock = false;
 		}
-		
+
 		/// <summary>
 		/// 获取对象时触发
 		/// </summary>
-		public virtual void OnSpawn(){}
-		
+		public virtual void OnSpawn()
+		{
+		}
+
 		/// <summary>
 		/// 回收对象时触发
 		/// </summary>
-		public virtual void OnRecycle(){}
-		
+		public virtual void OnRecycle()
+		{
+		}
+
 		/// <summary>
 		/// 释放对象时触发
 		/// </summary>
-		public virtual void OnRelease(){}
+		public virtual void OnRelease()
+		{
+		}
 	}
 }

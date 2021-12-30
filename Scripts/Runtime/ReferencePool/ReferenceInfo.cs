@@ -6,15 +6,21 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-namespace AureFramework.ReferencePool {
-	public readonly struct ReferenceInfo {
+namespace AureFramework.ReferencePool
+{
+	/// <summary>
+	/// 引用信息
+	/// </summary>
+	public readonly struct ReferenceInfo
+	{
 		private readonly string typeName;
 		private readonly int unusedReferenceCount;
 		private readonly int usingReferenceCount;
 		private readonly int acquireReferenceCount;
 		private readonly int releaseReferenceCount;
-		
-		public ReferenceInfo(string typeName, int unusedReferenceCount, int usingReferenceCount, int acquireReferenceCount, int releaseReferenceCount) {
+
+		public ReferenceInfo(string typeName, int unusedReferenceCount, int usingReferenceCount, int acquireReferenceCount, int releaseReferenceCount)
+		{
 			this.typeName = typeName;
 			this.unusedReferenceCount = unusedReferenceCount;
 			this.usingReferenceCount = usingReferenceCount;

@@ -8,17 +8,20 @@
 
 using System;
 
-namespace AureFramework.ObjectPool {
+namespace AureFramework.ObjectPool
+{
 	/// <summary>
 	/// 对象信息
 	/// </summary>
-	public sealed class ObjectInfo {
+	public sealed class ObjectInfo
+	{
 		private readonly string name;
 		private readonly DateTime lastUseTime;
 		private readonly bool isLock;
 		private readonly bool isInUse;
 
-		public ObjectInfo(string name, DateTime lastUseTime, bool isLock, bool isInUse) {
+		public ObjectInfo(string name, DateTime lastUseTime, bool isLock, bool isInUse)
+		{
 			this.name = name;
 			this.lastUseTime = lastUseTime;
 			this.isLock = isLock;

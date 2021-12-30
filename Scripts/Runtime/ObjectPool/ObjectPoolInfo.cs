@@ -8,11 +8,13 @@
 
 using System;
 
-namespace AureFramework.ObjectPool {
+namespace AureFramework.ObjectPool
+{
 	/// <summary>
 	/// 对象池信息
 	/// </summary>
-	public sealed class ObjectPoolInfo {
+	public sealed class ObjectPoolInfo
+	{
 		private readonly Type objectType;
 		private readonly string name;
 		private readonly int capacity;
@@ -21,7 +23,8 @@ namespace AureFramework.ObjectPool {
 		private readonly float expireTime;
 		private readonly ObjectInfo[] objectInfoList;
 
-		public ObjectPoolInfo(Type objectType, string name, int capacity, int usingCount, int unusedCount, float expireTime, ObjectInfo[] objectInfoList) {
+		public ObjectPoolInfo(Type objectType, string name, int capacity, int usingCount, int unusedCount, float expireTime, ObjectInfo[] objectInfoList)
+		{
 			this.objectType = objectType;
 			this.name = name;
 			this.capacity = capacity;
@@ -52,7 +55,7 @@ namespace AureFramework.ObjectPool {
 				return name;
 			}
 		}
-		
+
 		/// <summary>
 		/// 获取对象池容量
 		/// </summary>
@@ -63,7 +66,7 @@ namespace AureFramework.ObjectPool {
 				return capacity;
 			}
 		}
-		
+
 		/// <summary>
 		/// 获取使用中对象的数量
 		/// </summary>
@@ -74,7 +77,7 @@ namespace AureFramework.ObjectPool {
 				return usingCount;
 			}
 		}
-		
+
 		/// <summary>
 		/// 获取未使用对象的数量
 		/// </summary>
