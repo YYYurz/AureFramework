@@ -19,8 +19,9 @@ namespace AureFramework.UI
 			/// </summary>
 			private sealed class UIFormInfo : IReference
 			{
-				private UIFormBase m_UIFormBase;
-				private string uiName;
+				private UIFormBase uiFormBase;
+				private UIObject uiObject;
+				private string uiAssetPath;
 				private bool isPause;
 				private int depth;
 
@@ -28,7 +29,19 @@ namespace AureFramework.UI
 				{
 					get
 					{
-						return m_UIFormBase;
+						return uiFormBase;
+					}
+				}
+
+				public UIObject UIObject
+				{
+					get
+					{
+						return uiObject;
+					}
+					set
+					{
+						uiObject = value;
 					}
 				}
 
@@ -36,7 +49,23 @@ namespace AureFramework.UI
 				{
 					get
 					{
-						return uiName;
+						return uiFormBase.UIName;
+					}
+					set
+					{
+						uiFormBase.UIName = value;
+					}
+				}
+
+				public string AssetPath
+				{
+					get
+					{
+						return uiAssetPath;
+					}
+					set
+					{
+						uiAssetPath = value;
 					}
 				}
 
@@ -64,11 +93,13 @@ namespace AureFramework.UI
 					}
 				}
 
-				public static UIFormInfo Create(UIFormBase uiFormBase, string uiName)
+				public static UIFormInfo Create(UIFormBase uiFormBase, UIObject uiObject, string uiName, string assetPath)
 				{
 					var uiFormInfo = Aure.GetModule<IReferencePoolModule>().Acquire<UIFormInfo>();
-					uiFormInfo.m_UIFormBase = uiFormBase;
-					uiFormInfo.uiName = uiName;
+					uiFormInfo.uiFormBase = uiFormBase;
+					uiFormInfo.uiObject = uiObject;
+					uiFormInfo.uiFormBase.UIName = uiName;
+					uiFormInfo.uiAssetPath = assetPath;
 					uiFormInfo.isPause = false;
 					uiFormInfo.depth = 0;
 					return uiFormInfo;
@@ -76,8 +107,9 @@ namespace AureFramework.UI
 
 				public void Clear()
 				{
-					m_UIFormBase = null;
-					uiName = null;
+					uiObject = null;
+					uiFormBase.UIName = null;
+					uiFormBase = null;
 					isPause = false;
 					depth = 0;
 				}

@@ -18,7 +18,23 @@ namespace AureFramework.UI
 	public abstract class UIFormBase : MonoBehaviour
 	{
 		private Canvas cachedCanvas;
+		private string uIName;
 		private bool isAlreadyInit;
+
+		/// <summary>
+		/// 获取或设置UI名称
+		/// </summary>
+		public string UIName
+		{
+			get
+			{
+				return uIName;
+			}
+			set
+			{
+				uIName = value;
+			}
+		}
 
 		/// <summary>
 		/// 获取UI是否已经初始化过了

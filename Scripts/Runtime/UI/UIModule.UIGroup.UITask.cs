@@ -25,6 +25,12 @@ namespace AureFramework.UI
 					get;
 				}
 
+				public string UIAssetPath
+				{
+					private set;
+					get;
+				}
+				
 				public object UserData
 				{
 					private set;
@@ -37,10 +43,11 @@ namespace AureFramework.UI
 					get;
 				}
 
-				public static UITask Create(string uiName, UITaskType uiTaskType, object userData)
+				public static UITask Create(string uiName, string uiAssetPath, UITaskType uiTaskType, object userData)
 				{
 					var uiTask = Aure.GetModule<IReferencePoolModule>().Acquire<UITask>();
 					uiTask.UIName = uiName;
+					uiTask.UIAssetPath = uiAssetPath;
 					uiTask.UserData = userData;
 					uiTask.UITaskType = uiTaskType;
 					return uiTask;
@@ -49,6 +56,7 @@ namespace AureFramework.UI
 				public void Clear()
 				{
 					UIName = null;
+					UIAssetPath = null;
 					UserData = null;
 					UITaskType = UITaskType.None;
 				}

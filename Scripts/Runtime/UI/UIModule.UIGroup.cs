@@ -22,7 +22,6 @@ namespace AureFramework.UI
 		{
 			private readonly IObjectPool<UIObject> uiObjectPool;
 			private readonly IReferencePoolModule referencePoolModule;
-			private readonly Dictionary<string, UIObject> usingUIObject = new Dictionary<string, UIObject>();
 			private readonly LinkedList<UIFormInfo> uiFormInfoLinked = new LinkedList<UIFormInfo>();
 			private readonly Queue<UITask> waitingUITaskQue = new Queue<UITask>();
 			private readonly Transform groupRoot;
@@ -31,7 +30,7 @@ namespace AureFramework.UI
 			private int groupDepth;
 			private int curUIDepth;
 			private float waitTime;
-			private const float taskExpireTime = 5f;
+			private const float TaskExpireTime = 5f;
 
 			public UIGroup(IObjectPool<UIObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot, UIGroupAdapter uiGroupAdapter)
 			{
@@ -88,7 +87,7 @@ namespace AureFramework.UI
 				{
 					waitTime = 0f;
 				}
-				else if (waitingUITaskQue.Count > 0 && waitTime > taskExpireTime)
+				else if (waitingUITaskQue.Count > 0 && waitTime > TaskExpireTime)
 				{
 					referencePoolModule.Release(waitingUITaskQue.Dequeue());
 					waitTime = 0f;
@@ -145,10 +144,11 @@ namespace AureFramework.UI
 			/// 入队打开UI操作
 			/// </summary>
 			/// <param name="uiName"> UI名称 </param>
+			/// <param name="uiAssetPath"> UI资源路径 </param>
 			/// <param name="userData"> 用户数据 </param>
-			public void OpenUI(string uiName, object userData)
+			public void OpenUI(string uiName, string uiAssetPath, object userData)
 			{
-				InternalCreateUITask(uiName, UITaskType.OpenUI, userData);
+				InternalCreateUITask(uiName, uiAssetPath, UITaskType.OpenUI, userData);
 			}
 
 			/// <summary>
@@ -157,7 +157,7 @@ namespace AureFramework.UI
 			/// <param name="uiName"> UI名称 </param>
 			public void CloseUI(string uiName)
 			{
-				InternalCreateUITask(uiName, UITaskType.CloseUI, null);
+				InternalCreateUITask(uiName, null,  UITaskType.CloseUI, null);
 			}
 
 			/// <summary>
@@ -180,7 +180,7 @@ namespace AureFramework.UI
 				{
 					if (curNode.Value.UIName.Equals(uiName))
 					{
-						InternalCreateUITask(curNode.Value.UIName, UITaskType.CloseUI, null);
+						InternalCreateUITask(curNode.Value.UIName, null, UITaskType.CloseUI, null);
 					}
 
 					curNode = curNode.Previous;
@@ -208,9 +208,9 @@ namespace AureFramework.UI
 				}
 			}
 
-			private void InternalCreateUITask(string uiName, UITaskType uiTaskType, object userData)
+			private void InternalCreateUITask(string uiName, string uiAssetPath, UITaskType uiTaskType, object userData)
 			{
-				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiTaskType, userData));
+				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiAssetPath, uiTaskType, userData));
 				InternalTryProcessTask();
 			}
 
@@ -267,7 +267,7 @@ namespace AureFramework.UI
 					return;
 				}
 
-				if (InternalTrySpawnUIObject(uiTask.UIName, out var uiObject))
+				if (InternalTrySpawnUIObject(uiTask.UIAssetPath, out var uiObject))
 				{
 					uiObject.UIGameObject.transform.SetParent(groupRoot);
 					uiObject.UIGameObject.SetActive(true);
@@ -280,7 +280,7 @@ namespace AureFramework.UI
 
 					uiForm.OnOpen(uiTask.UserData);
 
-					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiTask.UIName));
+					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiObject, uiTask.UIName, uiTask.UIAssetPath));
 					uiTask.UITaskType = UITaskType.Complete;
 				}
 			}
@@ -290,29 +290,24 @@ namespace AureFramework.UI
 				var uiNode = GetUINode(uiTask.UIName);
 				if (uiNode != null)
 				{
-					var uiObject = usingUIObject[uiTask.UIName];
 					uiNode.Value.UIFormBase.OnClose();
-
-					uiObject.UIGameObject.SetActive(false);
-					uiObjectPool.Recycle(uiObject);
+					uiNode.Value.UIObject.UIGameObject.SetActive(false);
+					uiObjectPool.Recycle(uiNode.Value.UIObject);
 
 					uiFormInfoLinked.Remove(uiNode);
-					usingUIObject.Remove(uiTask.UIName);
-
 					referencePoolModule.Release(uiNode.Value);
 				}
 
 				uiTask.UITaskType = UITaskType.Complete;
 			}
 
-			private bool InternalTrySpawnUIObject(string uiName, out UIObject uiObject)
+			private bool InternalTrySpawnUIObject(string uiAssetPath, out UIObject uiObject)
 			{
-				uiObject = uiObjectPool.Spawn(uiName);
+				uiObject = uiObjectPool.Spawn(uiAssetPath);
 
 				var uiForm = uiObject?.UIGameObject.GetComponent<UIFormBase>();
 				if (uiForm != null)
 				{
-					usingUIObject.Add(uiName, uiObject);
 					return true;
 				}
 

@@ -131,9 +131,10 @@ namespace AureFramework.UI
 		/// 打开UI
 		/// </summary>
 		/// <param name="uiName"> UI名称 </param>
+		/// <param name="uiAssetPath"> UI资源路径 </param>
 		/// <param name="uiGroupName"> UI组名称 </param>
 		/// <param name="userData"> 用户数据 </param>
-		public void OpenUI(string uiName, string uiGroupName, object userData)
+		public void OpenUI(string uiName, string uiAssetPath, string uiGroupName, object userData)
 		{
 			if (string.IsNullOrEmpty(uiName))
 			{
@@ -154,10 +155,10 @@ namespace AureFramework.UI
 
 			if (!uiObjectPool.IsHasObject(uiName) && !loadingUIDic.ContainsValue(uiName))
 			{
-				resourceModule.InstantiateAsync(uiName, instantiateGameObjectCallbacks);
+				resourceModule.InstantiateAsync(uiAssetPath, instantiateGameObjectCallbacks);
 			}
 
-			uiGroupDic[uiGroupName].OpenUI(uiName, userData);
+			uiGroupDic[uiGroupName].OpenUI(uiName, uiAssetPath, userData);
 		}
 
 		/// <summary>
@@ -354,11 +355,11 @@ namespace AureFramework.UI
 			return null;
 		}
 
-		private void OnInstantiateUIBegin(string uiName, int taskId)
+		private void OnInstantiateUIBegin(string uiAssetName, int taskId)
 		{
 			if (!loadingUIDic.ContainsKey(taskId))
 			{
-				loadingUIDic.Add(taskId, uiName);
+				loadingUIDic.Add(taskId, uiAssetName);
 			}
 		}
 
