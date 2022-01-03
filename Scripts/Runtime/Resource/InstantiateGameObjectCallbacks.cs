@@ -23,7 +23,8 @@ namespace AureFramework.Resource
 	/// <param name="assetName"> 游戏物体资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="gameObject"> 游戏物体资源 </param>
-	public delegate void InstantiateGameObjectSuccessCallback(string assetName, int taskId, GameObject gameObject);
+	/// <param name="userData"> 用户数据 </param>
+	public delegate void InstantiateGameObjectSuccessCallback(string assetName, int taskId, GameObject gameObject, object userData);
 
 	/// <summary>
 	/// 克隆游戏物体更新委托

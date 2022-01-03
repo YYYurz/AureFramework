@@ -149,7 +149,7 @@ namespace AureFramework.Scene
 				return;
 			}
 
-			resourceModule.LoadSceneAsync(sceneName, loadSceneAssetCallbacks);
+			resourceModule.LoadSceneAsync(sceneName, loadSceneAssetCallbacks, null);
 		}
 
 		/// <summary>
@@ -191,7 +191,7 @@ namespace AureFramework.Scene
 			loadingSceneDic.Add(taskId, sceneAssetName);
 		}
 
-		private void OnLoadSceneSuccess(string sceneAssetName, int taskId, SceneInstance sceneAsset)
+		private void OnLoadSceneSuccess(string sceneAssetName, int taskId, SceneInstance sceneAsset, object userData)
 		{
 			loadedSceneDic.Add(sceneAssetName, sceneAsset);
 			loadingSceneDic.Remove(taskId);
@@ -209,7 +209,7 @@ namespace AureFramework.Scene
 			loadingSceneDic.Remove(taskId);
 
 			eventModule.Fire(this, LoadSceneFailedEventArgs.Create(loadingSceneDic[taskId], errorMessage));
-			Debug.LogError($"UIModule : Load scene Failed, error message :{errorMessage}.");
+			Debug.LogError($"SceneModule : Load scene Failed, error message :{errorMessage}.");
 		}
 
 		private void OnUnloadSceneOver(string sceneName)

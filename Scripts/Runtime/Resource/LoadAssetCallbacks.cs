@@ -23,7 +23,8 @@ namespace AureFramework.Resource
 	/// <param name="assetName"> 资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="asset"> 加载完成的资源 </param>
-	public delegate void LoadAssetSuccessCallback(string assetName, int taskId, Object asset);
+	/// <param name="userData"> 用户数据 </param>
+	public delegate void LoadAssetSuccessCallback(string assetName, int taskId, Object asset, object userData);
 
 	/// <summary>
 	/// 加载资源更新委托

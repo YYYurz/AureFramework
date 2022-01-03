@@ -36,23 +36,25 @@ namespace AureFramework.Resource
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="loadAssetCallbacks"> 加载资源回调 </param>
+		/// <param name="userData"> 用户数据 </param>
 		/// <typeparam name="T"></typeparam>
-		void LoadAssetAsync<T>(string assetName, LoadAssetCallbacks loadAssetCallbacks = null) where T : UnityEngine.Object;
+		void LoadAssetAsync<T>(string assetName, LoadAssetCallbacks loadAssetCallbacks, object userData) where T : UnityEngine.Object;
 
 		/// <summary>
 		/// 异步克隆
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="instantiateGameObjectCallbacks"> 克隆游戏物体回调 </param>
-		void InstantiateAsync(string assetName, InstantiateGameObjectCallbacks instantiateGameObjectCallbacks = null);
+		/// <param name="userData"> 用户数据 </param>
+		void InstantiateAsync(string assetName, InstantiateGameObjectCallbacks instantiateGameObjectCallbacks, object userData);
 
 		/// <summary>
 		/// 异步加载场景
 		/// </summary>
 		/// <param name="sceneAssetName"> 场景资源Key </param>
 		/// <param name="loadSceneCallbacks"> 加载场景资源回调 </param>
-		/// <returns></returns>
-		void LoadSceneAsync(string sceneAssetName, LoadSceneCallbacks loadSceneCallbacks = null);
+		/// <param name="userData"> 用户数据 </param>
+		void LoadSceneAsync(string sceneAssetName, LoadSceneCallbacks loadSceneCallbacks, object userData);
 
 		/// <summary>
 		/// 卸载资源

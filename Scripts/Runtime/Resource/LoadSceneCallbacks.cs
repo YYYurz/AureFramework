@@ -23,7 +23,8 @@ namespace AureFramework.Resource
 	/// <param name="sceneAssetName"> 场景资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="sceneAsset"> 加载完成的场景资源 </param>
-	public delegate void LoadSceneSuccessCallback(string sceneAssetName, int taskId, SceneInstance sceneAsset);
+	/// <param name="userData"> 用户数据 </param>
+	public delegate void LoadSceneSuccessCallback(string sceneAssetName, int taskId, SceneInstance sceneAsset, object userData);
 
 	/// <summary>
 	/// 加载场景资源更新委托

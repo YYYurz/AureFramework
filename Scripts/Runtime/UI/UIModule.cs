@@ -155,7 +155,7 @@ namespace AureFramework.UI
 
 			if (!uiObjectPool.IsHasObject(uiName) && !loadingUIDic.ContainsValue(uiName))
 			{
-				resourceModule.InstantiateAsync(uiAssetPath, instantiateGameObjectCallbacks);
+				resourceModule.InstantiateAsync(uiAssetPath, instantiateGameObjectCallbacks, null);
 			}
 
 			uiGroupDic[uiGroupName].OpenUI(uiName, uiAssetPath, userData);
@@ -363,7 +363,7 @@ namespace AureFramework.UI
 			}
 		}
 
-		private void OnInstantiateUISuccess(string uiName, int taskId, GameObject uiGameObject)
+		private void OnInstantiateUISuccess(string uiName, int taskId, GameObject uiGameObject, object userData)
 		{
 			var uiForm = uiGameObject.GetComponent<UIFormBase>();
 			if (uiForm == null)

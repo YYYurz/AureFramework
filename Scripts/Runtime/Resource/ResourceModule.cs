@@ -92,11 +92,13 @@ namespace AureFramework.Resource
 		/// <param name="assetName"> 资源Key </param>
 		public GameObject InstantiateSync(string assetName)
 		{
-			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle))
+			if (string.IsNullOrEmpty(assetName))
 			{
+				Debug.LogError("ResourceModule : Load asset name is null.");
 				return null;
 			}
 
+			var handle = Addressables.InstantiateAsync(assetName);
 			handle.WaitForCompletion();
 
 			if (handle.Result != null)
@@ -116,11 +118,13 @@ namespace AureFramework.Resource
 		/// <returns></returns>
 		public T LoadAssetSync<T>(string assetName) where T : Object
 		{
-			if (!InternalCreateLoadAsyncHandle<T>(assetName, out var handle))
+			if (string.IsNullOrEmpty(assetName))
 			{
+				Debug.LogError("ResourceModule : Load asset name is null.");
 				return null;
 			}
 
+			var handle = Addressables.LoadAssetAsync<T>(assetName);
 			handle.WaitForCompletion();
 
 			if (handle.Result != null)
@@ -137,15 +141,17 @@ namespace AureFramework.Resource
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="loadAssetCallbacks"> 加载资源回调 </param>
+		/// <param name="userData"> 用户数据 </param>
 		/// <typeparam name="T"></typeparam>
-		public async void LoadAssetAsync<T>(string assetName, LoadAssetCallbacks loadAssetCallbacks = null)
-			where T : Object
+		public async void LoadAssetAsync<T>(string assetName, LoadAssetCallbacks loadAssetCallbacks, object userData) where T : Object
 		{
-			if (!InternalCreateLoadAsyncHandle<T>(assetName, out var handle))
+			if (string.IsNullOrEmpty(assetName))
 			{
+				loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, 0, "ResourceModule : Load asset name is null.");
 				return;
 			}
 
+			var handle = Addressables.LoadAssetAsync<T>(assetName);
 			var taskId = GetTaskId();
 			loadingAssetDic.Add(taskId, handle);
 			assetCallbackDic.Add(taskId, loadAssetCallbacks);
@@ -157,7 +163,7 @@ namespace AureFramework.Resource
 			{
 				if (handle.Status == AsyncOperationStatus.Succeeded)
 				{
-					loadAssetCallbacks?.LoadAssetSuccessCallback?.Invoke(assetName, taskId, handle.Result);
+					loadAssetCallbacks?.LoadAssetSuccessCallback?.Invoke(assetName, taskId, handle.Result, userData);
 				}
 				else
 				{
@@ -176,13 +182,16 @@ namespace AureFramework.Resource
 		/// </summary>
 		/// <param name="assetName"> 资源Key </param>
 		/// <param name="instantiateGameObjectCallbacks"> 克隆游戏物体回调 </param>
-		public async void InstantiateAsync(string assetName, InstantiateGameObjectCallbacks instantiateGameObjectCallbacks = null)
+		/// <param name="userData"> 用户数据 </param>
+		public async void InstantiateAsync(string assetName, InstantiateGameObjectCallbacks instantiateGameObjectCallbacks, object userData)
 		{
-			if (!InternalCreateInstantiateAsyncHandle(assetName, out var handle))
+			if (string.IsNullOrEmpty(assetName))
 			{
+				instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, 0, "ResourceModule : Load asset name is null.");
 				return;
 			}
 
+			var handle = Addressables.InstantiateAsync(assetName);
 			var taskId = GetTaskId();
 			loadingAssetDic.Add(taskId, handle);
 			instantiateCallbackDic.Add(taskId, instantiateGameObjectCallbacks);
@@ -194,7 +203,7 @@ namespace AureFramework.Resource
 			{
 				if (handle.Status == AsyncOperationStatus.Succeeded)
 				{
-					instantiateGameObjectCallbacks?.InstantiateGameObjectSuccessCallback?.Invoke(assetName, taskId, handle.Result);
+					instantiateGameObjectCallbacks?.InstantiateGameObjectSuccessCallback?.Invoke(assetName, taskId, handle.Result, userData);
 				}
 				else
 				{
@@ -212,14 +221,17 @@ namespace AureFramework.Resource
 		/// </summary>
 		/// <param name="sceneAssetName"> 场景资源Key </param>
 		/// <param name="loadSceneCallbacks"> 加载场景资源回调 </param>
+		/// <param name="userData"> 用户数据 </param>
 		/// <returns></returns>
-		public async void LoadSceneAsync(string sceneAssetName, LoadSceneCallbacks loadSceneCallbacks = null)
+		public async void LoadSceneAsync(string sceneAssetName, LoadSceneCallbacks loadSceneCallbacks, object userData)
 		{
-			if (!InternalCreateSceneAsyncHandle(sceneAssetName, out var handle))
+			if (string.IsNullOrEmpty(sceneAssetName))
 			{
+				loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, 0, "ResourceModule : Load asset name is null.");
 				return;
 			}
 
+			var handle = Addressables.LoadSceneAsync(sceneAssetName, LoadSceneMode.Additive);
 			var taskId = GetTaskId();
 			loadingAssetDic.Add(taskId, handle);
 			sceneCallbackDic.Add(taskId, loadSceneCallbacks);
@@ -232,7 +244,7 @@ namespace AureFramework.Resource
 				if (handle.Status == AsyncOperationStatus.Succeeded)
 				{
 					loadedSceneDic.Add(handle.Result, sceneAssetName);
-					loadSceneCallbacks?.LoadSceneSuccessCallback?.Invoke(sceneAssetName, taskId, handle.Result);
+					loadSceneCallbacks?.LoadSceneSuccessCallback?.Invoke(sceneAssetName, taskId, handle.Result, userData);
 				}
 				else
 				{
@@ -292,46 +304,6 @@ namespace AureFramework.Resource
 			{
 				Debug.LogError($"ResourceModule : Unload scene failed, error message :{handle.OperationException.Message}");
 			}
-		}
-
-		private static bool InternalCreateLoadAsyncHandle<T>(string assetName, out AsyncOperationHandle<T> handle)
-			where T : Object
-		{
-			if (string.IsNullOrEmpty(assetName))
-			{
-				Debug.LogError("ResourceModule : Load asset name is null.");
-				handle = default;
-				return false;
-			}
-
-			handle = Addressables.LoadAssetAsync<T>(assetName);
-			return true;
-		}
-
-		private static bool InternalCreateInstantiateAsyncHandle(string assetName, out AsyncOperationHandle<GameObject> handle)
-		{
-			if (string.IsNullOrEmpty(assetName))
-			{
-				Debug.LogError("ResourceModule : Load asset name is null.");
-				handle = default;
-				return false;
-			}
-
-			handle = Addressables.InstantiateAsync(assetName);
-			return true;
-		}
-
-		private static bool InternalCreateSceneAsyncHandle(string sceneName, out AsyncOperationHandle<SceneInstance> handle)
-		{
-			if (string.IsNullOrEmpty(sceneName))
-			{
-				Debug.LogError("ResourceModule : Load asset name is null.");
-				handle = default;
-				return false;
-			}
-
-			handle = Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-			return true;
 		}
 
 		private int GetTaskId()
