@@ -39,7 +39,8 @@ namespace AureFramework.Resource
 	/// <param name="sceneAssetName"> 场景资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="errorMessage"> 错误信息 </param>
-	public delegate void LoadSceneFailedCallback(string sceneAssetName, int taskId, string errorMessage);
+	/// <param name="userData"> 用户数据 </param>
+	public delegate void LoadSceneFailedCallback(string sceneAssetName, int taskId, string errorMessage, object userData);
 
 	/// <summary>
 	/// 加载场景资源回调

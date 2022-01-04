@@ -39,7 +39,8 @@ namespace AureFramework.Resource
 	/// <param name="assetName"> 游戏物体资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="errorMessage"> 错误信息 </param>
-	public delegate void InstantiateGameObjectFailedCallback(string assetName, int taskId, string errorMessage);
+	/// <param name="userData"> 用户数据 </param>
+	public delegate void InstantiateGameObjectFailedCallback(string assetName, int taskId, string errorMessage, object userData);
 
 	/// <summary>
 	/// 克隆游戏物体回调

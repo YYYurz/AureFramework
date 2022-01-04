@@ -125,7 +125,7 @@ namespace AureFramework.Procedure
 		{
 			if (procedureFsm == null)
 			{
-				Debug.LogError("ProcedureModule : procedureFsm is null");
+				Debug.LogError("ProcedureModule : procedureFsm is null.");
 				return;
 			}
 

@@ -138,13 +138,13 @@ namespace AureFramework.UI
 		{
 			if (string.IsNullOrEmpty(uiName))
 			{
-				Debug.LogError("UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is invalid.");
 				return;
 			}
 
 			if (string.IsNullOrEmpty(uiGroupName))
 			{
-				Debug.LogError("UIModule : UI group name is null.");
+				Debug.LogError("UIModule : UI group name is invalid.");
 				return;
 			}
 
@@ -169,7 +169,7 @@ namespace AureFramework.UI
 		{
 			if (string.IsNullOrEmpty(uiName))
 			{
-				Debug.LogError("UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is invalid.");
 				return;
 			}
 
@@ -198,7 +198,7 @@ namespace AureFramework.UI
 		{
 			if (string.IsNullOrEmpty(uiName))
 			{
-				Debug.LogError("UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is invalid.");
 				return;
 			}
 
@@ -216,7 +216,7 @@ namespace AureFramework.UI
 		{
 			if (string.IsNullOrEmpty(groupName))
 			{
-				Debug.LogError("UIModule : UI group name is null.");
+				Debug.LogError("UIModule : UI group name is invalid.");
 				return;
 			}
 
@@ -237,7 +237,7 @@ namespace AureFramework.UI
 		{
 			if (string.IsNullOrEmpty(groupName))
 			{
-				Debug.LogError("UIModule : UI group name is null.");
+				Debug.LogError("UIModule : UI group name is invalid.");
 				return;
 			}
 
@@ -271,7 +271,7 @@ namespace AureFramework.UI
 		{
 			if (string.IsNullOrEmpty(uiName))
 			{
-				Debug.LogError("UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is invalid.");
 				return;
 			}
 
@@ -286,7 +286,7 @@ namespace AureFramework.UI
 		{
 			if (string.IsNullOrEmpty(uiName))
 			{
-				Debug.LogError("UIModule : UI name is null.");
+				Debug.LogError("UIModule : UI name is invalid.");
 				return;
 			}
 
@@ -383,7 +383,7 @@ namespace AureFramework.UI
 			loadingUIDic.Remove(taskId);
 		}
 
-		private void OnInstantiateUIFailed(string uiName, int taskId, string errorMessage)
+		private void OnInstantiateUIFailed(string uiName, int taskId, string errorMessage, object userData)
 		{
 			foreach (var uiGroup in uiGroupDic)
 			{

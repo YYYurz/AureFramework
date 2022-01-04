@@ -94,7 +94,7 @@ namespace AureFramework.Resource
 		{
 			if (string.IsNullOrEmpty(assetName))
 			{
-				Debug.LogError("ResourceModule : Load asset name is null.");
+				Debug.LogError("ResourceModule : Load asset name is invalid.");
 				return null;
 			}
 
@@ -120,7 +120,7 @@ namespace AureFramework.Resource
 		{
 			if (string.IsNullOrEmpty(assetName))
 			{
-				Debug.LogError("ResourceModule : Load asset name is null.");
+				Debug.LogError("ResourceModule : Load asset name is invalid.");
 				return null;
 			}
 
@@ -147,7 +147,7 @@ namespace AureFramework.Resource
 		{
 			if (string.IsNullOrEmpty(assetName))
 			{
-				loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, 0, "ResourceModule : Load asset name is null.");
+				loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, 0, "ResourceModule : Load asset name is invalid.", userData);
 				return;
 			}
 
@@ -167,8 +167,7 @@ namespace AureFramework.Resource
 				}
 				else
 				{
-					loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, taskId,
-						handle.OperationException.Message);
+					loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, taskId, handle.OperationException.Message, userData);
 					Addressables.Release(handle);
 				}
 
@@ -187,7 +186,7 @@ namespace AureFramework.Resource
 		{
 			if (string.IsNullOrEmpty(assetName))
 			{
-				instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, 0, "ResourceModule : Load asset name is null.");
+				instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, 0, "ResourceModule : Load asset name is invalid.", userData);
 				return;
 			}
 
@@ -207,7 +206,7 @@ namespace AureFramework.Resource
 				}
 				else
 				{
-					instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, taskId, handle.OperationException.Message);
+					instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, taskId, handle.OperationException.Message, userData);
 					Addressables.Release(handle);
 				}
 
@@ -227,7 +226,7 @@ namespace AureFramework.Resource
 		{
 			if (string.IsNullOrEmpty(sceneAssetName))
 			{
-				loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, 0, "ResourceModule : Load asset name is null.");
+				loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, 0, "ResourceModule : Load asset name is invalid.", userData);
 				return;
 			}
 
@@ -248,7 +247,7 @@ namespace AureFramework.Resource
 				}
 				else
 				{
-					loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, taskId, handle.OperationException.Message);
+					loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, taskId, handle.OperationException.Message, userData);
 					Addressables.Release(handle);
 				}
 
@@ -316,7 +315,11 @@ namespace AureFramework.Resource
 					taskIdAccumulator = 1;
 				}
 
-				if (loadingAssetDic.ContainsKey(taskIdAccumulator)) continue;
+				if (loadingAssetDic.ContainsKey(taskIdAccumulator))
+				{
+					continue;
+				}
+				
 				return taskIdAccumulator;
 			}
 		}

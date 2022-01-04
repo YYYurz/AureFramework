@@ -193,7 +193,7 @@ namespace AureFramework.ReferencePool
 		{
 			if (reference == null)
 			{
-				Debug.LogError("ReferencePoolModule : Reference is null");
+				Debug.LogError("ReferencePoolModule : Reference is null.");
 				return;
 			}
 

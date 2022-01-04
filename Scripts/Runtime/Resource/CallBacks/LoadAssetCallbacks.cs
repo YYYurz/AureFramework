@@ -39,7 +39,8 @@ namespace AureFramework.Resource
 	/// <param name="assetName"> 资源名称 </param>
 	/// <param name="taskId"> 任务Id </param>
 	/// <param name="errorMessage"> 错误信息 </param>
-	public delegate void LoadAssetFailedCallback(string assetName, int taskId, string errorMessage);
+	/// <param name="userData"> 用户数据 </param>
+	public delegate void LoadAssetFailedCallback(string assetName, int taskId, string errorMessage, object userData);
 
 	/// <summary>
 	/// 加载资源回调

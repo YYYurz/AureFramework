@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using AureFramework.Resource;
-using AureFramework.Utility;
 using UnityEngine;
 
 namespace AureFramework.Sound
@@ -16,11 +15,13 @@ namespace AureFramework.Sound
 	/// <summary>
 	/// 声音模块
 	/// </summary>
-	public class SoundModule : AureFrameworkModule, ISoundModule
+	public sealed partial class SoundModule : AureFrameworkModule, ISoundModule
 	{
+		private readonly Dictionary<string, SoundGroup> soundGroupDic = new Dictionary<string, SoundGroup>();  
 		private IResourceModule resourceModule;
 		private LoadAssetCallbacks loadAssetCallbacks;
-		
+		private int soundIdAccumulator;
+
 		public override void Init()
 		{
 			resourceModule = Aure.GetModule<IResourceModule>();
@@ -37,19 +38,89 @@ namespace AureFramework.Sound
 			
 		}
 
-		public void PlaySound(string soundName, GameObject gameObj)
+		public bool HasSoundGroup(string soundGroupName)
 		{
-			var audioSource = gameObj.GetOrAddComponent<AudioSource>();
-			resourceModule.LoadAssetAsync<AudioClip>(soundName, loadAssetCallbacks, null);
-			
+			return false;
 		}
 
+		public ISoundGroup GetSoundGroup(string soundGroupName)
+		{
+			if (string.IsNullOrEmpty(soundGroupName))
+			{
+				Debug.LogError("SoundModule : Sound group name is invalid.");
+				return null;
+			}
+
+			if (soundGroupDic.TryGetValue(soundGroupName, out var soundGroup))
+			{
+				return soundGroup;
+			}
+
+			return null;
+		}
+		
+		public int PlaySound(string soundAssetName, string soundGroupName)
+		{
+			return PlaySound(soundAssetName, soundGroupName, null, null);
+		}
+		
+		public int PlaySound(string soundAssetName, string soundGroupName, SoundParams soundParams)
+		{
+			return PlaySound(soundAssetName, soundGroupName, null, soundParams);
+		}
+		
+		public int PlaySound(string soundAssetName, string soundGroupName, GameObject bindingGameObj)
+		{
+			return PlaySound(soundAssetName, soundGroupName, bindingGameObj, null);
+		}
+		
+		public int PlaySound(string soundAssetName, string soundGroupName, GameObject bindingGameObj, SoundParams soundParams)
+		{
+			if (string.IsNullOrEmpty(soundAssetName))
+			{
+				Debug.LogError("SoundModule : Sound asset name is invalid.");
+				return 0;
+			}
+
+			var soundGroup = (SoundGroup) GetSoundGroup(soundGroupName);
+			if (soundGroup == null)
+			{
+				Debug.LogError($"SoundModule : Sound group is not exist. Sound group name :{soundGroupName}");
+				return 0;
+			}
+
+			if (soundParams == null)
+			{
+				soundParams = SoundParams.Create();
+			}
+
+			var soundId = GetSoundId();
+			resourceModule.LoadAssetAsync<AudioClip>(soundAssetName, loadAssetCallbacks, PlaySoundInfo.Create(soundId, soundParams, bindingGameObj));
+
+			return soundId;
+		}
+
+		private int GetSoundId()
+		{
+			while (true)
+			{
+				++soundIdAccumulator;
+				if (soundIdAccumulator == int.MaxValue)
+				{
+					soundIdAccumulator = 1;
+				}
+
+				return soundIdAccumulator;
+			}
+		}
+		
 		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset, object userData)
 		{
+			var playSoundInfo = (PlaySoundInfo) userData;
 			
 		}
 
-		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage)
+		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage, object userData)
 		{
 			
 		}

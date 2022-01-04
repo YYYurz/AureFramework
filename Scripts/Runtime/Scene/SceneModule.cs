@@ -38,8 +38,7 @@ namespace AureFramework.Scene
 		{
 			resourceModule = Aure.GetModule<IResourceModule>();
 			eventModule = Aure.GetModule<IEventModule>();
-			loadSceneAssetCallbacks = new LoadSceneCallbacks(OnLoadSceneBegin, OnLoadSceneSuccess, OnLoadSceneUpdate,
-				OnLoadSceneFailed);
+			loadSceneAssetCallbacks = new LoadSceneCallbacks(OnLoadSceneBegin, OnLoadSceneSuccess, OnLoadSceneUpdate, OnLoadSceneFailed);
 		}
 
 		/// <summary>
@@ -204,7 +203,7 @@ namespace AureFramework.Scene
 			eventModule.Fire(this, LoadSceneUpdateEventArgs.Create(loadingSceneDic[taskId], progress));
 		}
 
-		private void OnLoadSceneFailed(string sceneAssetName, int taskId, string errorMessage)
+		private void OnLoadSceneFailed(string sceneAssetName, int taskId, string errorMessage, object userData)
 		{
 			loadingSceneDic.Remove(taskId);
 
