@@ -14,8 +14,8 @@ namespace AureFramework.Editor
 	[CustomEditor(typeof(UIModule))]
 	public class UIModuleInspector : AureFrameworkInspector
 	{
-		private SerializedProperty objectPoolCapacity;
-		private SerializedProperty objectPoolExpireTime;
+		private SerializedProperty uiObjectPoolCapacity;
+		private SerializedProperty uiObjectPoolExpireTime;
 		private SerializedProperty uiRoot;
 		private SerializedProperty uiGroupList;
 
@@ -25,30 +25,30 @@ namespace AureFramework.Editor
 
 			var t = (UIModule) target;
 
-			var capacity = EditorGUILayout.DelayedIntField("UI Object Pool Capacity", objectPoolCapacity.intValue);
-			if (capacity != objectPoolCapacity.intValue)
+			var capacity = EditorGUILayout.DelayedIntField("UI Object Pool Capacity", uiObjectPoolCapacity.intValue);
+			if (capacity != uiObjectPoolCapacity.intValue)
 			{
 				if (EditorApplication.isPlaying)
 				{
-					t.ObjectPoolCapacity = capacity;
+					t.UIObjectPoolCapacity = capacity;
 				}
 				else
 				{
-					objectPoolCapacity.intValue = capacity;
+					uiObjectPoolCapacity.intValue = capacity;
 				}
 			}
 
 			var expireTime =
-				EditorGUILayout.DelayedFloatField("UI Object Pool Expire Time", objectPoolExpireTime.floatValue);
-			if (!expireTime.Equals(objectPoolExpireTime.floatValue))
+				EditorGUILayout.DelayedFloatField("UI Object Pool Expire Time", uiObjectPoolExpireTime.floatValue);
+			if (!expireTime.Equals(uiObjectPoolExpireTime.floatValue))
 			{
 				if (EditorApplication.isPlaying)
 				{
-					t.ObjectPoolExpireTime = expireTime;
+					t.UIObjectPoolExpireTime = expireTime;
 				}
 				else
 				{
-					objectPoolExpireTime.floatValue = expireTime;
+					uiObjectPoolExpireTime.floatValue = expireTime;
 				}
 			}
 
@@ -66,8 +66,8 @@ namespace AureFramework.Editor
 
 		private void OnEnable()
 		{
-			objectPoolCapacity = serializedObject.FindProperty("objectPoolCapacity");
-			objectPoolExpireTime = serializedObject.FindProperty("objectPoolExpireTime");
+			uiObjectPoolCapacity = serializedObject.FindProperty("uiObjectPoolCapacity");
+			uiObjectPoolExpireTime = serializedObject.FindProperty("uiObjectPoolExpireTime");
 			uiRoot = serializedObject.FindProperty("uiRoot");
 			uiGroupList = serializedObject.FindProperty("uiGroupList");
 		}

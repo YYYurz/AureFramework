@@ -16,7 +16,7 @@ namespace AureFramework.UI
 		/// <summary>
 		/// 获取或设置UI对象池容量
 		/// </summary>
-		int ObjectPoolCapacity
+		int UIObjectPoolCapacity
 		{
 			get;
 			set;
@@ -25,7 +25,7 @@ namespace AureFramework.UI
 		/// <summary>
 		/// 获取或设置UI对象池过期时间
 		/// </summary>
-		float ObjectPoolExpireTime
+		float UIObjectPoolExpireTime
 		{
 			get;
 			set;

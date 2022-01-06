@@ -11,6 +11,7 @@ using AureFramework.ObjectPool;
 using AureFramework.Resource;
 using AureFramework.Utility;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace AureFramework.UI
 {
@@ -26,14 +27,14 @@ namespace AureFramework.UI
 		private IResourceModule resourceModule;
 
 		[SerializeField] private Transform uiRoot;
-		[SerializeField] private int objectPoolCapacity;
-		[SerializeField] private float objectPoolExpireTime;
+		[SerializeField] private int uiObjectPoolCapacity;
+		[SerializeField] private float uiObjectPoolExpireTime;
 		[SerializeField] private string[] uiGroupList;
 
 		/// <summary>
 		/// 获取或设置UI对象池容量
 		/// </summary>
-		public int ObjectPoolCapacity
+		public int UIObjectPoolCapacity
 		{
 			get
 			{
@@ -41,22 +42,22 @@ namespace AureFramework.UI
 			}
 			set
 			{
-				uiObjectPool.Capacity = objectPoolCapacity = value;
+				uiObjectPool.Capacity = uiObjectPoolCapacity = value;
 			}
 		}
 
 		/// <summary>
 		/// 获取或设置UI对象池过期时间
 		/// </summary>
-		public float ObjectPoolExpireTime
+		public float UIObjectPoolExpireTime
 		{
 			get
 			{
-				return objectPoolExpireTime;
+				return uiObjectPoolExpireTime;
 			}
 			set
 			{
-				uiObjectPool.ExpireTime = objectPoolExpireTime = value;
+				uiObjectPool.ExpireTime = uiObjectPoolExpireTime = value;
 			}
 		}
 
@@ -75,8 +76,8 @@ namespace AureFramework.UI
 			resourceModule = Aure.GetModule<IResourceModule>();
 
 			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<UIObject>("UI Pool", 100, 240);
-			uiObjectPool.Capacity = objectPoolCapacity;
-			uiObjectPool.ExpireTime = objectPoolExpireTime;
+			uiObjectPool.Capacity = uiObjectPoolCapacity;
+			uiObjectPool.ExpireTime = uiObjectPoolExpireTime;
 
 			var tempGroupDepth = 0;
 			foreach (var groupName in uiGroupList)

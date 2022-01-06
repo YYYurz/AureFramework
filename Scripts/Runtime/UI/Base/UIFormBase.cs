@@ -18,7 +18,7 @@ namespace AureFramework.UI
 	public abstract class UIFormBase : MonoBehaviour
 	{
 		private Canvas cachedCanvas;
-		private string uIName;
+		private string uiName;
 		private bool isAlreadyInit;
 
 		/// <summary>
@@ -28,11 +28,11 @@ namespace AureFramework.UI
 		{
 			get
 			{
-				return uIName;
+				return uiName;
 			}
 			set
 			{
-				uIName = value;
+				uiName = value;
 			}
 		}
 

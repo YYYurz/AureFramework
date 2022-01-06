@@ -285,7 +285,6 @@ namespace AureFramework.Resource
 		{
 			if (!loadingAssetDic.TryGetValue(taskId, out var loadingHandle))
 			{
-				Debug.LogError(taskId);
 				return;
 			}
 
