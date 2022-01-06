@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using AureFramework.Resource;
+using BiuBiu;
 using UnityEngine;
 
 namespace AureFramework.Sound
@@ -30,7 +31,10 @@ namespace AureFramework.Sound
 
 		public override void Tick(float elapseTime, float realElapseTime)
 		{
-			
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.Update();
+			}
 		}
 
 		public override void Clear()
@@ -95,9 +99,22 @@ namespace AureFramework.Sound
 			}
 
 			var soundId = GetSoundId();
-			resourceModule.LoadAssetAsync<AudioClip>(soundAssetName, loadAssetCallbacks, PlaySoundInfo.Create(soundId, soundParams, bindingGameObj));
+			resourceModule.LoadAssetAsync<AudioClip>(soundAssetName, loadAssetCallbacks, PlaySoundInfo.Create(soundId, soundGroup, soundParams, bindingGameObj));
 
 			return soundId;
+		}
+
+		public void StopSound(int soundId)
+		{
+			StopSound(soundId, SoundParams.DefaultFadeOutSeconds);
+		}
+
+		public void StopSound(int soundId, float fadeOutSeconds)
+		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.StopSound(soundId, fadeOutSeconds);
+			}
 		}
 
 		private int GetSoundId()
@@ -117,7 +134,9 @@ namespace AureFramework.Sound
 		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset, object userData)
 		{
 			var playSoundInfo = (PlaySoundInfo) userData;
-			
+
+			var soundGroup = playSoundInfo.SoundGroup;
+			soundGroup.
 		}
 
 		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage, object userData)
