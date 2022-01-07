@@ -144,7 +144,7 @@ namespace AureFramework.UI
 			/// 入队打开UI操作
 			/// </summary>
 			/// <param name="uiName"> UI名称 </param>
-			/// <param name="uiAssetName"> UI资源路径 </param>
+			/// <param name="uiAssetName"> UI资源名称 </param>
 			/// <param name="userData"> 用户数据 </param>
 			public void OpenUI(string uiName, string uiAssetName, object userData)
 			{
