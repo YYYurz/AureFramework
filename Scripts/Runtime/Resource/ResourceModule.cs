@@ -174,10 +174,6 @@ namespace AureFramework.Resource
 				loadingAssetDic.Remove(taskId);
 				assetCallbackDic.Remove(taskId);
 			}
-			else
-			{
-				loadAssetCallbacks?.LoadAssetFailedCallback?.Invoke(assetName, 0, "The task was released before it was loaded.", userData);
-			}
 		}
 
 		/// <summary>
@@ -216,10 +212,6 @@ namespace AureFramework.Resource
 
 				loadingAssetDic.Remove(taskId);
 				instantiateCallbackDic.Remove(taskId);
-			}
-			else
-			{
-				instantiateGameObjectCallbacks?.InstantiateGameObjectFailedCallback?.Invoke(assetName, 0, "The task was released before it was loaded.", userData);
 			}
 		}
 
@@ -261,10 +253,6 @@ namespace AureFramework.Resource
 
 				sceneCallbackDic.Remove(taskId);
 				instantiateCallbackDic.Remove(taskId);
-			}
-			else
-			{
-				loadSceneCallbacks?.LoadSceneFailedCallback?.Invoke(sceneAssetName, 0, "The task was released before it was loaded.", userData);
 			}
 		}
 
