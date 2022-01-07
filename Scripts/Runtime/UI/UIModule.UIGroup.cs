@@ -144,11 +144,11 @@ namespace AureFramework.UI
 			/// 入队打开UI操作
 			/// </summary>
 			/// <param name="uiName"> UI名称 </param>
-			/// <param name="uiAssetPath"> UI资源路径 </param>
+			/// <param name="uiAssetName"> UI资源路径 </param>
 			/// <param name="userData"> 用户数据 </param>
-			public void OpenUI(string uiName, string uiAssetPath, object userData)
+			public void OpenUI(string uiName, string uiAssetName, object userData)
 			{
-				InternalCreateUITask(uiName, uiAssetPath, UITaskType.OpenUI, userData);
+				InternalCreateUITask(uiName, uiAssetName, UITaskType.OpenUI, userData);
 			}
 
 			/// <summary>
@@ -208,9 +208,9 @@ namespace AureFramework.UI
 				}
 			}
 
-			private void InternalCreateUITask(string uiName, string uiAssetPath, UITaskType uiTaskType, object userData)
+			private void InternalCreateUITask(string uiName, string uiAssetName, UITaskType uiTaskType, object userData)
 			{
-				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiAssetPath, uiTaskType, userData));
+				waitingUITaskQue.Enqueue(UITask.Create(uiName, uiAssetName, uiTaskType, userData));
 				InternalTryProcessTask();
 			}
 
@@ -267,7 +267,7 @@ namespace AureFramework.UI
 					return;
 				}
 
-				if (InternalTrySpawnUIObject(uiTask.UIAssetPath, out var uiObject))
+				if (InternalTrySpawnUIObject(uiTask.UIAssetName, out var uiObject))
 				{
 					uiObject.UIGameObject.transform.SetParent(groupRoot);
 					uiObject.UIGameObject.SetActive(true);
@@ -280,7 +280,7 @@ namespace AureFramework.UI
 
 					uiForm.OnOpen(uiTask.UserData);
 
-					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiObject, uiTask.UIName, uiTask.UIAssetPath));
+					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiObject, uiTask.UIName, uiTask.UIAssetName));
 					uiTask.UITaskType = UITaskType.Complete;
 				}
 			}
@@ -301,9 +301,9 @@ namespace AureFramework.UI
 				uiTask.UITaskType = UITaskType.Complete;
 			}
 
-			private bool InternalTrySpawnUIObject(string uiAssetPath, out UIObject uiObject)
+			private bool InternalTrySpawnUIObject(string uiAssetName, out UIObject uiObject)
 			{
-				uiObject = uiObjectPool.Spawn(uiAssetPath);
+				uiObject = uiObjectPool.Spawn(uiAssetName);
 
 				var uiForm = uiObject?.UIGameObject.GetComponent<UIFormBase>();
 				if (uiForm != null)

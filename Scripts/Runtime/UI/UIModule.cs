@@ -132,10 +132,10 @@ namespace AureFramework.UI
 		/// 打开UI
 		/// </summary>
 		/// <param name="uiName"> UI名称 </param>
-		/// <param name="uiAssetPath"> UI资源路径 </param>
+		/// <param name="uiAssetName"> UI资源名称 </param>
 		/// <param name="uiGroupName"> UI组名称 </param>
 		/// <param name="userData"> 用户数据 </param>
-		public void OpenUI(string uiName, string uiAssetPath, string uiGroupName, object userData)
+		public void OpenUI(string uiName, string uiAssetName, string uiGroupName, object userData)
 		{
 			if (string.IsNullOrEmpty(uiName))
 			{
@@ -156,10 +156,10 @@ namespace AureFramework.UI
 
 			if (!uiObjectPool.IsHasObject(uiName) && !loadingUIDic.ContainsValue(uiName))
 			{
-				resourceModule.InstantiateAsync(uiAssetPath, instantiateGameObjectCallbacks, null);
+				resourceModule.InstantiateAsync(uiAssetName, instantiateGameObjectCallbacks, null);
 			}
 
-			uiGroupDic[uiGroupName].OpenUI(uiName, uiAssetPath, userData);
+			uiGroupDic[uiGroupName].OpenUI(uiName, uiAssetName, userData);
 		}
 
 		/// <summary>
@@ -392,7 +392,7 @@ namespace AureFramework.UI
 			}
 
 			loadingUIDic.Remove(taskId);
-			Debug.LogError($"UIModule : Load ui Failed, error message :{errorMessage}.");
+			Debug.LogError($"UIModule : Load ui asset failed. Asset name: {uiName}, error message :{errorMessage}.");
 		}
 	}
 }

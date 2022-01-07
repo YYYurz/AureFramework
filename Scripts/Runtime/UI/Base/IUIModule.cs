@@ -42,10 +42,10 @@ namespace AureFramework.UI
 		/// 打开UI
 		/// </summary>
 		/// <param name="uiName"> UI名称 </param>
-		/// <param name="uiAssetPath"> UI资源路径 </param>
+		/// <param name="uiAssetName"> UI资源路径 </param>
 		/// <param name="uiGroupName"> UI组名称 </param>
 		/// <param name="userData"> 用户数据 </param>
-		void OpenUI(string uiName, string uiAssetPath, string uiGroupName, object userData);
+		void OpenUI(string uiName, string uiAssetName, string uiGroupName, object userData);
 
 		/// <summary>
 		/// 关闭UI

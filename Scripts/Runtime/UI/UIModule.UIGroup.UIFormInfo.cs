@@ -21,7 +21,7 @@ namespace AureFramework.UI
 			{
 				private UIFormBase uiFormBase;
 				private UIObject uiObject;
-				private string uiAssetPath;
+				private string uiAssetName;
 				private bool isPause;
 				private int depth;
 
@@ -57,15 +57,15 @@ namespace AureFramework.UI
 					}
 				}
 
-				public string AssetPath
+				public string AssetName
 				{
 					get
 					{
-						return uiAssetPath;
+						return uiAssetName;
 					}
 					set
 					{
-						uiAssetPath = value;
+						uiAssetName = value;
 					}
 				}
 
@@ -93,13 +93,13 @@ namespace AureFramework.UI
 					}
 				}
 
-				public static UIFormInfo Create(UIFormBase uiFormBase, UIObject uiObject, string uiName, string assetPath)
+				public static UIFormInfo Create(UIFormBase uiFormBase, UIObject uiObject, string uiName, string assetName)
 				{
 					var uiFormInfo = Aure.GetModule<IReferencePoolModule>().Acquire<UIFormInfo>();
 					uiFormInfo.uiFormBase = uiFormBase;
 					uiFormInfo.uiObject = uiObject;
 					uiFormInfo.uiFormBase.UIName = uiName;
-					uiFormInfo.uiAssetPath = assetPath;
+					uiFormInfo.uiAssetName = assetName;
 					uiFormInfo.isPause = false;
 					uiFormInfo.depth = 0;
 					return uiFormInfo;
