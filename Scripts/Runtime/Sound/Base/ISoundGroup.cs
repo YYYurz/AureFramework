@@ -13,6 +13,30 @@ namespace AureFramework.Sound
 	/// </summary>
 	public interface ISoundGroup
 	{
+		/// <summary>
+		/// 获取声音组名称
+		/// </summary>
+		string GroupName
+		{
+			get;
+		}
+		
+		/// <summary>
+		/// 获取或设置声音组静音。
+		/// </summary>
+		bool Mute
+		{
+			get;
+			set;
+		}
 
+		/// <summary>
+		/// 获取或设置声音组音量。
+		/// </summary>
+		float Volume
+		{
+			get;
+			set;
+		}
 	}
 }

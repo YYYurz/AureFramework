@@ -7,8 +7,8 @@
 //------------------------------------------------------------
 
 using System.Collections.Generic;
+using AureFramework.ReferencePool;
 using AureFramework.Resource;
-using BiuBiu;
 using UnityEngine;
 
 namespace AureFramework.Sound
@@ -18,17 +18,42 @@ namespace AureFramework.Sound
 	/// </summary>
 	public sealed partial class SoundModule : AureFrameworkModule, ISoundModule
 	{
-		private readonly Dictionary<string, SoundGroup> soundGroupDic = new Dictionary<string, SoundGroup>();  
+		private readonly Dictionary<string, SoundGroup> soundGroupDic = new Dictionary<string, SoundGroup>();
+		private readonly List<int> loadingSoundList = new List<int>();
 		private IResourceModule resourceModule;
+		private IReferencePoolModule referencePoolModule;
+		private SoundAssetCollection soundAssetCollection;
 		private LoadAssetCallbacks loadAssetCallbacks;
 		private int soundIdAccumulator;
 
+		[SerializeField] private string[] soundGroupList;
+
+		/// <summary>
+		/// 模块优先级，最小的优先轮询
+		/// </summary>
+		public override int Priority => 23;
+
+		/// <summary>
+		/// 模块初始化，只在第一次被获取时调用一次
+		/// </summary>
 		public override void Init()
 		{
 			resourceModule = Aure.GetModule<IResourceModule>();
+			referencePoolModule = Aure.GetModule<IReferencePoolModule>();
+			soundAssetCollection = new SoundAssetCollection();
 			loadAssetCallbacks = new LoadAssetCallbacks(null, OnLoadAssetSuccess, null, OnLoadAssetFailed);
+			
+			foreach (var groupName in soundGroupList)
+			{
+				AddSoundGroup(groupName);
+			}
 		}
 
+		/// <summary>
+		/// 框架轮询
+		/// </summary>
+		/// <param name="elapseTime"> 距离上一帧的流逝时间，秒单位 </param>
+		/// <param name="realElapseTime"> 距离上一帧的真实流逝时间，秒单位 </param>
 		public override void Tick(float elapseTime, float realElapseTime)
 		{
 			foreach (var soundGroup in soundGroupDic)
@@ -37,48 +62,97 @@ namespace AureFramework.Sound
 			}
 		}
 
+		/// <summary>
+		/// 框架清理
+		/// </summary>
 		public override void Clear()
 		{
-			
+			soundAssetCollection.ReleaseALlSoundAssets();
 		}
 
-		public bool HasSoundGroup(string soundGroupName)
+		/// <summary>
+		/// 是否存在声音组
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <returns></returns>
+		public bool HasSoundGroup(string groupName)
 		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				if (soundGroup.Value.GroupName.Equals(groupName))
+				{
+					return true;
+				}
+			}
+
 			return false;
 		}
 
-		public ISoundGroup GetSoundGroup(string soundGroupName)
+		/// <summary>
+		/// 获取声音组
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <returns></returns>
+		public ISoundGroup GetSoundGroup(string groupName)
 		{
-			if (string.IsNullOrEmpty(soundGroupName))
+			if (string.IsNullOrEmpty(groupName))
 			{
 				Debug.LogError("SoundModule : Sound group name is invalid.");
 				return null;
 			}
 
-			if (soundGroupDic.TryGetValue(soundGroupName, out var soundGroup))
+			if (soundGroupDic.TryGetValue(groupName, out var soundGroup))
 			{
 				return soundGroup;
 			}
 
 			return null;
 		}
-		
-		public int PlaySound(string soundAssetName, string soundGroupName)
+
+		/// <summary>
+		/// 播放声音
+		/// </summary>
+		/// <param name="soundAssetName"> 声音资源名称 </param>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <returns> 返回声音唯一Id </returns>
+		public int PlaySound(string soundAssetName, string groupName)
 		{
-			return PlaySound(soundAssetName, soundGroupName, null, null);
+			return PlaySound(soundAssetName, groupName, null, null);
 		}
-		
-		public int PlaySound(string soundAssetName, string soundGroupName, SoundParams soundParams)
+
+		/// <summary>
+		/// 播放声音
+		/// </summary>
+		/// <param name="soundAssetName"> 声音资源名称 </param>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <param name="soundParams"> 声音参数 </param>
+		/// <returns> 返回声音唯一Id </returns>
+		public int PlaySound(string soundAssetName, string groupName, SoundParams soundParams)
 		{
-			return PlaySound(soundAssetName, soundGroupName, null, soundParams);
+			return PlaySound(soundAssetName, groupName, null, soundParams);
 		}
-		
-		public int PlaySound(string soundAssetName, string soundGroupName, GameObject bindingGameObj)
+
+		/// <summary>
+		/// 播放声音
+		/// </summary>
+		/// <param name="soundAssetName"> 声音资源名称 </param>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <param name="bindingGameObj"> 声音绑定游戏物体 </param>
+		/// <returns> 返回声音唯一Id </returns>
+		public int PlaySound(string soundAssetName, string groupName, GameObject bindingGameObj)
 		{
-			return PlaySound(soundAssetName, soundGroupName, bindingGameObj, null);
+			return PlaySound(soundAssetName, groupName, bindingGameObj, null);
 		}
-		
-		public int PlaySound(string soundAssetName, string soundGroupName, GameObject bindingGameObj, SoundParams soundParams)
+
+		/// <summary>
+		/// 播放声音
+		/// </summary>
+		/// <param name="soundAssetName"> 声音资源名称 </param>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <param name="bindingGameObj"> 声音绑定游戏物体 </param>
+		/// <param name="soundParams"> 声音参数 </param>
+		/// <returns> 返回声音唯一Id </returns>
+		public int PlaySound(string soundAssetName, string groupName, GameObject bindingGameObj, SoundParams soundParams)
 		{
 			if (string.IsNullOrEmpty(soundAssetName))
 			{
@@ -86,10 +160,10 @@ namespace AureFramework.Sound
 				return 0;
 			}
 
-			var soundGroup = (SoundGroup) GetSoundGroup(soundGroupName);
+			var soundGroup = (SoundGroup) GetSoundGroup(groupName);
 			if (soundGroup == null)
 			{
-				Debug.LogError($"SoundModule : Sound group is not exist. Sound group name :{soundGroupName}");
+				Debug.LogError($"SoundModule : Sound group is not exist. Sound group name :{groupName}");
 				return 0;
 			}
 
@@ -104,11 +178,20 @@ namespace AureFramework.Sound
 			return soundId;
 		}
 
+		/// <summary>
+		/// 停止声音
+		/// </summary>
+		/// <param name="soundId"> 声音唯一Id </param>
 		public void StopSound(int soundId)
 		{
 			StopSound(soundId, SoundParams.DefaultFadeOutSeconds);
 		}
 
+		/// <summary>
+		/// 停止声音
+		/// </summary>
+		/// <param name="soundId"> 声音唯一Id </param>
+		/// <param name="fadeOutSeconds"> 声音淡出时间 </param>
 		public void StopSound(int soundId, float fadeOutSeconds)
 		{
 			foreach (var soundGroup in soundGroupDic)
@@ -117,6 +200,135 @@ namespace AureFramework.Sound
 			}
 		}
 
+		/// <summary>
+		/// 停止所有加载完成正在播放的声音
+		/// </summary>
+		public void StopAllLoadedSound()
+		{
+			StopAllLoadedSound(SoundParams.DefaultFadeOutSeconds);
+		}
+		
+		/// <summary>
+		/// 停止所有加载完成正在播放的声音
+		/// </summary>
+		/// <param name="fadeOutSeconds"> 淡出时间 </param>
+		public void StopAllLoadedSound(float fadeOutSeconds)
+		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.StopAllSound(fadeOutSeconds);
+			}
+		}
+
+		/// <summary>
+		/// 停止所有正在加载中的声音
+		/// </summary>
+		public void StopAllLoadingSound()
+		{
+			StopAllLoadingSound(SoundParams.DefaultFadeOutSeconds);
+		}
+
+		/// <summary>
+		/// 停止所有正在加载中的声音
+		/// </summary>
+		/// <param name="fadeOutSeconds"> 淡出时间 </param>
+		public void StopAllLoadingSound(float fadeOutSeconds)
+		{
+			foreach (var loadingSoundTaskId in loadingSoundList)
+			{
+				resourceModule.ReleaseTask(loadingSoundTaskId);
+			}
+			
+			loadingSoundList.Clear();
+		}
+
+		/// <summary>
+		/// 暂停声音
+		/// </summary>
+		/// <param name="soundId"> 唯一声音Id </param>
+		public void PauseSound(int soundId)
+		{
+			PauseSound(soundId, SoundParams.DefaultFadeOutSeconds);
+		}
+
+		/// <summary>
+		/// 暂停声音
+		/// </summary>
+		/// <param name="soundId"> 声音唯一Id </param>
+		/// <param name="fadeOutSeconds"> 淡出时间 </param>
+		public void PauseSound(int soundId, float fadeOutSeconds)
+		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.PauseSound(soundId, fadeOutSeconds);
+			}
+		}
+
+		/// <summary>
+		/// 恢复声音
+		/// </summary>
+		/// <param name="soundId"> 声音唯一Id </param>
+		public void ResumeSound(int soundId)
+		{
+			ResumeSound(soundId, SoundParams.DefaultFadeInSeconds);
+		}
+
+		/// <summary>
+		/// 恢复声音
+		/// </summary>
+		/// <param name="soundId"> 唯一声音Id </param>
+		/// <param name="fadeInSeconds"> 淡出时间 </param>
+		public void ResumeSound(int soundId, float fadeInSeconds)
+		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.ResumeSound(soundId, fadeInSeconds);
+			}
+		}
+
+		/// <summary>
+		/// 添加声音组
+		/// </summary>
+		/// <param name="groupName"></param>
+		public void AddSoundGroup(string groupName)
+		{
+			if (soundGroupDic.ContainsKey(groupName))
+			{
+				Debug.LogError("SoundModule : Sound group is already exist.");
+				return;
+			}
+
+			var soundGroup = new SoundGroup(groupName, soundAssetCollection);
+			soundGroupDic.Add(groupName, soundGroup);
+		}
+		
+		private void OnLoadAssetBegin(string assetName, int taskId)
+		{
+			loadingSoundList.Add(taskId);
+		}
+
+		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset, object userData)
+		{
+			var playSoundInfo = (PlaySoundInfo) userData;
+			var audioAsset = (AudioClip) asset;
+
+			var soundGroup = playSoundInfo.SoundGroup;
+			var soundId = playSoundInfo.SoundId;
+			var bindingGameObj = playSoundInfo.BindingGameObj;
+			var soundParams = playSoundInfo.SoundParams;
+
+			referencePoolModule.Release(playSoundInfo);
+			loadingSoundList.Remove(taskId);
+
+			soundGroup.PlaySound(soundId, audioAsset, bindingGameObj, soundParams);
+		}
+
+		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage, object userData)
+		{
+			loadingSoundList.Remove(taskId);
+			Debug.LogError($"SoundModule : Load sound asset failed. Asset name :{assetName}, error message :{errorMessage}");
+		}
+		
 		private int GetSoundId()
 		{
 			while (true)
@@ -129,19 +341,6 @@ namespace AureFramework.Sound
 
 				return soundIdAccumulator;
 			}
-		}
-		
-		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset, object userData)
-		{
-			var playSoundInfo = (PlaySoundInfo) userData;
-
-			var soundGroup = playSoundInfo.SoundGroup;
-			soundGroup.
-		}
-
-		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage, object userData)
-		{
-			
 		}
 	}
 }

@@ -38,8 +38,7 @@ namespace AureFramework.Editor
 				}
 			}
 
-			var expireTime =
-				EditorGUILayout.DelayedFloatField("UI Object Pool Expire Time", uiObjectPoolExpireTime.floatValue);
+			var expireTime = EditorGUILayout.DelayedFloatField("UI Object Pool Expire Time", uiObjectPoolExpireTime.floatValue);
 			if (!expireTime.Equals(uiObjectPoolExpireTime.floatValue))
 			{
 				if (EditorApplication.isPlaying)

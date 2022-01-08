@@ -19,10 +19,14 @@ namespace AureFramework.Sound
 		/// </summary>
 		private sealed class SoundAgent : MonoBehaviour
 		{
+			private ISoundGroup soundGroup;
 			private AudioSource audioSource;
 			private GameObject bindingGameObj;
 			private int soundId;
 			private bool isPause;
+			private bool mute;
+			private float volumeWhenPause;
+			private float volume;
 
 			public AudioSource AudioSource
 			{
@@ -52,11 +56,12 @@ namespace AureFramework.Sound
 			{
 				get
 				{
-					return audioSource.volume;
+					return volume;
 				}
 				set
 				{
-					audioSource.volume = value;
+					volume = value;
+					RefreshVolume();
 				}
 			}
 			
@@ -132,11 +137,12 @@ namespace AureFramework.Sound
 			{
 				get
 				{
-					return audioSource.mute;
+					return mute;
 				}
 				set
 				{
-					audioSource.mute = value;
+					mute = value;
+					RefreshMute();
 				}
 			}
 
@@ -160,8 +166,9 @@ namespace AureFramework.Sound
 				}
 			}
 			
-			public void InitAgent(int id, AudioClip audioAsset, GameObject bindingObj, SoundParams soundParams)
+			public void InitAgent(ISoundGroup group, int id, AudioClip audioAsset, GameObject bindingObj, SoundParams soundParams)
 			{
+				soundGroup = group;
 				audioSource = gameObject.GetOrAddComponent<AudioSource>();
 				audioSource.clip = audioAsset;
 				bindingGameObj = bindingObj;
@@ -199,8 +206,9 @@ namespace AureFramework.Sound
 				audioSource.Play();
 				if (fadeInSeconds > 0f)
 				{
-					Volume = 0f;
-					StartCoroutine(FadeToVolume(Volume, fadeInSeconds));
+					var targetVolume = audioSource.volume;
+					audioSource.volume = 0f;
+					StartCoroutine(FadeToVolume(targetVolume, fadeInSeconds));
 				}
 			}
 
@@ -223,6 +231,7 @@ namespace AureFramework.Sound
 				StopAllCoroutines();
 
 				isPause = true;
+				volumeWhenPause = volume;
 				if (fadeOutSeconds > 0f && gameObject.activeInHierarchy)
 				{
 					StartCoroutine(PauseCo(fadeOutSeconds));
@@ -240,11 +249,11 @@ namespace AureFramework.Sound
 				audioSource.UnPause();
 				if (fadeInSeconds > 0f)
 				{
-					StartCoroutine(FadeToVolume(m_AudioSource, m_VolumeWhenPause, fadeInSeconds));
+					StartCoroutine(FadeToVolume(fadeInSeconds, fadeInSeconds));
 				}
 				else
 				{
-					m_AudioSource.volume = m_VolumeWhenPause;
+					Volume = volumeWhenPause;
 				}
 			}
 
@@ -256,6 +265,16 @@ namespace AureFramework.Sound
 				}
 
 				transform.position = bindingGameObj.transform.position;
+			}
+
+			public void RefreshVolume()
+			{
+				AudioSource.volume = volume * soundGroup.Volume;
+			}
+
+			public void RefreshMute()
+			{
+				AudioSource.mute = mute || soundGroup.Mute;
 			}
 			
 			private IEnumerator StopCo(float fadeOutSeconds)
@@ -270,18 +289,18 @@ namespace AureFramework.Sound
 				audioSource.Pause();
 			}
 
-			private IEnumerator FadeToVolume(float volume, float duration)
+			private IEnumerator FadeToVolume(float targetVolume, float duration)
 			{
 				var time = 0f;
 				var originalVolume = audioSource.volume;
 				while (time < duration)
 				{
 					time += Time.deltaTime;
-					audioSource.volume = Mathf.Lerp(originalVolume, volume, time / duration);
+					audioSource.volume = Mathf.Lerp(originalVolume, targetVolume, time / duration);
 					yield return new WaitForEndOfFrame();
 				}
 
-				audioSource.volume = volume;
+				audioSource.volume = targetVolume;
 			}
 		}
 	}

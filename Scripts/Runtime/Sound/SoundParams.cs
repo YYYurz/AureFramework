@@ -21,7 +21,7 @@ namespace AureFramework.Sound
 		public const float DefaultPitch = 1f;
 		public const float DefaultPanStereo = 0f;
 		public const float DefaultSpatialBlend = 0f;
-		public const float DefaultMaxDistance = 100f;
+		public const float DefaultMaxDistance = 10000f;
 		public const float DefaultDopplerLevel = 1f;
 		public const bool DefaultMute = false;
 		public const bool DefaultLoop = false;

@@ -96,7 +96,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8037430785218191234}
   - component: {fileID: 5672693853685373340}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,9 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 7316955684019619469}
+  - {fileID: 7104934961126744754}
   m_Father: {fileID: 1193148012413222402}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -130,8 +132,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiRoot: {fileID: 7316955684019619469}
-  objectPoolCapacity: 0
-  objectPoolExpireTime: 0
+  uiObjectPoolCapacity: 0
+  uiObjectPoolExpireTime: 0
   uiGroupList: []
 --- !u!1 &1152396794609616484
 GameObject:
@@ -142,6 +144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3455615280970874814}
+  - component: {fileID: 267982961198003560}
   m_Layer: 0
   m_Name: Sound
   m_TagString: Untagged
@@ -163,6 +166,19 @@ Transform:
   m_Father: {fileID: 1193148012413222402}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &267982961198003560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152396794609616484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1af52e4b405c4b888e128a18d4b56d6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundGroupList: []
 --- !u!1 &1193148012413222403
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,8 +217,6 @@ Transform:
   - {fileID: 595306626288924492}
   - {fileID: 3455615280970874814}
   - {fileID: 8037430785218191234}
-  - {fileID: 7316955684019619469}
-  - {fileID: 7104934961126744754}
   - {fileID: 677162784933647780}
   - {fileID: 191891021023681063}
   - {fileID: 2945303683191406335}
@@ -249,8 +263,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1193148012413222402}
-  m_RootOrder: 11
+  m_Father: {fileID: 8037430785218191234}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &1536126187698328240
 Camera:
@@ -261,7 +275,7 @@ Camera:
   m_GameObject: {fileID: 1608831743698111225}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -396,7 +410,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1193148012413222402}
-  m_RootOrder: 13
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5516499800200335319
 GameObject:
@@ -410,7 +424,7 @@ GameObject:
   - component: {fileID: 1667803638906203011}
   - component: {fileID: 6315931717110734234}
   - component: {fileID: 4099154519124564222}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -428,8 +442,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children: []
-  m_Father: {fileID: 1193148012413222402}
-  m_RootOrder: 10
+  m_Father: {fileID: 8037430785218191234}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -610,7 +624,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1193148012413222402}
-  m_RootOrder: 12
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7087076356657679238
 GameObject:
@@ -683,7 +697,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1193148012413222402}
-  m_RootOrder: 14
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9028196032427878725
 GameObject:

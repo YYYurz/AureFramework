@@ -19,6 +19,8 @@ namespace AureFramework.Sound
 		/// </summary>
 		private sealed class SoundObject : ObjectBase
 		{
+			private SoundAssetCollection soundAssetCollection;
+			
 			/// <summary>
 			/// 声音游戏物体
 			/// </summary>
@@ -37,9 +39,10 @@ namespace AureFramework.Sound
 				private set;
 			}
 
-			public SoundObject Create(GameObject soundGameObject, SoundAgent soundAgent)
+			public static SoundObject Create(GameObject soundGameObject, SoundAgent soundAgent, SoundAssetCollection collection)
 			{
 				var soundObject = Aure.GetModule<IReferencePoolModule>().Acquire<SoundObject>();
+				soundObject.soundAssetCollection = collection;
 				soundObject.SoundGameObject = soundGameObject;
 				soundObject.SoundAgent = soundAgent;
 
@@ -50,7 +53,17 @@ namespace AureFramework.Sound
 			{
 				base.OnRelease();
 				
+				soundAssetCollection.ReduceSoundAssetReference(SoundAgent.AudioSource.clip);
 				Destroy(SoundGameObject);
+			}
+
+			public override void Clear()
+			{
+				base.Clear();
+				
+				soundAssetCollection = null;
+				SoundGameObject = null;
+				SoundAgent = null;
 			}
 		}
 	}

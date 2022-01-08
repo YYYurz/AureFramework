@@ -11,7 +11,6 @@ using AureFramework.ObjectPool;
 using AureFramework.Resource;
 using AureFramework.Utility;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace AureFramework.UI
 {
