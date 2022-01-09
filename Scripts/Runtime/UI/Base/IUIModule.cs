@@ -104,13 +104,6 @@ namespace AureFramework.UI
 		void UnlockAllUIObject();
 
 		/// <summary>
-		/// 添加UI组
-		/// </summary>
-		/// <param name="groupName"> UI组名称 </param>
-		/// <param name="groupDepth"> UI组深度 </param>
-		void AddUIGroup(string groupName, int groupDepth);
-
-		/// <summary>
 		/// 获取UI组
 		/// </summary>
 		/// <param name="groupName"> UI组名称 </param>

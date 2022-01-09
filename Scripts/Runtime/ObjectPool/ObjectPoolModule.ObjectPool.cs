@@ -210,7 +210,7 @@ namespace AureFramework.ObjectPool
 
 				if (objectList.Count >= capacity)
 				{
-					Debug.Log($"ObjectPoolModule : Register failed because capacity exceeded, Object Name :{objName}");
+					Debug.LogWarning($"ObjectPoolModule : Register failed because capacity exceeded, Object Name :{objName}");
 					return;
 				}
 

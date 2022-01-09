@@ -132,7 +132,7 @@ namespace AureFramework.ObjectPool
 				return null;
 			}
 
-			objectPool = new ObjectPool<T>(name, capacity, expireTime);
+			objectPool = new ObjectPool<T>(poolName, capacity, expireTime);
 			ObjectPoolList.Add(objectPool);
 			return objectPool;
 		}

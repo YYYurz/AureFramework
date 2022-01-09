@@ -78,12 +78,7 @@ namespace AureFramework.UI
 			uiObjectPool.Capacity = uiObjectPoolCapacity;
 			uiObjectPool.ExpireTime = uiObjectPoolExpireTime;
 
-			var tempGroupDepth = 0;
-			foreach (var groupName in uiGroupList)
-			{
-				AddUIGroup(groupName, tempGroupDepth);
-				tempGroupDepth += 3000;
-			}
+			InternalCreateUIGroup();
 		}
 
 		/// <summary>
@@ -310,29 +305,6 @@ namespace AureFramework.UI
 		}
 
 		/// <summary>
-		/// 添加UI组
-		/// </summary>
-		/// <param name="groupName">  </param>
-		/// <param name="groupDepth"></param>
-		public void AddUIGroup(string groupName, int groupDepth)
-		{
-			if (uiGroupDic.ContainsKey(groupName))
-			{
-				Debug.LogError("UIModule : UI group is already exist.");
-				return;
-			}
-
-			var groupGameObject = new GameObject(groupName);
-			groupGameObject.transform.SetParent(uiRoot.transform);
-
-			var uiGroupAdapter = groupGameObject.GetOrAddComponent<UIGroupAdapter>();
-			uiGroupAdapter.SetDepth(groupDepth);
-
-			var uiGroup = new UIGroup(uiObjectPool, groupName, groupDepth, groupGameObject.transform, uiGroupAdapter);
-			uiGroupDic.Add(groupName, uiGroup);
-		}
-
-		/// <summary>
 		/// 获取UI组
 		/// </summary>
 		/// <param name="groupName"> UI组名称 </param>
@@ -355,6 +327,29 @@ namespace AureFramework.UI
 			return null;
 		}
 
+		private void InternalCreateUIGroup()
+		{
+			var tempGroupDepth = 0;
+			foreach (var groupName in uiGroupList)
+			{
+				if (uiGroupDic.ContainsKey(groupName))
+				{
+					Debug.LogError($"SoundModule : Can not create ui group because it is already exist. Name :{groupName}");
+					continue;
+				}
+				
+				var groupGameObject = new GameObject(groupName);
+				groupGameObject.transform.SetParent(uiRoot.transform);
+
+				var uiGroupAdapter = groupGameObject.GetOrAddComponent<UIGroupAdapter>();
+				uiGroupAdapter.SetDepth(tempGroupDepth);
+
+				var uiGroup = new UIGroup(uiObjectPool, groupName, tempGroupDepth, groupGameObject.transform, uiGroupAdapter);
+				uiGroupDic.Add(groupName, uiGroup);
+				tempGroupDepth += 3000;
+			}
+		}
+		
 		private void OnInstantiateUIBegin(string uiAssetName, int taskId)
 		{
 			if (!loadingUIDic.ContainsKey(taskId))

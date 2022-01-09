@@ -26,7 +26,7 @@ namespace AureFramework.Sound
 		private LoadAssetCallbacks loadAssetCallbacks;
 		private int soundIdAccumulator;
 
-		[SerializeField] private string[] soundGroupList;
+		[SerializeField] private SoundGroup[] soundGroupList;
 
 		/// <summary>
 		/// 模块优先级，最小的优先轮询
@@ -42,11 +42,8 @@ namespace AureFramework.Sound
 			referencePoolModule = Aure.GetModule<IReferencePoolModule>();
 			soundAssetCollection = new SoundAssetCollection();
 			loadAssetCallbacks = new LoadAssetCallbacks(null, OnLoadAssetSuccess, null, OnLoadAssetFailed);
-			
-			foreach (var groupName in soundGroupList)
-			{
-				AddSoundGroup(groupName);
-			}
+
+			InternalCreateSoundGroup();
 		}
 
 		/// <summary>
@@ -277,7 +274,7 @@ namespace AureFramework.Sound
 		/// 恢复声音
 		/// </summary>
 		/// <param name="soundId"> 唯一声音Id </param>
-		/// <param name="fadeInSeconds"> 淡出时间 </param>
+		/// <param name="fadeInSeconds"> 淡入时间 </param>
 		public void ResumeSound(int soundId, float fadeInSeconds)
 		{
 			foreach (var soundGroup in soundGroupDic)
@@ -286,20 +283,25 @@ namespace AureFramework.Sound
 			}
 		}
 
-		/// <summary>
-		/// 添加声音组
-		/// </summary>
-		/// <param name="groupName"></param>
-		public void AddSoundGroup(string groupName)
+		private void InternalCreateSoundGroup()
 		{
-			if (soundGroupDic.ContainsKey(groupName))
+			foreach (var soundGroup in soundGroupList)
 			{
-				Debug.LogError("SoundModule : Sound group is already exist.");
-				return;
-			}
+				if (string.IsNullOrEmpty(soundGroup.GroupName))
+				{
+					Debug.LogError($"SoundModule : Can not create sound group because its name is invalid.");
+					continue;
+				}
 
-			var soundGroup = new SoundGroup(groupName, soundAssetCollection);
-			soundGroupDic.Add(groupName, soundGroup);
+				if (soundGroupDic.ContainsKey(soundGroup.GroupName))
+				{
+					Debug.LogError($"SoundModule : Can not create sound group because it is already exist. Name :{soundGroup.GroupName}");
+					continue;
+				}
+				
+				soundGroup.Init(soundAssetCollection);
+				soundGroupDic.Add(soundGroup.GroupName, soundGroup);
+			}
 		}
 		
 		private void OnLoadAssetBegin(string assetName, int taskId)

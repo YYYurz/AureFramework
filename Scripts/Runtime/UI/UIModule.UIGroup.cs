@@ -30,7 +30,7 @@ namespace AureFramework.UI
 			private int groupDepth;
 			private int curUIDepth;
 			private float waitTime;
-			private const float TaskExpireTime = 5f;
+			private const float TaskExpireTime = 100f;
 
 			public UIGroup(IObjectPool<UIObject> uiObjectPool, string groupName, int groupDepth, Transform groupRoot, UIGroupAdapter uiGroupAdapter)
 			{
@@ -308,9 +308,11 @@ namespace AureFramework.UI
 				var uiForm = uiObject?.UIGameObject.GetComponent<UIFormBase>();
 				if (uiForm != null)
 				{
+					Debug.Log("Spawn success.");
 					return true;
 				}
 
+				Debug.Log("Spawn failed.");
 				return false;
 			}
 

@@ -28,6 +28,9 @@ namespace AureFramework.Sound
 			private float volumeWhenPause;
 			private float volume;
 
+			/// <summary>
+			/// 获取声音源组件
+			/// </summary>
 			public AudioSource AudioSource
 			{
 				get
@@ -36,14 +39,9 @@ namespace AureFramework.Sound
 				}
 			}
 
-			public GameObject BindingGameObj
-			{
-				get
-				{
-					return bindingGameObj;
-				}
-			}
-
+			/// <summary>
+			/// 获取声音Id
+			/// </summary>
 			public int SoundId
 			{
 				get
@@ -52,6 +50,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取或设置音量
+			/// </summary>
 			public float Volume
 			{
 				get
@@ -65,6 +66,9 @@ namespace AureFramework.Sound
 				}
 			}
 			
+			/// <summary>
+			/// 获取或设置音调
+			/// </summary>
 			public float Pitch
 			{
 				get
@@ -77,6 +81,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取或设置立体声声相
+			/// </summary>
 			public float PanStereo
 			{
 				get
@@ -89,6 +96,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取或设置声音空间混合量
+			/// </summary>
 			public float SpatialBlend
 			{
 				get
@@ -101,6 +111,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取或设置声音最大距离
+			/// </summary>
 			public float MaxDistance
 			{
 				get
@@ -113,6 +126,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取或设置多普勒等级
+			/// </summary>
 			public float DopplerLevel
 			{
 				get
@@ -125,6 +141,9 @@ namespace AureFramework.Sound
 				}
 			}
 			
+			/// <summary>
+			/// 获取是否正在播放
+			/// </summary>
 			public bool IsPlaying
 			{
 				get
@@ -133,6 +152,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取或设置静音
+			/// </summary>
 			public bool Mute
 			{
 				get
@@ -146,6 +168,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取或设置循环播放
+			/// </summary>
 			public bool Loop
 			{
 				get
@@ -158,6 +183,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 获取是否暂停
+			/// </summary>
 			public bool IsPause
 			{
 				get
@@ -166,6 +194,14 @@ namespace AureFramework.Sound
 				}
 			}
 			
+			/// <summary>
+			/// 初始化声音代理
+			/// </summary>
+			/// <param name="group"> 所属声音组 </param>
+			/// <param name="id"> 唯一声音Id </param>
+			/// <param name="audioAsset"> 声音资源 </param>
+			/// <param name="bindingObj"> 绑定游戏物体 </param>
+			/// <param name="soundParams"> 声音参数 </param>
 			public void InitAgent(ISoundGroup group, int id, AudioClip audioAsset, GameObject bindingObj, SoundParams soundParams)
 			{
 				soundGroup = group;
@@ -183,6 +219,9 @@ namespace AureFramework.Sound
 				Loop = soundParams.Loop;
 			}
 
+			/// <summary>
+			/// 重置声音代理
+			/// </summary>
 			public void ResetAgent()
 			{
 				audioSource = gameObject.GetOrAddComponent<AudioSource>();
@@ -199,6 +238,10 @@ namespace AureFramework.Sound
 				Loop = SoundParams.DefaultLoop;
 			}
 
+			/// <summary>
+			/// 播放
+			/// </summary>
+			/// <param name="fadeInSeconds"> 淡入时间 </param>
 			public void Play(float fadeInSeconds)
 			{
 				StopAllCoroutines();
@@ -212,6 +255,10 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 停止
+			/// </summary>
+			/// <param name="fadeOutSeconds"> 淡出时间 </param>
 			public void Stop(float fadeOutSeconds)
 			{
 				StopAllCoroutines();
@@ -226,6 +273,10 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 暂停
+			/// </summary>
+			/// <param name="fadeOutSeconds"> 淡出时间 </param>
 			public void Pause(float fadeOutSeconds)
 			{
 				StopAllCoroutines();
@@ -242,6 +293,10 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 恢复
+			/// </summary>
+			/// <param name="fadeInSeconds"> 淡入时间 </param>
 			public void Resume(float fadeInSeconds)
 			{
 				StopAllCoroutines();
@@ -257,6 +312,9 @@ namespace AureFramework.Sound
 				}
 			}
 
+			/// <summary>
+			/// 更新跟随绑定游戏物体位置
+			/// </summary>
 			public void UpdatePosition()
 			{
 				if (bindingGameObj == null)
@@ -267,11 +325,17 @@ namespace AureFramework.Sound
 				transform.position = bindingGameObj.transform.position;
 			}
 
+			/// <summary>
+			/// 刷新音量
+			/// </summary>
 			public void RefreshVolume()
 			{
 				AudioSource.volume = volume * soundGroup.Volume;
 			}
 
+			/// <summary>
+			/// 刷新静音
+			/// </summary>
 			public void RefreshMute()
 			{
 				AudioSource.mute = mute || soundGroup.Mute;

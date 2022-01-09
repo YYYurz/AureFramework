@@ -22,6 +22,24 @@ namespace AureFramework.Sound
 		}
 		
 		/// <summary>
+		/// 获取或设置UI对象池容量
+		/// </summary>
+		int SoundAgentPoolCapacity
+		{
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// 获取或设置UI对象池过期时间
+		/// </summary>
+		float SoundAgentPoolExpireTime
+		{
+			get;
+			set;
+		}
+		
+		/// <summary>
 		/// 获取或设置声音组静音。
 		/// </summary>
 		bool Mute

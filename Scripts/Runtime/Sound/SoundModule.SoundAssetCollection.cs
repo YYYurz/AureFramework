@@ -53,6 +53,7 @@ namespace AureFramework.Sound
 			/// <param name="audioAsset"></param>
 			public void AddSoundAssetReference(AudioClip audioAsset)
 			{
+				Debug.LogError("AddSoundAssetReference");
 				if (audioAssetReferenceDic.ContainsKey(audioAsset))
 				{
 					audioAssetReferenceDic[audioAsset]++;
@@ -69,6 +70,7 @@ namespace AureFramework.Sound
 			/// <param name="audioAsset"></param>
 			public void ReduceSoundAssetReference(AudioClip audioAsset)
 			{
+				Debug.LogError("ReduceSoundAssetReference");
 				if (audioAssetReferenceDic.ContainsKey(audioAsset))
 				{
 					audioAssetReferenceDic[audioAsset]--;

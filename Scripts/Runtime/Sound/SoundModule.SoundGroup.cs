@@ -1,4 +1,4 @@
-﻿ //------------------------------------------------------------
+﻿//------------------------------------------------------------
 // AureFramework
 // Developed By ZhiRui Yu.
 // GitHub: https://github.com/YYYurz
@@ -6,7 +6,8 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-using System.Collections.Generic;
+ using System;
+ using System.Collections.Generic;
 using AureFramework.ObjectPool;
 using AureFramework.ReferencePool;
 using AureFramework.Utility;
@@ -19,28 +20,30 @@ namespace AureFramework.Sound
 		/// <summary>
 		/// 内部声音组
 		/// </summary>
+		[Serializable]
 		private sealed class SoundGroup : ISoundGroup
 		{
 			private readonly List<SoundObject> usingSoundAgentObjectList = new List<SoundObject>();
-			private readonly SoundAssetCollection soundAssetCollection;
-			private readonly IObjectPool<SoundObject> soundAgentObjectPool;
-			private readonly IReferencePoolModule referencePoolModule;
-			private readonly string groupName;
+			private SoundAssetCollection soundAssetCollection;
+			private IObjectPool<SoundObject> soundAgentObjectPool;
+			private IReferencePoolModule referencePoolModule;
 			private const string AgentName = "SoundAgent";
-			private bool mute;
-			private float volume;
 
+			[SerializeField] private string groupName;
 			[SerializeField] private int soundAgentPoolCapacity;
 			[SerializeField] private float soundAgentPoolExpireTime;
-			
-			public SoundGroup(string groupName, SoundAssetCollection soundAssetCollection)
+			[SerializeField] private bool mute;
+			[SerializeField, Range(0f, 1f)] private float volume;
+
+			public void Init(SoundAssetCollection collection)
 			{
-				this.groupName = groupName;
-				this.soundAssetCollection = soundAssetCollection;
+				soundAssetCollection = collection;
 				referencePoolModule = Aure.GetModule<IReferencePoolModule>();
 				soundAgentObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<SoundObject>("Group " + groupName +  " Agent Pool", soundAgentPoolCapacity, soundAgentPoolExpireTime);
 				soundAgentObjectPool.Capacity = soundAgentPoolCapacity;
 				soundAgentObjectPool.ExpireTime = soundAgentPoolExpireTime;
+				Mute = mute;
+				Volume = volume;
 			}
 
 			/// <summary>
@@ -66,6 +69,21 @@ namespace AureFramework.Sound
 				set
 				{
 					soundAgentObjectPool.Capacity = soundAgentPoolCapacity = value;
+				}
+			}
+			
+			/// <summary>
+			/// 获取或设置UI对象池过期时间
+			/// </summary>
+			public float SoundAgentPoolExpireTime
+			{
+				get
+				{
+					return soundAgentPoolExpireTime;
+				}
+				set
+				{
+					soundAgentObjectPool.ExpireTime = soundAgentPoolExpireTime = value;
 				}
 			}
 
@@ -106,21 +124,6 @@ namespace AureFramework.Sound
 					{
 						soundAgentObject.SoundAgent.RefreshVolume();
 					}
-				}
-			}
-
-			/// <summary>
-			/// 获取或设置UI对象池过期时间
-			/// </summary>
-			public float SoundAgentPoolExpireTime
-			{
-				get
-				{
-					return soundAgentPoolExpireTime;
-				}
-				set
-				{
-					soundAgentObjectPool.ExpireTime = soundAgentPoolExpireTime = value;
 				}
 			}
 
@@ -225,7 +228,7 @@ namespace AureFramework.Sound
 
 			private void CheckUnusedSoundAgentObject()
 			{
-				for (var i = usingSoundAgentObjectList.Count; i >= 0; i--)
+				for (var i = usingSoundAgentObjectList.Count - 1; i >= 0; i--)
 				{
 					var soundAgentObject = usingSoundAgentObjectList[i];
 					if (!soundAgentObject.SoundAgent.IsPause && !soundAgentObject.SoundAgent.IsPlaying)
@@ -241,9 +244,10 @@ namespace AureFramework.Sound
 				soundAgentObject = null;
 				if (soundAgentObjectPool.CanSpawn(AgentName))
 				{
-					soundAgentObject = soundAgentObjectPool.Spawn();
+					soundAgentObject = soundAgentObjectPool.Spawn(AgentName);
 					soundAssetCollection.ReduceSoundAssetReference(soundAgentObject.SoundAgent.AudioSource.clip);
 					soundAgentObject.SoundAgent.ResetAgent();
+					usingSoundAgentObjectList.Add(soundAgentObject);
 					return true;
 				}
 				
@@ -258,7 +262,7 @@ namespace AureFramework.Sound
 
 			private SoundObject CreateSoundObject()
 			{
-				var soundGameObj = new GameObject();
+				var soundGameObj = new GameObject(AgentName);
 				var soundAgent = soundGameObj.GetOrAddComponent<SoundAgent>();
 				var soundAgentObject = SoundObject.Create(soundGameObj, soundAgent, soundAssetCollection);
 				

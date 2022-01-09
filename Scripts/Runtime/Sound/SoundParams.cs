@@ -51,12 +51,6 @@ namespace AureFramework.Sound
 			set;
 		}
 		
-		public float FadeOutSeconds
-		{
-			get;
-			set;
-		}
-		
 		public float Pitch
 		{
 			get;
