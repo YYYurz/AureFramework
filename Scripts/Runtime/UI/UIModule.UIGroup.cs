@@ -308,11 +308,9 @@ namespace AureFramework.UI
 				var uiForm = uiObject?.UIGameObject.GetComponent<UIFormBase>();
 				if (uiForm != null)
 				{
-					Debug.Log("Spawn success.");
 					return true;
 				}
 
-				Debug.Log("Spawn failed.");
 				return false;
 			}
 

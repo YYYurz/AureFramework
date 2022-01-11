@@ -10,8 +10,10 @@
  using System.Collections.Generic;
 using AureFramework.ObjectPool;
 using AureFramework.ReferencePool;
-using AureFramework.Utility;
+ using AureFramework.Resource;
+ using AureFramework.Utility;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AureFramework.Sound
 {
@@ -21,29 +23,43 @@ namespace AureFramework.Sound
 		/// 内部声音组
 		/// </summary>
 		[Serializable]
-		private sealed class SoundGroup : ISoundGroup
+		private sealed partial class SoundGroup : ISoundGroup
 		{
-			private readonly List<SoundObject> usingSoundAgentObjectList = new List<SoundObject>();
-			private SoundAssetCollection soundAssetCollection;
-			private IObjectPool<SoundObject> soundAgentObjectPool;
+			
+			private readonly List<int> loadingSoundTaskIdList = new List<int>();
+			private readonly List<SoundAgentObject> usingSoundAgentObjectList = new List<SoundAgentObject>();
+			private readonly List<SoundAssetObject> usingSoundAssetObjectList = new List<SoundAssetObject>();
+			private IObjectPool<SoundAgentObject> soundAgentObjectPool;
+			private IObjectPool<SoundAssetObject> soundAssetObjectPool;
+			private IResourceModule resourceModule;
 			private IReferencePoolModule referencePoolModule;
+			private LoadAssetCallbacks loadAssetCallbacks;
 			private const string AgentName = "SoundAgent";
 
 			[SerializeField] private string groupName;
 			[SerializeField] private int soundAgentPoolCapacity;
 			[SerializeField] private float soundAgentPoolExpireTime;
+			[SerializeField] private int soundAssetPoolCapacity;
+			[SerializeField] private float soundAssetPoolExpireTime;
 			[SerializeField] private bool mute;
 			[SerializeField, Range(0f, 1f)] private float volume;
 
-			public void Init(SoundAssetCollection collection)
+			public void Init()
 			{
-				soundAssetCollection = collection;
+				resourceModule = Aure.GetModule<IResourceModule>();
 				referencePoolModule = Aure.GetModule<IReferencePoolModule>();
-				soundAgentObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<SoundObject>("Group " + groupName +  " Agent Pool", soundAgentPoolCapacity, soundAgentPoolExpireTime);
+				
+				soundAgentObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<SoundAgentObject>("Sound Group " + groupName +  " Agent Pool", soundAgentPoolCapacity, soundAgentPoolExpireTime);
 				soundAgentObjectPool.Capacity = soundAgentPoolCapacity;
 				soundAgentObjectPool.ExpireTime = soundAgentPoolExpireTime;
+				
+				soundAssetObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<SoundAssetObject>("Sound Group " + groupName +  " Asset Pool", soundAssetPoolCapacity, soundAssetPoolExpireTime);
+				soundAssetObjectPool.Capacity = soundAssetPoolCapacity;
+				soundAssetObjectPool.ExpireTime = soundAssetPoolExpireTime;
+				
 				Mute = mute;
 				Volume = volume;
+				loadAssetCallbacks = new LoadAssetCallbacks(OnLoadAssetBegin, OnLoadAssetSuccess, null, OnLoadAssetFailed);
 			}
 
 			/// <summary>
@@ -132,7 +148,7 @@ namespace AureFramework.Sound
 			/// </summary>
 			public void Update()
 			{
-				CheckUnusedSoundAgentObject();
+				CheckUnusedObjects();
 
 				foreach (var soundAgentObject in usingSoundAgentObjectList)
 				{
@@ -140,25 +156,38 @@ namespace AureFramework.Sound
 				}
 			}
 
+			private int i = 0;
 			/// <summary>
 			/// 播放声音
 			/// </summary>
 			/// <param name="soundId"> 唯一声音Id </param>
-			/// <param name="audioAsset"> 声音资源 </param>
+			/// <param name="soundAssetName"> 声音资源名称 </param>
 			/// <param name="bindingGameObj"> 声音绑定游戏物体 </param>
 			/// <param name="soundParams"> 声音参数 </param>
-			public void PlaySound(int soundId, AudioClip audioAsset, GameObject bindingGameObj, SoundParams soundParams)
+			public void PlaySound(int soundId, string soundAssetName, GameObject bindingGameObj, SoundParams soundParams)
 			{
-				if (InternalTryGetAvailableSoundObject(out var soundAgentObject))
+				i++;
+				if (i == 5)
 				{
-					soundAgentObject.SoundAgent.InitAgent(this, soundId, audioAsset, bindingGameObj, soundParams);
+					return;
+				}
+				if (!InternalTryGetAvailableSoundAssetObject(soundAssetName, out var soundAssetObject))
+				{
+					resourceModule.LoadAssetAsync<AudioClip>(soundAssetName, loadAssetCallbacks, PlaySoundInfo.Create(soundId, soundAssetName, bindingGameObj, soundParams));
+					return;
+				}
+				
+				if (InternalTryGetAvailableSoundAgentObject(out var soundAgentObject))
+				{
+					soundAgentObject.SoundAgent.InitAgent(this, soundId, soundAssetObject, bindingGameObj, soundParams);
 					soundAgentObject.SoundAgent.Play(soundParams.FadeInSeconds);
-					soundAssetCollection.AddSoundAssetReference(audioAsset);
 					referencePoolModule.Release(soundParams);
 				}
 				else
 				{
-					Debug.LogError($"SoundGroup : Sound agent object pool has reached its maximum capacity, play sound failed, sound Id :{soundId}");
+					soundAssetObjectPool.Recycle(soundAssetObject);
+					usingSoundAssetObjectList.Remove(soundAssetObject);
+					Debug.LogError($"SoundGroup : Sound agent object pool has reached its maximum capacity, sound Id :{soundId}");
 				}
 			}
 
@@ -174,7 +203,7 @@ namespace AureFramework.Sound
 					if (soundAgentObject.SoundAgent.SoundId == soundId)
 					{
 						soundAgentObject.SoundAgent.Stop(fadeOutSeconds);
-						CheckUnusedSoundAgentObject();
+						CheckUnusedObjects();
 						break;
 					}
 				}
@@ -189,7 +218,7 @@ namespace AureFramework.Sound
 				foreach (var soundAgentObject in usingSoundAgentObjectList)
 				{
 					soundAgentObject.SoundAgent.Stop(fadeOutSeconds);
-					CheckUnusedSoundAgentObject();
+					CheckUnusedObjects();
 					break;
 				}
 			}
@@ -226,50 +255,117 @@ namespace AureFramework.Sound
 				}
 			}
 
-			private void CheckUnusedSoundAgentObject()
+			private void CheckUnusedObjects()
 			{
 				for (var i = usingSoundAgentObjectList.Count - 1; i >= 0; i--)
 				{
 					var soundAgentObject = usingSoundAgentObjectList[i];
 					if (!soundAgentObject.SoundAgent.IsPause && !soundAgentObject.SoundAgent.IsPlaying)
 					{
+						soundAssetObjectPool.Recycle(soundAgentObject.SoundAgent.SoundAssetObject);
 						soundAgentObjectPool.Recycle(soundAgentObject);
+						usingSoundAssetObjectList.Remove(soundAgentObject.SoundAgent.SoundAssetObject);
 						usingSoundAgentObjectList.Remove(soundAgentObject);
 					}
 				}
 			}
 
-			private bool InternalTryGetAvailableSoundObject(out SoundObject soundAgentObject)
+			private bool InternalTryGetAvailableSoundAssetObject(string soundAssetName, out SoundAssetObject soundAssetObject)
+			{
+				soundAssetObject = null;
+				if (soundAssetObjectPool.CanSpawn(soundAssetName))
+				{
+					soundAssetObject = soundAssetObjectPool.Spawn(soundAssetName);
+					usingSoundAssetObjectList.Add(soundAssetObject);
+					
+					return true;
+				}
+
+				return false;
+			}
+			
+			private SoundAssetObject InternalCreateSoundAssetObject(string soundAssetName, AudioClip audioAsset)
+			{
+				if (soundAssetObjectPool.UsingCount + soundAssetObjectPool.UnusedCount >= soundAssetObjectPool.Capacity)
+				{
+					return null;
+				}
+				
+				var soundAssetObject = SoundAssetObject.Create(audioAsset);
+				
+				Debug.Log("Register");
+				soundAssetObjectPool.Register(soundAssetObject, false, soundAssetName);
+				usingSoundAssetObjectList.Add(soundAssetObject);
+
+				return soundAssetObject;
+			}
+
+			private bool InternalTryGetAvailableSoundAgentObject(out SoundAgentObject soundAgentObject)
 			{
 				soundAgentObject = null;
 				if (soundAgentObjectPool.CanSpawn(AgentName))
 				{
 					soundAgentObject = soundAgentObjectPool.Spawn(AgentName);
-					soundAssetCollection.ReduceSoundAssetReference(soundAgentObject.SoundAgent.AudioSource.clip);
 					soundAgentObject.SoundAgent.ResetAgent();
 					usingSoundAgentObjectList.Add(soundAgentObject);
+					
 					return true;
 				}
-				
-				if (soundAgentObjectPool.UsingCount + soundAgentObjectPool.UnusedCount >= soundAgentObjectPool.Capacity)
-				{
-					return false;
-				}
 
-				soundAgentObject = CreateSoundObject();
+				soundAgentObject = InternalCreateSoundAgentObject();
 				return true;
 			}
 
-			private SoundObject CreateSoundObject()
+			private SoundAgentObject InternalCreateSoundAgentObject()
 			{
+				if (soundAgentObjectPool.UsingCount + soundAgentObjectPool.UnusedCount >= soundAgentObjectPool.Capacity)
+				{
+					return null;
+				}
+				
 				var soundGameObj = new GameObject(AgentName);
 				var soundAgent = soundGameObj.GetOrAddComponent<SoundAgent>();
-				var soundAgentObject = SoundObject.Create(soundGameObj, soundAgent, soundAssetCollection);
+				var soundAgentObject = SoundAgentObject.Create(soundGameObj, soundAgent);
 				
 				soundAgentObjectPool.Register(soundAgentObject, true, "SoundAgent");
 				usingSoundAgentObjectList.Add(soundAgentObject);
 
 				return soundAgentObject;
+			}
+			
+			private void OnLoadAssetBegin(string assetName, int taskId)
+			{
+				loadingSoundTaskIdList.Add(taskId);
+			}
+
+			private void OnLoadAssetSuccess(string assetName, int taskId, Object asset, object userData)
+			{
+				var playSoundInfo = (PlaySoundInfo) userData;
+				var audioAsset = (AudioClip) asset;
+
+				var soundId = playSoundInfo.SoundId;
+				var soundAssetName = playSoundInfo.SoundAssetName;
+				var bindingGameObj = playSoundInfo.BindingGameObj;
+				var soundParams = playSoundInfo.SoundParams;
+
+				referencePoolModule.Release(playSoundInfo);
+				loadingSoundTaskIdList.Remove(taskId);
+
+				var soundAssetAgent = InternalCreateSoundAssetObject(assetName, audioAsset);
+				if (soundAssetAgent != null)
+				{
+					PlaySound(soundId, soundAssetName, bindingGameObj, soundParams);
+				}
+				else
+				{
+					Debug.LogError($"SoundGroup : Sound asset object pool has reached its maximum capacity, sound Id :{soundId}");
+				}
+			}
+
+			private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage, object userData)
+			{
+				loadingSoundTaskIdList.Remove(taskId);
+				Debug.LogError($"SoundModule : Load sound asset failed. Asset name :{assetName}, error message :{errorMessage}");
 			}
 		}
 	}

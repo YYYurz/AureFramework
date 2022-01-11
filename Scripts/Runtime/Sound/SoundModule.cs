@@ -7,7 +7,6 @@
 //------------------------------------------------------------
 
 using System.Collections.Generic;
-using AureFramework.ReferencePool;
 using AureFramework.Resource;
 using UnityEngine;
 
@@ -19,11 +18,7 @@ namespace AureFramework.Sound
 	public sealed partial class SoundModule : AureFrameworkModule, ISoundModule
 	{
 		private readonly Dictionary<string, SoundGroup> soundGroupDic = new Dictionary<string, SoundGroup>();
-		private readonly List<int> loadingSoundList = new List<int>();
 		private IResourceModule resourceModule;
-		private IReferencePoolModule referencePoolModule;
-		private SoundAssetCollection soundAssetCollection;
-		private LoadAssetCallbacks loadAssetCallbacks;
 		private int soundIdAccumulator;
 
 		[SerializeField] private SoundGroup[] soundGroupList;
@@ -39,10 +34,6 @@ namespace AureFramework.Sound
 		public override void Init()
 		{
 			resourceModule = Aure.GetModule<IResourceModule>();
-			referencePoolModule = Aure.GetModule<IReferencePoolModule>();
-			soundAssetCollection = new SoundAssetCollection();
-			loadAssetCallbacks = new LoadAssetCallbacks(null, OnLoadAssetSuccess, null, OnLoadAssetFailed);
-
 			InternalCreateSoundGroup();
 		}
 
@@ -64,7 +55,7 @@ namespace AureFramework.Sound
 		/// </summary>
 		public override void Clear()
 		{
-			soundAssetCollection.ReleaseALlSoundAssets();
+			
 		}
 
 		/// <summary>
@@ -170,7 +161,7 @@ namespace AureFramework.Sound
 			}
 
 			var soundId = GetSoundId();
-			resourceModule.LoadAssetAsync<AudioClip>(soundAssetName, loadAssetCallbacks, PlaySoundInfo.Create(soundId, soundGroup, soundParams, bindingGameObj));
+			soundGroup.PlaySound(soundId, soundAssetName, bindingGameObj, soundParams);
 
 			return soundId;
 		}
@@ -231,12 +222,12 @@ namespace AureFramework.Sound
 		/// <param name="fadeOutSeconds"> 淡出时间 </param>
 		public void StopAllLoadingSound(float fadeOutSeconds)
 		{
-			foreach (var loadingSoundTaskId in loadingSoundList)
-			{
-				resourceModule.ReleaseTask(loadingSoundTaskId);
-			}
-			
-			loadingSoundList.Clear();
+			// foreach (var loadingSoundTaskId in loadingSoundList)
+			// {
+			// 	resourceModule.ReleaseTask(loadingSoundTaskId);
+			// }
+			//
+			// loadingSoundList.Clear();
 		}
 
 		/// <summary>
@@ -299,36 +290,9 @@ namespace AureFramework.Sound
 					continue;
 				}
 				
-				soundGroup.Init(soundAssetCollection);
+				soundGroup.Init();
 				soundGroupDic.Add(soundGroup.GroupName, soundGroup);
 			}
-		}
-		
-		private void OnLoadAssetBegin(string assetName, int taskId)
-		{
-			loadingSoundList.Add(taskId);
-		}
-
-		private void OnLoadAssetSuccess(string assetName, int taskId, Object asset, object userData)
-		{
-			var playSoundInfo = (PlaySoundInfo) userData;
-			var audioAsset = (AudioClip) asset;
-
-			var soundGroup = playSoundInfo.SoundGroup;
-			var soundId = playSoundInfo.SoundId;
-			var bindingGameObj = playSoundInfo.BindingGameObj;
-			var soundParams = playSoundInfo.SoundParams;
-
-			referencePoolModule.Release(playSoundInfo);
-			loadingSoundList.Remove(taskId);
-
-			soundGroup.PlaySound(soundId, audioAsset, bindingGameObj, soundParams);
-		}
-
-		private void OnLoadAssetFailed(string assetName, int taskId, string errorMessage, object userData)
-		{
-			loadingSoundList.Remove(taskId);
-			Debug.LogError($"SoundModule : Load sound asset failed. Asset name :{assetName}, error message :{errorMessage}");
 		}
 		
 		private int GetSoundId()
