@@ -222,12 +222,10 @@ namespace AureFramework.Sound
 		/// <param name="fadeOutSeconds"> 淡出时间 </param>
 		public void StopAllLoadingSound(float fadeOutSeconds)
 		{
-			// foreach (var loadingSoundTaskId in loadingSoundList)
-			// {
-			// 	resourceModule.ReleaseTask(loadingSoundTaskId);
-			// }
-			//
-			// loadingSoundList.Clear();
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.ReleaseAllLoadingSound();
+			}
 		}
 
 		/// <summary>
