@@ -6,10 +6,13 @@
 // Email: 1228396352@qq.com
 //------------------------------------------------------------
 
-
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 
 namespace AureFramework.Editor
@@ -19,11 +22,69 @@ namespace AureFramework.Editor
 	/// </summary>
 	public static class GroupBuilder
 	{
-		private static readonly Dictionary<string, List<string>> AssetDic = new Dictionary<string, List<string>>();
+		private readonly struct GroupAssetInfo
+		{
+			public readonly string Path;
+			public readonly string Address;
+
+			public GroupAssetInfo(string path, string address)
+			{
+				Path = path;
+				Address = address;
+			}
+		}
+		
+		private static readonly Dictionary<string, List<GroupAssetInfo>> AssetDic = new Dictionary<string, List<GroupAssetInfo>>();
 		
 		public static void ResetGroup(List<GroupSetting> groupSettingList)
 		{
 			GetAssets(groupSettingList);
+			ProcessAssetToGroup();
+			AssetDatabase.SaveAssets();
+		}
+
+		private static void ProcessAssetToGroup()
+		{
+			foreach (var assetInfo in AssetDic)
+			{
+				var group = GetGroup(assetInfo.Key);
+				foreach (var groupAssetInfo in assetInfo.Value)
+				{
+					AddAssetEntry(group, groupAssetInfo.Path, groupAssetInfo.Address);
+				}
+			}
+		}
+
+		private static AddressableAssetGroup GetGroup(string groupName)
+		{
+			var name = groupName.Replace("/", "_");
+			name = name.Replace("\\", "_");
+			var group = AddressableAssetSettingsDefaultObject.Settings.FindGroup(name);
+			if (group == null)
+			{
+				group = AddressableAssetSettingsDefaultObject.Settings.CreateGroup(name, false, false, false, null, typeof(Object));
+				group.AddSchema<ContentUpdateGroupSchema>();
+				group.AddSchema<BundledAssetGroupSchema>();
+			} 
+
+			// AddressableAssetSettingsDefaultObject.Settings.AddLabel(groupName, false);
+			EditorUtility.SetDirty(group);
+			return group;
+		}
+
+		private static void AddAssetEntry(AddressableAssetGroup group, string assetPath, string address)
+		{
+			Debug.Log("AddAssetEntry");
+			var guid = AssetDatabase.AssetPathToGUID(assetPath);
+			var entry = group.entries.FirstOrDefault(e => e.guid == guid);
+
+			if (entry == null)
+			{
+				entry = AddressableAssetSettingsDefaultObject.Settings.CreateOrMoveEntry(guid, group, false, false);
+			}
+
+			entry.address = address;
+			// entry.SetLabel(group.Name, true, false, false);
 		}
 
 		private static void GetAssets(List<GroupSetting> groupSettingList)
@@ -35,21 +96,106 @@ namespace AureFramework.Editor
 				var path = groupSetting.AssetPath;
 				if (File.Exists(path) && groupSetting.ErgodicLayers == 0)
 				{
-					AssetDic.Add(path, new List<string>() {path});
-					Debug.Log(path);
+					AddAsset(path, path, groupSetting);
 				}
 				else if (Directory.Exists(path))
 				{
-					var allFileList = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
-					foreach (var file in allFileList)
+					switch (groupSetting.ErgodicLayers)
 					{
-						if (!file.Contains(".meta"))
+						case 0:
 						{
-							Debug.Log(file);
+							SplitDirectoryAssets(path, groupSetting);
+							break;
+						}
+						case 1:
+						{
+							var allDirectoryList = Directory.GetDirectories(path);
+							foreach (var directory in allDirectoryList)
+							{
+								SplitDirectoryAssets(directory, groupSetting);
+							}
+							break;
 						}
 					}
 				}
-				Debug.Log("================================================");
+			}
+		}
+		
+		private static void SplitDirectoryAssets(string directoryPath, GroupSetting groupSetting)
+		{
+			var filePathList = Directory.GetFiles(directoryPath, "*.*", SearchOption.AllDirectories);
+			var groupSuffixIndex = 0;
+			var byteRecord = 0;
+			foreach (var filePath in filePathList)
+			{
+				if (filePath.Contains(".meta"))
+				{
+					continue;
+				}
+				
+				var byteCount= File.ReadAllBytes(filePath).Length;
+				byteRecord += byteCount;
+				if (byteRecord > groupSetting.MaxByte)
+				{
+					groupSuffixIndex++;
+					byteRecord = byteCount;
+				}
+				
+				var groupName = directoryPath + "_" + groupSuffixIndex;
+				AddAsset(groupName, filePath, groupSetting);
+			}
+		}
+
+		private static void AddAsset(string groupName, string filePath, GroupSetting groupSetting)
+		{
+			if (!string.IsNullOrEmpty(groupSetting.FilterPrefix) && groupSetting.FilterPrefixMode && !filePath.StartsWith(groupSetting.FilterPrefix))
+			{
+				return;
+			}
+			
+			if (!string.IsNullOrEmpty(groupSetting.FilterPrefix) && !groupSetting.FilterPrefixMode && filePath.StartsWith(groupSetting.FilterPrefix))
+			{
+				return;
+			}
+			
+			if (!string.IsNullOrEmpty(groupSetting.FilterSuffix) && groupSetting.FilterSuffixMode && !filePath.EndsWith(groupSetting.FilterSuffix))
+			{
+				return;
+			}
+			
+			if (!string.IsNullOrEmpty(groupSetting.FilterSuffix) && !groupSetting.FilterSuffixMode && filePath.EndsWith(groupSetting.FilterSuffix))
+			{
+				return;
+			}
+			
+			if (!string.IsNullOrEmpty(groupSetting.FilterString) && groupSetting.FilterStringMode && !filePath.Contains(groupSetting.FilterString))
+			{
+				return;
+			}
+			
+			if (!string.IsNullOrEmpty(groupSetting.FilterString) && !groupSetting.FilterStringMode && filePath.Contains(groupSetting.FilterString))
+			{
+				return;
+			}
+			
+			if (!AssetDic.ContainsKey(groupName))
+			{
+				AssetDic.Add(groupName, new List<GroupAssetInfo>());
+			}
+			
+			switch (groupSetting.AddressNaming)
+			{
+				case 0:
+				{
+					AssetDic[groupName].Add(new GroupAssetInfo(filePath, filePath));
+					break;
+				}
+				case 1:
+				{
+					var fileName = Path.GetFileNameWithoutExtension(filePath);
+					AssetDic[groupName].Add(new GroupAssetInfo(filePath, fileName));
+					break;
+				}
 			}
 		}
 	}

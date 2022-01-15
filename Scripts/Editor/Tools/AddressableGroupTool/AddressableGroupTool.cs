@@ -8,6 +8,8 @@
 
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 
 namespace AureFramework.Editor
@@ -21,7 +23,7 @@ namespace AureFramework.Editor
 		private static void OpenWindow()
 		{
 			var window = GetWindow<AddressableGroupTool>(true, "Addressable分组工具", true);
-			window.minSize = window.maxSize = new Vector2(580f, 400f);
+			window.minSize = window.maxSize = new Vector2(1000f, 400f);
 		}
 
 		private readonly List<int> selectGroupIndexList = new List<int>();
@@ -32,11 +34,14 @@ namespace AureFramework.Editor
 
 		private readonly string[] ergodicLayerArray =
 		{
-			"第零层",
-			"第一层",
-			"第二层",
-			"第三层",
-			"第四层",
+			"遍历所有资源为一个Group",
+			"第一层文件夹为一个Group",
+		};
+		
+		private readonly string[] addressNamingArray =
+		{
+			"资源路径",
+			"文件名",
 		};
 
 		/// <summary>
@@ -117,6 +122,11 @@ namespace AureFramework.Editor
 			EditorGUILayout.BeginHorizontal();
 			{
 				IsSelectAll = EditorGUILayout.ToggleLeft("全选", IsSelectAll);
+				
+				if (GUILayout.Button("清除所有空Group"))
+				{
+					RemoveEmptyGroup();
+				}
 
 				EditorGUI.BeginDisabledGroup(groupConfig == null);
 				{
@@ -138,26 +148,28 @@ namespace AureFramework.Editor
 			}
 			EditorGUILayout.EndHorizontal();
 
-			EditorGUILayout.BeginVertical("box", GUILayout.Width(200f), GUILayout.Height(20f));
+			EditorGUILayout.BeginVertical("box", GUILayout.Width(800f), GUILayout.Height(20f));
 			{
 				EditorGUILayout.BeginHorizontal();
 				{
 					EditorGUILayout.LabelField("", GUILayout.Width(30f));
-					EditorGUILayout.LabelField("目标路径", GUILayout.Width(130f));
-					EditorGUILayout.LabelField("过滤前缀", GUILayout.Width(90f));
-					EditorGUILayout.LabelField("过滤后缀", GUILayout.Width(90f));
-					EditorGUILayout.LabelField("分组遍历目录层级", GUILayout.Width(120f));
+					EditorGUILayout.LabelField("目标路径", GUILayout.Width(160f));
+					EditorGUILayout.LabelField("过滤前缀(筛/排)", GUILayout.Width(125f));
+					EditorGUILayout.LabelField("过滤后缀(筛/排)", GUILayout.Width(125f));
+					EditorGUILayout.LabelField("过滤字符串(筛/排)", GUILayout.Width(120f));
+					EditorGUILayout.LabelField("分组资源收集方式", GUILayout.Width(190f));
+					EditorGUILayout.LabelField("资源Key命名方式", GUILayout.Width(110f));
 					EditorGUILayout.LabelField("每组最大字节", GUILayout.Width(90f));
 				}
 				EditorGUILayout.EndHorizontal();
 
 				if (settingList != null)
 				{
-					scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(600f), GUILayout.Height(300f));
+					scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(990f), GUILayout.Height(300f));
 					{
 						for (var i = 0; i < settingList.Count; i++)
 						{
-							EditorGUILayout.BeginHorizontal("box", GUILayout.Width(200f), GUILayout.Height(20f));
+							EditorGUILayout.BeginHorizontal("box", GUILayout.Width(960f), GUILayout.Height(20f));
 							{
 								var setting = settingList[i];
 								var isSelect = selectGroupIndexList.Contains(i);
@@ -180,19 +192,31 @@ namespace AureFramework.Editor
 								}
 
 								var groupTarget = AssetDatabase.LoadAssetAtPath<Object>(setting.AssetPath);
-								groupTarget = EditorGUILayout.ObjectField(groupTarget, typeof(Object), false, GUILayout.Width(130f), GUILayout.Height(20f));
+								groupTarget = EditorGUILayout.ObjectField(groupTarget, typeof(Object), false, GUILayout.Width(150f), GUILayout.Height(20f));
 								setting.AssetPath = AssetDatabase.GetAssetPath(groupTarget);
-								setting.Prefix = EditorGUILayout.TextField("", setting.Prefix, GUILayout.Width(90f), GUILayout.Height(20f));
-								setting.Suffix = EditorGUILayout.TextField("", setting.Suffix, GUILayout.Width(90f), GUILayout.Height(20f));
+								EditorGUILayout.LabelField("", GUILayout.Width(10f));
+								setting.FilterPrefixMode = EditorGUILayout.Toggle("", setting.FilterPrefixMode, GUILayout.Width(20f));
+								setting.FilterPrefix = EditorGUILayout.TextField("", setting.FilterPrefix, GUILayout.Width(90f), GUILayout.Height(20f));
+								EditorGUILayout.LabelField("", GUILayout.Width(10f));
+								setting.FilterSuffixMode = EditorGUILayout.Toggle("", setting.FilterSuffixMode, GUILayout.Width(20f));
+								setting.FilterSuffix = EditorGUILayout.TextField("", setting.FilterSuffix, GUILayout.Width(90f), GUILayout.Height(20f));
+								EditorGUILayout.LabelField("", GUILayout.Width(10f));
+								setting.FilterStringMode = EditorGUILayout.Toggle("", setting.FilterStringMode, GUILayout.Width(20f));
+								setting.FilterString = EditorGUILayout.TextField("", setting.FilterString, GUILayout.Width(90f), GUILayout.Height(20f));
 
-								var selectedIndex = EditorGUILayout.Popup("", setting.ErgodicLayers, ergodicLayerArray, GUILayout.Width(120f), GUILayout.Height(20f));
-								if (selectedIndex != setting.ErgodicLayers)
+								var selectErgodicIndex = EditorGUILayout.Popup("", setting.ErgodicLayers, ergodicLayerArray, GUILayout.Width(190f), GUILayout.Height(20f));
+								if (selectErgodicIndex != setting.ErgodicLayers)
 								{
-									setting.ErgodicLayers = selectedIndex;
+									setting.ErgodicLayers = selectErgodicIndex;
+								}
+								
+								var selectAddressIndex = EditorGUILayout.Popup("", setting.AddressNaming, addressNamingArray, GUILayout.Width(110f), GUILayout.Height(20f));
+								if (selectAddressIndex != setting.AddressNaming)
+								{
+									setting.AddressNaming = selectAddressIndex;
 								}
 
-								setting.MaxByte = EditorGUILayout.IntField("", setting.MaxByte, GUILayout.Width(90f),
-									GUILayout.Height(20f));
+								setting.MaxByte = EditorGUILayout.IntField("", setting.MaxByte, GUILayout.Width(90f), GUILayout.Height(20f));
 							}
 							EditorGUILayout.EndHorizontal();
 						}
@@ -210,6 +234,24 @@ namespace AureFramework.Editor
 				}
 			}
 			EditorGUI.EndDisabledGroup();
+		}
+
+		private void RemoveEmptyGroup()
+		{
+			var groupList = AddressableAssetSettingsDefaultObject.Settings.groups;
+			var needRemoveGroupList = new List<AddressableAssetGroup>();
+			foreach (var group in groupList)
+			{
+				if (group.entries.Count == 0)
+				{
+					needRemoveGroupList.Add(group);
+				}
+			}
+
+			foreach (var needRemoveGroup in needRemoveGroupList)
+			{
+				AddressableAssetSettingsDefaultObject.Settings.RemoveGroup(needRemoveGroup);
+			}
 		}
 
 		private void AddSetting()
@@ -236,22 +278,25 @@ namespace AureFramework.Editor
 
 			if (groupConfig == null)
 			{
-				CreateDefaultGroupConfig();
+				groupConfig = GroupConfig.CreateDefaultConfig();
+				GroupConfigGuid = AssetDatabase.AssetPathToGUID(GroupConfig.DefaultGroupConfigPath);
 				Debug.Log("由于不存在默认分组配置文件，或上一次使用的分组配置文件被删除，已在Assets/目录下自动创建AureAddressableGroupConfig.asset");
 			}
-
+			
 			ReadGroupConfig();
 		}
 
 		private void ReadGroupConfig()
 		{
-			settingList = groupConfig != null ? groupConfig.GroupSettingList : null;
-		}
-
-		private void CreateDefaultGroupConfig()
-		{
-			groupConfig = GroupConfig.CreateDefaultConfig();
-			GroupConfigGuid = AssetDatabase.AssetPathToGUID(GroupConfig.DefaultGroupConfigPath);
+			if (groupConfig != null)
+			{
+				settingList = groupConfig.GroupSettingList;
+				EditorUtility.SetDirty(groupConfig);
+			}
+			else
+			{
+				settingList = null;
+			}
 		}
 	}
 }
