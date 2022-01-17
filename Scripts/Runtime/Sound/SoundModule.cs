@@ -7,7 +7,6 @@
 //------------------------------------------------------------
 
 using System.Collections.Generic;
-using AureFramework.Resource;
 using UnityEngine;
 
 namespace AureFramework.Sound
@@ -18,7 +17,6 @@ namespace AureFramework.Sound
 	public sealed partial class SoundModule : AureFrameworkModule, ISoundModule
 	{
 		private readonly Dictionary<string, SoundGroup> soundGroupDic = new Dictionary<string, SoundGroup>();
-		private IResourceModule resourceModule;
 		private int soundIdAccumulator;
 
 		[SerializeField] private SoundGroup[] soundGroupList;
@@ -33,8 +31,7 @@ namespace AureFramework.Sound
 		/// </summary>
 		public override void Init()
 		{
-			resourceModule = Aure.GetModule<IResourceModule>();
-			InternalCreateSoundGroup();
+			InternalInitializeSoundGroup();
 		}
 
 		/// <summary>
@@ -55,7 +52,13 @@ namespace AureFramework.Sound
 		/// </summary>
 		public override void Clear()
 		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.ReleaseAllLoadingSound();
+				soundGroup.Value.StopAllSound(0f);
+			}
 			
+			soundGroupDic.Clear();
 		}
 
 		/// <summary>
@@ -272,7 +275,7 @@ namespace AureFramework.Sound
 			}
 		}
 
-		private void InternalCreateSoundGroup()
+		private void InternalInitializeSoundGroup()
 		{
 			foreach (var soundGroup in soundGroupList)
 			{

@@ -226,11 +226,18 @@ namespace AureFramework.Editor
 			}
 			EditorGUILayout.EndVertical();
 
-			EditorGUI.BeginDisabledGroup(selectGroupIndexList.Count <= 0);
+			EditorGUI.BeginDisabledGroup(selectGroupIndexList.Count <= 0 || settingList == null);
 			{
 				if (GUILayout.Button("分组"))
 				{
-					GroupBuilder.ResetGroup(settingList);
+					var selectGroupList = new List<GroupSetting>();
+					foreach (var selectIndex in selectGroupIndexList)
+					{
+						selectGroupList.Add(settingList[selectIndex]);
+					}
+					
+					GroupBuilder.ResetGroup(selectGroupList);
+					RemoveEmptyGroup();
 				}
 			}
 			EditorGUI.EndDisabledGroup();

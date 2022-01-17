@@ -45,20 +45,27 @@ namespace AureFramework.Editor
 
 		private static void ProcessAssetToGroup()
 		{
+			var length = AssetDic.Count;
+			var counter = 1f;
 			foreach (var assetInfo in AssetDic)
 			{
+				EditorUtility.DisplayProgressBar("Processing group", assetInfo.Key, counter / length);
+
 				var group = GetGroup(assetInfo.Key);
 				foreach (var groupAssetInfo in assetInfo.Value)
 				{
 					AddAssetEntry(group, groupAssetInfo.Path, groupAssetInfo.Address);
 				}
+
+				counter++;
 			}
+			
+			EditorUtility.ClearProgressBar();
 		}
 
 		private static AddressableAssetGroup GetGroup(string groupName)
 		{
 			var name = groupName.Replace("/", "_");
-			name = name.Replace("\\", "_");
 			var group = AddressableAssetSettingsDefaultObject.Settings.FindGroup(name);
 			if (group == null)
 			{
@@ -66,6 +73,12 @@ namespace AureFramework.Editor
 				group.AddSchema<ContentUpdateGroupSchema>();
 				group.AddSchema<BundledAssetGroupSchema>();
 			} 
+			
+			var packedAssetsTemplate = AddressableAssetSettingsDefaultObject.Settings.GroupTemplateObjects[0] as AddressableAssetGroupTemplate;
+			if (packedAssetsTemplate != null)
+			{
+				packedAssetsTemplate.ApplyToAddressableAssetGroup(group);
+			}
 
 			// AddressableAssetSettingsDefaultObject.Settings.AddLabel(groupName, false);
 			EditorUtility.SetDirty(group);
@@ -74,7 +87,6 @@ namespace AureFramework.Editor
 
 		private static void AddAssetEntry(AddressableAssetGroup group, string assetPath, string address)
 		{
-			Debug.Log("AddAssetEntry");
 			var guid = AssetDatabase.AssetPathToGUID(assetPath);
 			var entry = group.entries.FirstOrDefault(e => e.guid == guid);
 
@@ -90,9 +102,14 @@ namespace AureFramework.Editor
 		private static void GetAssets(List<GroupSetting> groupSettingList)
 		{
 			AssetDic.Clear();
-			
-			foreach (var groupSetting in groupSettingList)
+
+			var length = groupSettingList.Count;
+			for (var i = 0; i < length; i++)
 			{
+				var groupSetting = groupSettingList[i];
+
+				EditorUtility.DisplayProgressBar("Loading assets", groupSetting.AssetPath, (i + 1f) / length);
+				
 				var path = groupSetting.AssetPath;
 				if (File.Exists(path) && groupSetting.ErgodicLayers == 0)
 				{
@@ -119,6 +136,8 @@ namespace AureFramework.Editor
 					}
 				}
 			}
+			
+			EditorUtility.ClearProgressBar();
 		}
 		
 		private static void SplitDirectoryAssets(string directoryPath, GroupSetting groupSetting)
@@ -142,7 +161,7 @@ namespace AureFramework.Editor
 				}
 				
 				var groupName = directoryPath + "_" + groupSuffixIndex;
-				AddAsset(groupName, filePath, groupSetting);
+				AddAsset(groupName, filePath.Replace("\\", "/"), groupSetting);
 			}
 		}
 

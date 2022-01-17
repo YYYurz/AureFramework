@@ -122,13 +122,11 @@ namespace AureFramework.ObjectPool
 			}
 		}
 
-		private ObjectPoolBase InternalCreateObjectPool<T>(string poolName, int capacity, float expireTime)
-			where T : ObjectBase
+		private ObjectPoolBase InternalCreateObjectPool<T>(string poolName, int capacity, float expireTime) where T : ObjectBase
 		{
 			if (TryGetObjectPool<T>(poolName, out var objectPool))
 			{
-				Debug.LogError(
-					$"ObjectPoolModule : Object Pool is already exists, object type : {objectPool.ObjectType.FullName}.");
+				Debug.LogError($"ObjectPoolModule : Object Pool is already exists, object type : {objectPool.ObjectType.FullName}.");
 				return null;
 			}
 
