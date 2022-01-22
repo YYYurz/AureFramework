@@ -28,7 +28,6 @@ namespace AureFramework.UI
 			private readonly UIGroupAdapter uiGroupAdapter;
 			private readonly string groupName;
 			private int groupDepth;
-			private int curUIDepth;
 			private float waitTime;
 			private const float TaskExpireTime = 100f;
 
