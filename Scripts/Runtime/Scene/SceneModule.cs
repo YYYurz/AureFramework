@@ -192,29 +192,40 @@ namespace AureFramework.Scene
 
 		private void OnLoadSceneSuccess(string sceneAssetName, int taskId, SceneInstance sceneAsset, object userData)
 		{
-			loadedSceneDic.Add(sceneAssetName, sceneAsset);
-			loadingSceneDic.Remove(taskId);
-
-			eventModule.Fire(this, LoadSceneSuccessEventArgs.Create(sceneAssetName));
+			if (loadingSceneDic.ContainsKey(taskId))
+			{
+				loadedSceneDic.Add(sceneAssetName, sceneAsset);
+				loadingSceneDic.Remove(taskId);
+				eventModule.Fire(this, LoadSceneSuccessEventArgs.Create(sceneAssetName));
+			}
 		}
 
 		private void OnLoadSceneUpdate(int taskId, float progress)
 		{
-			eventModule.Fire(this, LoadSceneUpdateEventArgs.Create(loadingSceneDic[taskId], progress));
+			if (loadingSceneDic.ContainsKey(taskId))
+			{
+				eventModule.Fire(this, LoadSceneUpdateEventArgs.Create(loadingSceneDic[taskId], progress));
+			}
 		}
 
 		private void OnLoadSceneFailed(string sceneAssetName, int taskId, string errorMessage, object userData)
 		{
-			loadingSceneDic.Remove(taskId);
-
-			eventModule.Fire(this, LoadSceneFailedEventArgs.Create(loadingSceneDic[taskId], errorMessage));
-			Debug.LogError($"SceneModule : Load scene Failed, error message :{errorMessage}.");
+			if (loadingSceneDic.ContainsKey(taskId))
+			{
+				eventModule.Fire(this, LoadSceneFailedEventArgs.Create(loadingSceneDic[taskId], errorMessage));
+				Debug.LogError($"SceneModule : Load scene Failed, error message :{errorMessage}.");
+				loadingSceneDic.Remove(taskId);
+			}
 		}
 
 		private void OnUnloadSceneOver(string sceneName)
 		{
-			unLoadingSceneList.Remove(sceneName);
-			loadedSceneDic.Remove(sceneName);
+			if (unLoadingSceneList.Contains(sceneName) && loadedSceneDic.ContainsKey(sceneName))
+			{
+				eventModule.Fire(this, UnloadSceneSuccessEventArgs.Create(sceneName));
+				unLoadingSceneList.Remove(sceneName);
+				loadedSceneDic.Remove(sceneName);
+			}
 		}
 	}
 }

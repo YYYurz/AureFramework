@@ -290,7 +290,7 @@ namespace AureFramework.Resource
 		/// <param name="callBack"> 卸载完成回调 </param>
 		public async void UnloadSceneAsync(SceneInstance scene, Action<string> callBack = null)
 		{
-			var handle = Addressables.UnloadSceneAsync(scene);
+			var handle = Addressables.UnloadSceneAsync(scene, false);
 
 			await handle.Task;
 
@@ -303,6 +303,8 @@ namespace AureFramework.Resource
 			{
 				Debug.LogError($"ResourceModule : Unload scene failed, error message :{handle.OperationException.Message}");
 			}
+			
+			Addressables.Release(handle);
 		}
 
 		private int GetTaskId()
