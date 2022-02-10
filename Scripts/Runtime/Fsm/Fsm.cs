@@ -137,7 +137,7 @@ namespace AureFramework.Fsm
 				Debug.LogError($"Fsm : FsmState is not exist in current Fsm {fsmType.FullName}.");
 				return;
 			}
-
+			
 			PreviousState = CurrentState;
 			CurrentState?.OnExit();
 			CurrentState = fsmStateDic[fsmType];

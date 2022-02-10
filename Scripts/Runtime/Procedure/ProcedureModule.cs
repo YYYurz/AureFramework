@@ -75,7 +75,7 @@ namespace AureFramework.Procedure
 				return;
 			}
 
-			procedureFsm.ChangeState<T>();
+			procedureFsm.ChangeState<T>(args);
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace AureFramework.Procedure
 				return;
 			}
 
-			procedureFsm.ChangeState(procedureType);
+			procedureFsm.ChangeState(procedureType, args);
 		}
 
 		private IEnumerator Start()
