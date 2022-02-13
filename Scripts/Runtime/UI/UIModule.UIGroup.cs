@@ -7,6 +7,7 @@
 //------------------------------------------------------------
 
 using System.Collections.Generic;
+using AureFramework.Event;
 using AureFramework.ObjectPool;
 using AureFramework.ReferencePool;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace AureFramework.UI
 		private sealed partial class UIGroup : IUIGroup
 		{
 			private readonly IObjectPool<UIObject> uiObjectPool;
+			private readonly IEventModule eventModule;
 			private readonly IReferencePoolModule referencePoolModule;
 			private readonly LinkedList<UIFormInfo> uiFormInfoLinked = new LinkedList<UIFormInfo>();
 			private readonly Queue<UITask> waitingUITaskQue = new Queue<UITask>();
@@ -38,6 +40,7 @@ namespace AureFramework.UI
 				this.groupDepth = groupDepth;
 				this.groupRoot = groupRoot;
 				this.uiGroupAdapter = uiGroupAdapter;
+				eventModule = Aure.GetModule<IEventModule>();
 				referencePoolModule = Aure.GetModule<IReferencePoolModule>();
 			}
 
@@ -88,7 +91,9 @@ namespace AureFramework.UI
 				}
 				else if (waitingUITaskQue.Count > 0 && waitTime > TaskExpireTime)
 				{
-					referencePoolModule.Release(waitingUITaskQue.Dequeue());
+					var expireTask = waitingUITaskQue.Dequeue();
+					eventModule.Fire(this, OpenUIFailedEventArgs.Create(expireTask.UIName, $"Open UI task has expired, UI name :{expireTask.UIName}"));
+					referencePoolModule.Release(expireTask);
 					waitTime = 0f;
 				}
 
@@ -106,7 +111,7 @@ namespace AureFramework.UI
 			public bool IsHasUI(string uiName)
 			{
 				var uiNode = GetUINode(uiName);
-				return uiNode == null;
+				return uiNode != null;
 			}
 
 			/// <summary>
@@ -263,6 +268,7 @@ namespace AureFramework.UI
 					uiFormInfoLinked.Remove(uiNode);
 					uiFormInfoLinked.AddLast(uiNode);
 					uiTask.UITaskType = UITaskType.Complete;
+					eventModule.Fire(this, OpenUISuccessEventArgs.Create(uiNode.Value.UIFormBase));
 					return;
 				}
 
@@ -281,6 +287,7 @@ namespace AureFramework.UI
 
 					uiFormInfoLinked.AddLast(UIFormInfo.Create(uiForm, uiObject, uiTask.UIName, uiTask.UIAssetName));
 					uiTask.UITaskType = UITaskType.Complete;
+					eventModule.Fire(this, OpenUISuccessEventArgs.Create(uiForm));
 				}
 			}
 
