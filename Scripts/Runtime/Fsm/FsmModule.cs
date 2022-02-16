@@ -57,9 +57,10 @@ namespace AureFramework.Fsm
 		/// </summary>
 		/// <param name="owner"> 持有类 </param>
 		/// <param name="fsmStateList"> 状态列表 </param>
+		/// <param name="userData"> 用户数据 </param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public IFsm CreateFsm<T>(T owner, List<Type> fsmStateList) where T : class
+		public IFsm CreateFsm<T>(T owner, List<Type> fsmStateList, params object[] userData) where T : class
 		{
 			if (fsmStateDic.ContainsKey(owner))
 			{
@@ -67,7 +68,7 @@ namespace AureFramework.Fsm
 				return null;
 			}
 
-			var fsm = new Fsm(fsmStateList);
+			var fsm = new Fsm(fsmStateList, userData);
 			fsmStateDic.Add(owner, fsm);
 
 			return fsm;

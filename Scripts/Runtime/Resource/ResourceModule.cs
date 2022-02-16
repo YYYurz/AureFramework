@@ -58,8 +58,7 @@ namespace AureFramework.Resource
 			foreach (var instantiateCallback in instantiateCallbackDic)
 			{
 				var handle = loadingAssetDic[instantiateCallback.Key];
-				instantiateCallback.Value?.InstantiateGameObjectUpdateCallback?.Invoke(instantiateCallback.Key,
-					handle.PercentComplete);
+				instantiateCallback.Value?.InstantiateGameObjectUpdateCallback?.Invoke(instantiateCallback.Key, handle.PercentComplete);
 			}
 
 			foreach (var sceneCallback in sceneCallbackDic)

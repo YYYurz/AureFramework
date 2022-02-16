@@ -55,8 +55,7 @@ namespace AureFramework.Editor
 			{
 				EditorGUILayout.Separator();
 
-				var selectedIndex = EditorGUILayout.Popup("Entrance Procedure", entranceProcedureIndex,
-					procedureTypeNameList.ToArray());
+				var selectedIndex = EditorGUILayout.Popup("Entrance Procedure", entranceProcedureIndex, procedureTypeNameList.ToArray());
 				if (selectedIndex != entranceProcedureIndex)
 				{
 					entranceProcedureIndex = selectedIndex;

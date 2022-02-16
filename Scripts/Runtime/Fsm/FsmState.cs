@@ -15,7 +15,7 @@ namespace AureFramework.Fsm
 	{
 		private IFsm fsmController;
 
-		public void OnInit(IFsm fsm)
+		public virtual void OnInit(IFsm fsm, params object[] userData)
 		{
 			fsmController = fsm;
 		}

@@ -13,7 +13,7 @@ namespace AureFramework.Fsm
 	/// </summary>
 	public interface IFsmState
 	{
-		void OnInit(IFsm fsmController);
+		void OnInit(IFsm fsmController, params object[] userData);
 
 		void OnEnter(params object[] args);
 

@@ -27,10 +27,9 @@ namespace AureFramework.Fsm
 	public class Fsm : IFsm
 	{
 		private readonly Dictionary<Type, IFsmState> fsmStateDic = new Dictionary<Type, IFsmState>();
-		private float durationTime;
 		private bool isPause;
 
-		public Fsm(IEnumerable<Type> fsmStateTypeList)
+		public Fsm(IEnumerable<Type> fsmStateTypeList, params object[] userData)
 		{
 			var interfaceType = typeof(FsmState);
 			foreach (var type in fsmStateTypeList)
@@ -49,7 +48,7 @@ namespace AureFramework.Fsm
 
 				var fsmState = Activator.CreateInstance(type) as IFsmState;
 
-				fsmState.OnInit(this);
+				fsmState.OnInit(this, userData);
 				fsmStateDic.Add(type, fsmState);
 			}
 
@@ -146,6 +145,10 @@ namespace AureFramework.Fsm
 
 		public void Destroy()
 		{
+			CurrentState?.OnExit();
+			PreviousState = null;
+			CurrentState = null;
+			fsmStateDic.Clear();
 		}
 	}
 }
