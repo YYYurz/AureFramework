@@ -81,16 +81,15 @@ namespace AureFramework.Fsm
 		/// <typeparam name="T"></typeparam>
 		public void DestroyFsm<T>(T owner) where T : class
 		{
-			var type = typeof(T);
-			if (!fsmStateDic.ContainsKey(type))
+			if (!fsmStateDic.ContainsKey(owner))
 			{
 				Debug.LogError("FsmModule : The Fsm for this owner not exists.");
 				return;
 			}
 
-			var fsm = fsmStateDic[type];
+			var fsm = fsmStateDic[owner];
 			fsm.Destroy();
-			fsmStateDic.Remove(type);
+			fsmStateDic.Remove(owner);
 		}
 	}
 }
