@@ -21,7 +21,7 @@ namespace AureFramework.UI
 		private class UIObject : ObjectBase
 		{
 			/// <summary>
-			/// UI游戏内物体
+			/// UI游戏物体
 			/// </summary>
 			public GameObject UIGameObject
 			{
@@ -43,6 +43,13 @@ namespace AureFramework.UI
 				base.OnRelease();
 
 				Aure.GetModule<IResourceModule>().ReleaseAsset(UIGameObject);
+			}
+
+			public override void Clear()
+			{
+				base.Clear();
+
+				UIGameObject = null;
 			}
 		}
 	}

@@ -48,14 +48,8 @@ namespace AureFramework.Sound
 			{
 				resourceModule = Aure.GetModule<IResourceModule>();
 				referencePoolModule = Aure.GetModule<IReferencePoolModule>();
-				
 				soundAgentObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<SoundAgentObject>("Sound Group " + groupName +  " Agent Pool", soundAgentPoolCapacity, soundAgentPoolExpireTime);
-				soundAgentObjectPool.Capacity = soundAgentPoolCapacity;
-				soundAgentObjectPool.ExpireTime = soundAgentPoolExpireTime;
-				
 				soundAssetObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<SoundAssetObject>("Sound Group " + groupName +  " Asset Pool", soundAssetPoolCapacity, soundAssetPoolExpireTime);
-				soundAssetObjectPool.Capacity = soundAssetPoolCapacity;
-				soundAssetObjectPool.ExpireTime = soundAssetPoolExpireTime;
 				
 				Mute = mute;
 				Volume = volume;

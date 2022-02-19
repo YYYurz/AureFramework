@@ -40,7 +40,7 @@ namespace AureFramework.Fsm {
 		/// <summary>
 		/// 轮询
 		/// </summary>
-		void Update();
+		void Update(float elapseTime, float realElapseTime);
 		
 		/// <summary>
 		/// 暂停状态机轮询

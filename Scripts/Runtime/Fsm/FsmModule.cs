@@ -35,7 +35,7 @@ namespace AureFramework.Fsm
 		{
 			foreach (var fsm in fsmStateDic)
 			{
-				fsm.Value.Update();
+				fsm.Value.Update(elapseTime, realElapseTime);
 			}
 		}
 

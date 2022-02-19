@@ -24,7 +24,7 @@ namespace AureFramework.Fsm
 		{
 		}
 
-		public virtual void OnUpdate()
+		public virtual void OnUpdate(float elapseTime, float realElapseTime)
 		{
 		}
 

@@ -73,10 +73,7 @@ namespace AureFramework.UI
 			uiRoot.gameObject.layer = LayerMask.NameToLayer("UI");
 			instantiateGameObjectCallbacks = new InstantiateGameObjectCallbacks(OnInstantiateUIBegin, OnInstantiateUISuccess, null, OnInstantiateUIFailed);
 			resourceModule = Aure.GetModule<IResourceModule>();
-
-			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<UIObject>("UI Pool", 100, 240);
-			uiObjectPool.Capacity = uiObjectPoolCapacity;
-			uiObjectPool.ExpireTime = uiObjectPoolExpireTime;
+			uiObjectPool = Aure.GetModule<IObjectPoolModule>().CreateObjectPool<UIObject>("UI Pool", uiObjectPoolCapacity, uiObjectPoolExpireTime);
 
 			InternalCreateUIGroup();
 		}

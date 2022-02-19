@@ -17,7 +17,7 @@ namespace AureFramework.Fsm
 
 		void OnEnter(params object[] args);
 
-		void OnUpdate();
+		void OnUpdate(float elapseTime, float realElapseTime);
 
 		void OnExit();
 

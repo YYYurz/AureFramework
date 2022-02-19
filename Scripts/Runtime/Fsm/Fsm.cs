@@ -87,14 +87,14 @@ namespace AureFramework.Fsm
 		/// <summary>
 		/// 轮询
 		/// </summary>
-		public void Update()
+		public void Update(float elapseTime, float realElapseTime)
 		{
 			if (isPause || CurrentState == null)
 			{
 				return;
 			}
 
-			CurrentState.OnUpdate();
+			CurrentState.OnUpdate(elapseTime, realElapseTime);
 		}
 
 		/// <summary>
