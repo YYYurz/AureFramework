@@ -404,7 +404,7 @@ namespace AureFramework.ObjectPool
 				}
 
 				var dateNow = DateTime.UtcNow;
-				for (var i = 0; i < objectList.Count; i++)
+				for (var i = objectList.Count - 1; i >= 0; i--)
 				{
 					var internalObject = objectList[i];
 					if (isCheckTime)
