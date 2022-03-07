@@ -7,6 +7,7 @@
 //------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
@@ -122,6 +123,11 @@ namespace AureFramework.Editor
 			EditorGUILayout.BeginHorizontal();
 			{
 				IsSelectAll = EditorGUILayout.ToggleLeft("全选", IsSelectAll);
+				
+				if (GUILayout.Button("清除所有Group"))
+				{
+					RemoveAllGroup();
+				}
 				
 				if (GUILayout.Button("清除所有空Group"))
 				{
@@ -243,6 +249,15 @@ namespace AureFramework.Editor
 			EditorGUI.EndDisabledGroup();
 		}
 
+		private void RemoveAllGroup()
+		{
+			var groupList = AddressableAssetSettingsDefaultObject.Settings.groups.ToArray();
+			foreach (var needRemoveGroup in groupList)
+			{
+				AddressableAssetSettingsDefaultObject.Settings.RemoveGroup(needRemoveGroup);
+			}
+		}
+		
 		private void RemoveEmptyGroup()
 		{
 			var groupList = AddressableAssetSettingsDefaultObject.Settings.groups;
