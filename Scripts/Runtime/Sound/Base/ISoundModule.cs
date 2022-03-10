@@ -114,6 +114,30 @@ namespace AureFramework.Sound
 		void PauseSound(int soundId, float fadeOutSeconds);
 
 		/// <summary>
+		/// 暂停一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		void PauseGroupSound(string groupName);
+
+		/// <summary>
+		/// 暂停一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <param name="fadeOutSeconds"> 淡出时间 </param>
+		void PauseGroupSound(string groupName, float fadeOutSeconds);
+
+		/// <summary>
+		/// 暂停所有声音
+		/// </summary>
+		void PauseAllSound();
+
+		/// <summary>
+		/// 暂停所有声音
+		/// </summary>
+		/// <param name="fadeOutSeconds"> 淡出时间 </param>
+		void PauseAllSound(float fadeOutSeconds);
+
+		/// <summary>
 		/// 恢复声音
 		/// </summary>
 		/// <param name="soundId"> 声音唯一Id </param>
@@ -125,5 +149,29 @@ namespace AureFramework.Sound
 		/// <param name="soundId"> 唯一声音Id </param>
 		/// <param name="fadeInSeconds"> 淡入时间 </param>
 		void ResumeSound(int soundId, float fadeInSeconds);
+
+		/// <summary>
+		/// 恢复一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		void ResumeGroupSound(string groupName);
+
+		/// <summary>
+		/// 恢复一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <param name="fadeInSeconds"> 淡入时间 </param>
+		void ResumeGroupSound(string groupName, float fadeInSeconds);
+
+		/// <summary>
+		/// 恢复所有声音
+		/// </summary>
+		void ResumeAllSound();
+
+		/// <summary>
+		/// 恢复所有声音
+		/// </summary>
+		/// <param name="fadeInSeconds"> 淡入时间 </param>
+		void ResumeAllSound(float fadeInSeconds);
 	}
 }

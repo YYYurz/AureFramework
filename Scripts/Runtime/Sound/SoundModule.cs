@@ -254,6 +254,52 @@ namespace AureFramework.Sound
 		}
 
 		/// <summary>
+		/// 暂停一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		public void PauseGroupSound(string groupName)
+		{
+			PauseGroupSound(groupName, SoundParams.DefaultFadeOutSeconds);
+		}
+
+		/// <summary>
+		/// 暂停一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <param name="fadeOutSeconds"> 淡出时间 </param>
+		public void PauseGroupSound(string groupName, float fadeOutSeconds)
+		{
+			var soundGroup = (SoundGroup) GetSoundGroup(groupName);
+			if (soundGroup == null)
+			{
+				Debug.LogError($"SoundModule : Sound group is not exist. Sound group name :{groupName}");
+				return;
+			}
+			
+			soundGroup.PauseAllSound(fadeOutSeconds);
+		}
+
+		/// <summary>
+		/// 暂停所有声音
+		/// </summary>
+		public void PauseAllSound()
+		{
+			PauseAllSound(SoundParams.DefaultFadeOutSeconds);
+		}
+
+		/// <summary>
+		/// 暂停所有声音
+		/// </summary>
+		/// <param name="fadeOutSeconds"> 淡出时间 </param>
+		public void PauseAllSound(float fadeOutSeconds)
+		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.PauseAllSound(fadeOutSeconds);
+			}
+		}
+
+		/// <summary>
 		/// 恢复声音
 		/// </summary>
 		/// <param name="soundId"> 声音唯一Id </param>
@@ -272,6 +318,52 @@ namespace AureFramework.Sound
 			foreach (var soundGroup in soundGroupDic)
 			{
 				soundGroup.Value.ResumeSound(soundId, fadeInSeconds);
+			}
+		}
+
+		/// <summary>
+		/// 恢复一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		public void ResumeGroupSound(string groupName)
+		{
+			ResumeGroupSound(groupName, SoundParams.DefaultFadeInSeconds);
+		}
+		
+		/// <summary>
+		/// 恢复一个声音组的所有声音
+		/// </summary>
+		/// <param name="groupName"> 声音组名称 </param>
+		/// <param name="fadeInSeconds"> 淡入时间 </param>
+		public void ResumeGroupSound(string groupName, float fadeInSeconds)
+		{
+			var soundGroup = (SoundGroup) GetSoundGroup(groupName);
+			if (soundGroup == null)
+			{
+				Debug.LogError($"SoundModule : Sound group is not exist. Sound group name :{groupName}");
+				return;
+			}
+			
+			soundGroup.ResumeAllSound(fadeInSeconds);
+		}
+
+		/// <summary>
+		/// 恢复所有声音
+		/// </summary>
+		public void ResumeAllSound()
+		{
+			ResumeAllSound(SoundParams.DefaultFadeInSeconds);
+		}
+		
+		/// <summary>
+		/// 恢复所有声音
+		/// </summary>
+		/// <param name="fadeInSeconds"> 淡入时间 </param>
+		public void ResumeAllSound(float fadeInSeconds)
+		{
+			foreach (var soundGroup in soundGroupDic)
+			{
+				soundGroup.Value.ResumeAllSound(fadeInSeconds);
 			}
 		}
 

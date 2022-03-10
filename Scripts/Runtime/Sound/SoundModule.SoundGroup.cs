@@ -226,12 +226,24 @@ namespace AureFramework.Sound
 					}
 				}
 			}
+
+			/// <summary>
+			/// 暂停所有声音
+			/// </summary>
+			/// <param name="fadeOutSeconds"> 淡入时间 </param>
+			public void PauseAllSound(float fadeOutSeconds)
+			{
+				foreach (var soundAgentObject in usingSoundAgentObjectList)
+				{
+					soundAgentObject.SoundAgent.Pause(fadeOutSeconds);
+				}
+			}
 			
 			/// <summary>
 			/// 恢复声音
 			/// </summary>
 			/// <param name="soundId"> 唯一声音Id </param>
-			/// <param name="fadeInSeconds"> 淡出时间 </param>
+			/// <param name="fadeInSeconds"> 淡入时间 </param>
 			public void ResumeSound(int soundId, float fadeInSeconds)
 			{
 				foreach (var soundAgentObject in usingSoundAgentObjectList)
@@ -240,6 +252,18 @@ namespace AureFramework.Sound
 					{
 						soundAgentObject.SoundAgent.Resume(fadeInSeconds);
 					}
+				}
+			}
+
+			/// <summary>
+			/// 恢复所有声音
+			/// </summary>
+			/// <param name="fadeInSeconds"> 淡入时间 </param>
+			public void ResumeAllSound(float fadeInSeconds)
+			{
+				foreach (var soundAgentObject in usingSoundAgentObjectList)
+				{
+					soundAgentObject.SoundAgent.Resume(fadeInSeconds);
 				}
 			}
 

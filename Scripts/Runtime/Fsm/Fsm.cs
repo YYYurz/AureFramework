@@ -103,6 +103,7 @@ namespace AureFramework.Fsm
 		public void Pause()
 		{
 			isPause = true;
+			CurrentState?.OnPause();
 		}
 
 		/// <summary>
@@ -111,6 +112,7 @@ namespace AureFramework.Fsm
 		public void Resume()
 		{
 			isPause = false;
+			CurrentState?.OnResume();
 		}
 
 		/// <summary>
