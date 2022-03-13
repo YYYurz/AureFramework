@@ -182,12 +182,13 @@ namespace AureFramework.UI
 				var curNode = uiFormInfoLinked.Last;
 				while (curNode != null)
 				{
-					if (!curNode.Value.UIName.Equals(uiName))
-					{
-						InternalCreateUITask(curNode.Value.UIName, null, UITaskType.CloseUI, null);
-					}
-
+					var tempNode = curNode;
 					curNode = curNode.Previous;
+
+					if (!tempNode.Value.UIName.Equals(uiName))
+					{
+						InternalCreateUITask(tempNode.Value.UIName, null, UITaskType.CloseUI, null);
+					}
 				}
 			}
 
