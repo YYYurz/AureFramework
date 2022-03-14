@@ -2,8 +2,8 @@
 
 # AureFramework 简介
 
-AureFramework 是一个基于 Unity 引擎的简单、易上手的游戏框架，对游戏开发种常用的模块进行了封装，也能简单快速地扩展自定义模块。
-（目前只为学习分享使用）
+AureFramework 是一个基于 Unity 引擎的简单、易上手的游戏框架，对游戏开发种常用的模块进行了封装，也能简单快速地扩展自定义模块。  
+（目前只为学习分享使用）  
 
 现版本有如下内置模块：
 
@@ -31,8 +31,8 @@ AureFramework 是一个基于 Unity 引擎的简单、易上手的游戏框架�
 
 一个使用AureFramework框架制作的游戏演示项目，供使用AureFramework时参考。
 
-[BiuBiu AureFramework Sample](https://gitee.com/yyyurz/biu-biu) Gitee国内较快
-[BiuBiu AureFramework Sample](https://github.com/YYYurz/BiuBiu-AureFramework-Sample) GitHub
+[BiuBiu AureFramework Sample](https://gitee.com/yyyurz/biu-biu) Gitee国内较快  
+[BiuBiu AureFramework Sample](https://github.com/YYYurz/BiuBiu-AureFramework-Sample) GitHub  
 
 # 白嫖鸣谢
 
