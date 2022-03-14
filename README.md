@@ -25,7 +25,14 @@ AureFramework 是一个基于 Unity 引擎的简单、易上手的游戏框架�
 
 框架所使用的一些插件或工具，请于Unity内Package Manager自行下载。
 
-* [Unity Addressables](https://docs.unity3d.com/Packages/com.unity.addressables@1.19/manual/index.html)，当前使用1.19.17版。
+* [Unity Addressables](https://docs.unity3d.com/Packages/com.unity.addressables@1.19/manual/index.html) 当前使用1.19.17版。
+
+# Demo
+
+一个使用AureFramework框架制作的游戏演示项目，供使用AureFramework时参考。
+
+[BiuBiu AureFramework Sample](https://gitee.com/yyyurz/biu-biu) Gitee国内较快
+[BiuBiu AureFramework Sample](https://github.com/YYYurz/BiuBiu-AureFramework-Sample) GitHub
 
 # 白嫖鸣谢
 
