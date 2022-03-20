@@ -61,11 +61,6 @@ namespace AureFramework.UI
 		}
 
 		/// <summary>
-		/// 模块优先级，最小的优先轮询
-		/// </summary>
-		public override int Priority => 10;
-
-		/// <summary>
 		/// 模块初始化，只在第一次被获取时调用一次
 		/// </summary>
 		public override void Init()

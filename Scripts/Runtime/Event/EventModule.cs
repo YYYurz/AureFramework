@@ -22,7 +22,7 @@ namespace AureFramework.Event
 		/// <summary>
 		/// 模块优先级，最小的优先轮询
 		/// </summary>
-		public override int Priority => 2;
+		public override int Priority => 3;
 
 		/// <summary>
 		/// 模块初始化，只在第一次被获取时调用一次

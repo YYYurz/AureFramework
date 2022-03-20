@@ -19,11 +19,6 @@ namespace AureFramework.ObjectPool
 		private static readonly List<ObjectPoolBase> ObjectPoolList = new List<ObjectPoolBase>();
 
 		/// <summary>
-		/// 模块优先级，最小的优先轮询
-		/// </summary>
-		public override int Priority => 4;
-
-		/// <summary>
 		/// 获取对象池数量
 		/// </summary>
 		public int Count
