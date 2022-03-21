@@ -50,7 +50,6 @@ namespace AureFramework.Sound
 			foreach (var soundGroup in soundGroupDic)
 			{
 				soundGroup.Value.ReleaseAllLoadingSound();
-				soundGroup.Value.StopAllSound(0f);
 			}
 			
 			soundGroupDic.Clear();

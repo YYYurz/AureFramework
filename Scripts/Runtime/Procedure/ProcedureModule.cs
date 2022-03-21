@@ -58,7 +58,7 @@ namespace AureFramework.Procedure
 		/// </summary>
 		public override void Clear()
 		{
-			Aure.GetModule<IFsmModule>().DestroyFsm(this);
+			procedureFsm = null;
 		}
 
 		/// <summary>

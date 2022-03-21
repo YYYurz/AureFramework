@@ -121,7 +121,7 @@ namespace AureFramework.Network
 					Debug.LogError(exception is SocketException socketException ? socketException.SocketErrorCode.ToString() : exception.Message);
 				}
 			}
-			
+
 			private void OnSendCallback(IAsyncResult result)
 			{
 				var socket = (Socket) result.AsyncState;

@@ -10,6 +10,14 @@ namespace AureFramework.Network
 {
 	public interface INetworkModule
 	{
+		/// <summary>
+		/// 创建网络频道
+		/// </summary>
+		/// <param name="channelName"></param>
+		/// <param name="networkHelper"></param>
+		/// <returns></returns>
+		INetworkChannel CreateNetworkChannel(string channelName, INetworkHelper networkHelper = null);
 
+		public void DestroyNetworkChannel(string channelName);
 	}
 }

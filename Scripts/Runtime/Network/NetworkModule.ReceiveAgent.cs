@@ -74,7 +74,7 @@ namespace AureFramework.Network
 
 			private void OnReceiveCallback(IAsyncResult result)
 			{
-				var internalSocket = (Socket)result.AsyncState;
+				var internalSocket = (Socket) result.AsyncState;
 				if (!channel.Socket.Connected)
 				{
 					return;

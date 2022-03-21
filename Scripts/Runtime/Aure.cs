@@ -40,10 +40,7 @@ namespace AureFramework
 			}
 		}
 
-		/// <summary>
-		/// 退出
-		/// </summary>
-		public static void ShutDown()
+		private void OnDestroy()
 		{
 			foreach (var module in ModuleLinked)
 			{
@@ -51,6 +48,10 @@ namespace AureFramework
 			}
 
 			ModuleLinked.Clear();
+		}
+
+		public static void ShutDown()
+		{
 			Application.Quit();
 		}
 

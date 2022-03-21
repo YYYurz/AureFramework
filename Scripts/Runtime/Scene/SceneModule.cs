@@ -55,15 +55,15 @@ namespace AureFramework.Scene
 		/// </summary>
 		public override void Clear()
 		{
-			foreach (var loadedScene in loadedSceneDic)
-			{
-				if (SceneIsUnloading(loadedScene.Key))
-				{
-					continue;
-				}
-
-				UnloadScene(loadedScene.Key);
-			}
+			// foreach (var loadedScene in loadedSceneDic)
+			// {
+			// 	if (SceneIsUnloading(loadedScene.Key))
+			// 	{
+			// 		continue;
+			// 	}
+			//
+			// 	UnloadScene(loadedScene.Key);
+			// }
 
 			loadingSceneDic.Clear();
 			loadedSceneDic.Clear();

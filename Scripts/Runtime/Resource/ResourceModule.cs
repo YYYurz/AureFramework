@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -73,9 +74,10 @@ namespace AureFramework.Resource
 		/// </summary>
 		public override void Clear()
 		{
-			foreach (var loadingTask in loadingAssetDic)
+			var loadingTaskIdList = loadingAssetDic.Keys.ToList();
+			foreach (var loadingTaskId in loadingTaskIdList)
 			{
-				ReleaseTask(loadingTask.Key);
+				ReleaseTask(loadingTaskId);
 			}
 			
 			loadingAssetDic.Clear();

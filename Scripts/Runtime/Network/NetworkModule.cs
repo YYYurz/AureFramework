@@ -30,7 +30,10 @@ namespace AureFramework.Network
 		/// <param name="realElapseTime"> 距离上一帧的真实流逝时间，秒单位 </param>
 		public override void Tick(float elapseTime, float realElapseTime)
 		{
-			
+			foreach (var channel in channelDic)
+			{
+				channel.Value.Update();
+			}
 		}
 
 		/// <summary>
@@ -40,7 +43,7 @@ namespace AureFramework.Network
 		{
 			foreach (var channel in channelDic)
 			{
-				
+				channel.Value.ShutDown();
 			}
 			
 			channelDic.Clear();
@@ -50,8 +53,9 @@ namespace AureFramework.Network
 		/// 创建网络频道
 		/// </summary>
 		/// <param name="channelName"></param>
+		/// <param name="networkHelper"></param>
 		/// <returns></returns>
-		public INetworkChannel CreateNetworkChannel(string channelName)
+		public INetworkChannel CreateNetworkChannel(string channelName, INetworkHelper networkHelper = null)
 		{
 			if (string.IsNullOrEmpty(channelName))
 			{
@@ -65,10 +69,25 @@ namespace AureFramework.Network
 				return null;
 			}
 			
-			var networkChannel = new NetworkChannel();
+			var networkChannel = new NetworkChannel(channelName, networkHelper);
 			channelDic.Add(channelName, networkChannel);
 
 			return networkChannel;
+		}
+
+		public void DestroyNetworkChannel(string channelName)
+		{
+			if (string.IsNullOrEmpty(channelName))
+			{
+				Debug.LogError("NetworkModule : Network channel name is invalid.");
+				return;	
+			}
+			
+			if (channelDic.TryGetValue(channelName, out var channel))
+			{
+				channel.ShutDown();
+				channelDic.Remove(channelName);
+			}
 		}
 	}
 }

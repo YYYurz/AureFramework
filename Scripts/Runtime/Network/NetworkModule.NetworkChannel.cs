@@ -9,6 +9,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using AureFramework.Event;
 using UnityEngine;
 
 namespace AureFramework.Network
@@ -17,12 +18,13 @@ namespace AureFramework.Network
 	{
 		private class NetworkChannel : INetworkChannel
 		{
-			private string name;
-			private Socket socket;
 			private readonly SendAgent sendAgent;
 			private readonly ReceiveAgent receiveAgent;
 			private readonly INetworkHelper networkHelper;
+			private readonly IEventModule eventModule;
+			private string name;
 			private bool active;
+			private Socket socket;
 
 			public NetworkChannel(string name, INetworkHelper networkHelper)
 			{
@@ -30,6 +32,15 @@ namespace AureFramework.Network
 				this.networkHelper = networkHelper;
 				sendAgent = new SendAgent(this);
 				receiveAgent = new ReceiveAgent(this);
+				eventModule = Aure.GetModule<IEventModule>();
+			}
+
+			public string Name
+			{
+				get
+				{
+					return name;
+				}
 			}
 
 			public Socket Socket
@@ -63,9 +74,7 @@ namespace AureFramework.Network
 			/// <summary>
 			/// 轮询
 			/// </summary>
-			/// <param name="elapseTime"> 距离上一帧的流逝时间，秒单位 </param>
-			/// <param name="realElapseTime"> 距离上一帧的真实流逝时间，秒单位 </param>
-			public void Update(float elapseTime, float realElapseTime)
+			public void Update()
 			{
 				if (!active || socket == null)
 				{
@@ -74,6 +83,12 @@ namespace AureFramework.Network
 				
 				sendAgent.Update();
 				receiveAgent.Update();
+			}
+
+			public void ShutDown()
+			{
+				CloseConnect();
+				// networkHelper.Shutdown();
 			}
 			
 			public void Connect(IPAddress ipAddress, int port)
@@ -114,7 +129,7 @@ namespace AureFramework.Network
 			{
 				lock (this)
 				{
-					if (socket == null)
+					if (socket == null || !socket.Connected)
 					{
 						return;
 					}
@@ -182,6 +197,7 @@ namespace AureFramework.Network
 
 				active = true;
 				receiveAgent.Receive();
+				eventModule.Fire(this, NetworkConnectedEventArgs.Create());
 			}
 		}
 	}
