@@ -19,7 +19,6 @@ namespace AureFramework.Network
 	{
 		private class ReceiveAgent : IDisposable
 		{
-			private const int DefaultBufferLength = 1024 * 64;
 			private readonly NetworkChannel channel;
 			private readonly IEventModule eventModule;
 			private IPacketHeader packetHeader;
@@ -30,7 +29,7 @@ namespace AureFramework.Network
 			{
 				this.channel = channel;
 				eventModule = Aure.GetModule<IEventModule>();
-				memoryStream = new MemoryStream(DefaultBufferLength);
+				memoryStream = new MemoryStream(1024 * 64);
 				disposed = false;
 			}
 
@@ -93,7 +92,7 @@ namespace AureFramework.Network
 			private void OnReceiveCallback(IAsyncResult result)
 			{
 				var internalSocket = (Socket) result.AsyncState;
-				if (!channel.Socket.Connected)
+				if (!internalSocket.Connected)
 				{
 					return;
 				}
@@ -144,7 +143,9 @@ namespace AureFramework.Network
 						return false;
 					}
 				
+					memoryStream.Position = 0L;
 					memoryStream.SetLength(packetHeader.PacketLength);
+					
 					if (packetHeader.PacketLength <= 0)
 					{
 						return ProcessPacket();
