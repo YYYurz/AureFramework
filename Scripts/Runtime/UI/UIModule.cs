@@ -308,12 +308,9 @@ namespace AureFramework.UI
 
 		private UIGroup InternalGetUIGroup(string groupName)
 		{
-			foreach (var uiGroup in uiGroupDic)
+			if (uiGroupDic.TryGetValue(groupName ?? string.Empty, out var uiGroup))
 			{
-				if (uiGroup.Value.GroupName.Equals(groupName))
-				{
-					return uiGroup.Value;
-				}
+				return uiGroup;
 			}
 
 			return null;

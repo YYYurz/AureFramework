@@ -48,18 +48,45 @@ namespace AureFramework.Network
 			
 			channelDic.Clear();
 		}
-
+		
 		/// <summary>
-		/// 创建网络频道
+		/// 获取网络频道
 		/// </summary>
-		/// <param name="channelName"></param>
-		/// <param name="networkHelper"></param>
+		/// <param name="channelName"> 网络频道名称 </param>
 		/// <returns></returns>
-		public INetworkChannel CreateNetworkChannel(string channelName, INetworkHelper networkHelper = null)
+		public INetworkChannel GetNetworkChannel(string channelName)
 		{
 			if (string.IsNullOrEmpty(channelName))
 			{
 				Debug.LogError("NetworkModule : Network channel name is invalid.");
+				return null;
+			}
+			
+			if (channelDic.TryGetValue(channelName, out var networkChannel))
+			{
+				return networkChannel;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// 创建网络频道
+		/// </summary>
+		/// <param name="channelName"> 网络频道名称 </param>
+		/// <param name="networkHelper"> 网络频道辅助器 </param>
+		/// <returns></returns>
+		public INetworkChannel CreateNetworkChannel(string channelName, INetworkHelper networkHelper)
+		{
+			if (string.IsNullOrEmpty(channelName))
+			{
+				Debug.LogError("NetworkModule : Network channel name is invalid.");
+				return null;
+			}
+
+			if (networkHelper == null)
+			{
+				Debug.LogError("NetworkModule : Network Helper is null.");
 				return null;
 			}
 
@@ -75,6 +102,10 @@ namespace AureFramework.Network
 			return networkChannel;
 		}
 
+		/// <summary>
+		/// 销毁网络频道
+		/// </summary>
+		/// <param name="channelName"> 网络频道名称 </param>
 		public void DestroyNetworkChannel(string channelName)
 		{
 			if (string.IsNullOrEmpty(channelName))

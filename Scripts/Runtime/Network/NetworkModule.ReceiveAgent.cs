@@ -9,6 +9,8 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using AureFramework.Event;
+using BiuBiu;
 using UnityEngine;
 
 namespace AureFramework.Network
@@ -19,12 +21,15 @@ namespace AureFramework.Network
 		{
 			private const int DefaultBufferLength = 1024 * 64;
 			private readonly NetworkChannel channel;
+			private readonly IEventModule eventModule;
+			private IPacketHeader packetHeader;
 			private MemoryStream memoryStream;
 			private bool disposed;
 			
 			public ReceiveAgent(NetworkChannel channel)
 			{
 				this.channel = channel;
+				eventModule = Aure.GetModule<IEventModule>();
 				memoryStream = new MemoryStream(DefaultBufferLength);
 				disposed = false;
 			}
@@ -41,6 +46,13 @@ namespace AureFramework.Network
 			{
 				
 			}
+
+			public void Reset()
+			{
+				memoryStream.Position = 0L;
+				memoryStream.SetLength(channel.NetworkHelper.PacketHeaderLength);
+				packetHeader = null;
+			}
 			
 			public void Dispose()
 			{
@@ -50,6 +62,11 @@ namespace AureFramework.Network
 			
 			private void InternalDispose()
 			{
+				if (disposed)
+				{
+					return;
+				}
+			
 				if (memoryStream != null)
 				{
 					memoryStream.Dispose();
@@ -68,7 +85,8 @@ namespace AureFramework.Network
 				catch (Exception exception)
 				{
 					channel.Active = false;
-					Debug.LogError(exception is SocketException socketException ? socketException.SocketErrorCode.ToString() : exception.Message);
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					throw;
 				}
 			}
 
@@ -88,11 +106,11 @@ namespace AureFramework.Network
 				catch (Exception exception)
 				{
 					channel.Active = false;
-					Debug.LogError(exception is SocketException socketException ? socketException.SocketErrorCode.ToString() : exception.Message);
-
-					return;
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					throw;
 				}
 
+				// 服务器主动断开
 				if (bytesReceived <= 0)
 				{
 					channel.CloseConnect();
@@ -108,21 +126,60 @@ namespace AureFramework.Network
 
 				memoryStream.Position = 0L;
 
-				// var processSuccess = false;
-				// if (m_ReceiveState.PacketHeader != null)
-				// {
-				// 	processSuccess = ProcessPacket();
-				// 	m_ReceivedPacketCount++;
-				// }
-				// else
-				// {
-				// 	processSuccess = ProcessPacketHeader();
-				// }
-				//
-				// if (processSuccess)
-				// {
-				// 	Receive();
-				// }
+				var processSuccess = packetHeader == null ? ProcessPacketHeader() : ProcessPacket();
+				if (processSuccess)
+				{
+					Receive();
+				}
+			}
+
+			private bool ProcessPacketHeader()
+			{
+				try
+				{
+					packetHeader = channel.NetworkHelper.DeserializePacketHeader(memoryStream);
+					if (packetHeader == null)
+					{
+						eventModule.Fire(this, NetworkErrorEventArgs.Create("NetworkModule : Packet header is invalid."));
+						return false;
+					}
+				
+					memoryStream.SetLength(packetHeader.PacketLength);
+					if (packetHeader.PacketLength <= 0)
+					{
+						return ProcessPacket();
+					}
+				}
+				catch (Exception exception)
+				{
+					channel.Active = false;
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					throw;
+				}
+
+				return true;
+			}
+
+			private bool ProcessPacket()
+			{
+				try
+				{
+					var packet = channel.NetworkHelper.DeserializePacket(packetHeader, memoryStream);
+					if (packet != null)
+					{
+						eventModule.Fire(this, NetworkReceiveEventArgs.Create(packet));
+					}
+
+					Reset();
+				}
+				catch (Exception exception)
+				{
+					channel.Active = false;
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					return false;
+				}
+
+				return true;
 			}
 		}
 	}

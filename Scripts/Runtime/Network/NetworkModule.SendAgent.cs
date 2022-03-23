@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
-using UnityEngine;
+using AureFramework.Event;
 
 namespace AureFramework.Network
 {
@@ -21,12 +21,14 @@ namespace AureFramework.Network
 			private const int DefaultBufferLength = 1024 * 64;
 			private readonly Queue<Packet> sendPacketQueue;
 			private readonly NetworkChannel channel;
+			private readonly IEventModule eventModule;
 			private MemoryStream memoryStream;
 			private bool disposed;
 
 			public SendAgent(NetworkChannel channel)
 			{
 				this.channel = channel;
+				eventModule = Aure.GetModule<IEventModule>();
 				sendPacketQueue = new Queue<Packet>();
 				memoryStream = new MemoryStream(DefaultBufferLength);
 				disposed = false;
@@ -93,13 +95,13 @@ namespace AureFramework.Network
 						catch (Exception exception)
 						{
 							channel.Active = false;
-							Debug.LogError(exception is SocketException socketException ? socketException.SocketErrorCode.ToString() : exception.Message);
-							return;
+							eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+							throw ;
 						}
 
 						if (!serializeResult)
 						{
-							Debug.LogError("NetworkModule : Serialized packet failed.");
+							eventModule.Fire(this, NetworkErrorEventArgs.Create("NetworkModule : Serialized packet failed."));
 							return;
 						}
 					}
@@ -118,7 +120,8 @@ namespace AureFramework.Network
 				catch (Exception exception)
 				{
 					channel.Active = false;
-					Debug.LogError(exception is SocketException socketException ? socketException.SocketErrorCode.ToString() : exception.Message);
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					throw;
 				}
 			}
 
@@ -138,8 +141,8 @@ namespace AureFramework.Network
 				catch (Exception exception)
 				{
 					channel.Active = false;
-					Debug.LogError(exception is SocketException socketException ? socketException.SocketErrorCode.ToString() : exception.Message);
-					return;
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					throw;
 				}
 
 				memoryStream.Position += bytesSent;

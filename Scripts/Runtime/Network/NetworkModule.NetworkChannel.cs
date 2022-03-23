@@ -22,7 +22,7 @@ namespace AureFramework.Network
 			private readonly ReceiveAgent receiveAgent;
 			private readonly INetworkHelper networkHelper;
 			private readonly IEventModule eventModule;
-			private string name;
+			private readonly string name;
 			private bool active;
 			private Socket socket;
 
@@ -88,7 +88,7 @@ namespace AureFramework.Network
 			public void ShutDown()
 			{
 				CloseConnect();
-				// networkHelper.Shutdown();
+				networkHelper.Shutdown();
 			}
 			
 			public void Connect(IPAddress ipAddress, int port)
@@ -105,7 +105,7 @@ namespace AureFramework.Network
 						break;
 					default:
 					{
-						Debug.LogError($"Not supported address family.");
+						Debug.LogError("NetworkModule : Not supported address family.");
 						return;
 					}
 				}
@@ -118,11 +118,12 @@ namespace AureFramework.Network
 				}
 				catch (Exception exception)
 				{
-					Debug.LogError(exception is SocketException socketException ? socketException.SocketErrorCode.ToString() : exception.Message);
-					return;
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					throw;
 				}
 				
 				sendAgent.Reset();
+				receiveAgent.Reset();
 			}
 
 			public void CloseConnect()
@@ -138,9 +139,10 @@ namespace AureFramework.Network
 					{
 						socket.Shutdown(SocketShutdown.Both);
 					}
-					catch(Exception e)
+					catch(Exception exception)
 					{
-						Debug.LogError($"NetworkModule : Close socket error, {e.Message}");
+						eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+						throw;
 					}
 					finally
 					{
@@ -183,16 +185,8 @@ namespace AureFramework.Network
 				catch (Exception exception)
 				{
 					active = false;
-					if (exception is SocketException socketException)
-					{
-						Debug.LogError(socketException.SocketErrorCode);
-					}
-					else
-					{
-						Debug.LogError(exception.Message);
-					}
-					
-					return;
+					eventModule.Fire(this, NetworkErrorEventArgs.Create(exception.Message));
+					throw;
 				}
 
 				active = true;
