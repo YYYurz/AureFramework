@@ -8,14 +8,15 @@ AureFramework 是一个基于 Unity 引擎的简单、易上手的游戏框架�
 现版本有如下内置模块：
 
 1. **有限状态机（FsmModule）**
-2. **资源（ResourceModule）**
-3. **事件（EventModule）**
-4. **对象池（ObjectPoolModule）**
-5. **流程（ProcedureModule）**
-6. **引用池（ReferencePoolModule）**
-7. **场景（SceneModule）**
-8. **声音（SoundModule）**
-9. **UI（UIModule）**
+2. **网络（NetworkModule）**
+3. **资源（ResourceModule）**
+4. **事件（EventModule）**
+5. **对象池（ObjectPoolModule）**
+6. **流程（ProcedureModule）**
+7. **引用池（ReferencePoolModule）**
+8. **场景（SceneModule）**
+9. **声音（SoundModule）**
+10. **UI（UIModule）**
 
 ### Unity版本
 
