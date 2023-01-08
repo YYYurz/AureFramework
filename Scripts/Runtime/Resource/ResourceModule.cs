@@ -252,8 +252,8 @@ namespace AureFramework.Resource
 					Addressables.Release(handle);
 				}
 
+				loadingAssetDic.Remove(taskId);
 				sceneCallbackDic.Remove(taskId);
-				instantiateCallbackDic.Remove(taskId);
 			}
 		}
 

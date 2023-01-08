@@ -58,7 +58,6 @@ namespace AureFramework.Procedure
 		/// </summary>
 		public override void Clear()
 		{
-			procedureFsm = null;
 		}
 
 		/// <summary>
