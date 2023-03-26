@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------
 // AureFramework
-// Developed By ZhiRui Yu.
+// Developed By YYYurz
 // GitHub: https://github.com/YYYurz
 // Gitee: https://gitee.com/yyyurz
 // Email: 1228396352@qq.com
@@ -11,7 +11,7 @@ using AureFramework.Event;
 using AureFramework.Network;
 using AureFramework.ReferencePool;
 
-namespace BiuBiu
+namespace AureFramework.Network
 {
 	public class NetworkReceiveEventArgs : AureEventArgs
 	{
