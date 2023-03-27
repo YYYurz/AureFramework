@@ -48,6 +48,7 @@ namespace AureFramework
 			}
 
 			ModuleLinked.Clear();
+			RegisteredModuleList.Clear();
 		}
 
 		public static void ShutDown()
