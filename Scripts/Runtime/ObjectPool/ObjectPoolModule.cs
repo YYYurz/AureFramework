@@ -144,12 +144,12 @@ namespace AureFramework.ObjectPool
 
 		private void InternalDestroyAllObjectPool()
 		{
-			for (var i = 0; i < Count; i++)
+			foreach (var objectPoolBase in ObjectPoolList)
 			{
-				var objectPool = ObjectPoolList[i];
-				objectPool.ShutDown();
-				ObjectPoolList.Remove(objectPool);
+				objectPoolBase.ShutDown();
 			}
+			
+			ObjectPoolList.Clear();
 		}
 
 		private static bool TryGetObjectPool<T>(string poolName, out ObjectPoolBase objectPool) where T : ObjectBase
